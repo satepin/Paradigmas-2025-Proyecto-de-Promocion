@@ -3,7 +3,7 @@
  * @description Muestra una lista de tareas y permite al usuario seleccionar una para ver sus detalles.
  */
 
-import { menuPrompt, prompt } from "../input/promptSync.ts";
+import { menuPrompt, prompt } from "../modulos/promptSync.ts";
 import type { Task } from '../../type.ts';
 import { formatearTarea } from './detalles.ts';
 

@@ -20,7 +20,7 @@
  dividir en dos secciones: ver detalles y editar
  */
 
-import { prompt } from '../input/promptSync.ts';
+import { prompt } from '../modulos/promptSync.ts';
 import type { Task } from '../../type.ts';
 
 /**

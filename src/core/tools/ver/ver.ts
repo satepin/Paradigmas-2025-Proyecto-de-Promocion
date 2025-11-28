@@ -3,7 +3,7 @@
  * @description Proporciona un menú para filtrar y ver tareas.
  */
 
-import { menuPrompt } from '../input/promptSync.ts';
+import { menuPrompt } from '../modulos/promptSync.ts';
 import { listado } from './listado.ts';
 import type { Task, TaskStatus } from '../../type.ts';
 

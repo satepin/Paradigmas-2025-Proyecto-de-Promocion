@@ -3,7 +3,7 @@
  * @description Entry point del menú principal de la aplicación.
  */
 
-import { menuPrompt } from "../core/tools/input/promptSync.ts";
+import { menuPrompt } from "../core/tools/modulos/promptSync.ts";
 import { formatearMenuPrincipal } from "./menuRenderer.ts";
 import { obtenerAccionPorOpcion, type MenuActionResult } from "./menuActions.ts";
 import type { Task } from '../core/type.ts';

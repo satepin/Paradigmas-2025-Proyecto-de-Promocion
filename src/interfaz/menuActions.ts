@@ -3,7 +3,7 @@
  * @description Orquestadores de acciones del menú (con efectos secundarios controlados).
  */
 
-import { menuPrompt, prompt } from "../core/tools/input/promptSync.ts";
+import { menuPrompt, prompt } from "../core/tools/modulos/promptSync.ts";
 import { filtrarPorOpcion } from "../core/tools/ver/ver.ts";
 import { filtrarPorTitulo } from "../core/tools/ver/buscar.ts";
 import { listado } from "../core/tools/ver/listado.ts";

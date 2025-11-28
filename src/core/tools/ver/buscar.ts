@@ -3,7 +3,7 @@
  * @description Permite al usuario buscar tareas por título.
  */
 
-import { prompt } from "../input/promptSync.ts";
+import { prompt } from "../modulos/promptSync.ts";
 import { taskFlags } from '../../task.ts';
 import { listado } from './listado.ts';
 import type { Task } from '../../type.ts';
