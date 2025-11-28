@@ -17,7 +17,7 @@ const task: Readonly<Task> = {
     creacion: null,
     uEdicion: null,
     vencimiento: null,
-    dificultad: 'facil'
+    dificultad: 'facil ★☆☆'
 } as const;
 
 /**
@@ -61,9 +61,9 @@ const flagEstado: ReadonlyMap<TaskStatus, number> = new Map<TaskStatus, number>(
  * @type {ReadonlyMap<TaskDifficulty, number>}
  */
 const flagDificultad: ReadonlyMap<TaskDifficulty, number> = new Map<TaskDifficulty, number>([
-    ["facil", 1],
-    ["medio", 2],
-    ["dificil", 3]
+    ["facil ★☆☆", 1],
+    ["medio ★★☆", 2],
+    ["dificil ★★★", 3]
 ]);
 
 /**

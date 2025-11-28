@@ -13,7 +13,7 @@ export type TaskStatus = 'pendiente' | 'en curso' | 'completada' | 'cancelada';
  * Define los posibles niveles de dificultad de una tarea.
  * @typedef {'facil' | 'medio' | 'dificil'} TaskDifficulty
  */
-export type TaskDifficulty = 'facil' | 'medio' | 'dificil';
+export type TaskDifficulty = 'facil ★☆☆' | 'medio ★★☆' | 'dificil ★★★';
 
 /**
  * @interface Task
