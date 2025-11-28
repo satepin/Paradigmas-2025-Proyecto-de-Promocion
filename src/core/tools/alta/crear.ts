@@ -90,7 +90,7 @@ export function crear(): Task {
     console.log("\n4. Selecciona una dificultad:");
     dificultadEntries.forEach(([key, value]) => console.log(`   ${value}. ${key}`));
     const dificultadInput = prompt("   Opción: ");
-    const dificultad = dificultadEntries.find(([_, value]) => value.toString() === dificultadInput)?.[0] || 'facil' as const;
+    const dificultad = dificultadEntries.find(([_, value]) => value.toString() === dificultadInput)?.[0] || 'facil ★☆☆' as const;
     
     // 5. Vencimiento (BONUS)
     const vencimiento: Date | null = datePrompt("5. Ingresa la fecha de vencimiento (aaaa/mm/dd) o deja en blanco: ");
