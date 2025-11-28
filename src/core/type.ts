@@ -18,6 +18,7 @@ export type TaskDifficulty = 'facil' | 'medio' | 'dificil';
 /**
  * @interface Task
  * @description Representa la estructura inmutable de una tarea.
+ * @property {string} id - El identificador único de la tarea.
  * @property {string} titulo - El título de la tarea.
  * @property {string} descripcion - La descripción de la tarea.
  * @property {TaskStatus} estado - El estado actual de la tarea.
@@ -27,6 +28,7 @@ export type TaskDifficulty = 'facil' | 'medio' | 'dificil';
  * @property {TaskDifficulty} dificultad - El nivel de dificultad de la tarea.
  */
 export interface Task {
+    readonly id: string;
     readonly titulo: string;
     readonly descripcion: string;
     readonly estado: TaskStatus;

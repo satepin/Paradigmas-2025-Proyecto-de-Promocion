@@ -3,11 +3,11 @@
  * @description Re-exporta los módulos principales de la interfaz.
  */
 
-export { mainMenu, procesarOpcionMenu, type MainMenuResult } from './mainMenu.js';
+export { mainMenu, procesarOpcionMenu, type MainMenuResult } from './mainMenu.ts';
 export { 
     formatearMenuPrincipal, 
     generarTextoMenu
-} from './menuRenderer.js';
+} from './menuRenderer.ts';
 export {
     ejecutarVerTareas,
     ejecutarBuscarTareas,
@@ -15,10 +15,10 @@ export {
     ejecutarSalir,
     obtenerAccionPorOpcion,
     type MenuActionResult
-} from './menuActions.js';
+} from './menuActions.ts';
 export {
     crearResultadoSinCambios,
     crearResultadoConCambios,
     generarLineasMenu,
     mostrarLineasMenu
-} from './menuHelpers.js';
+} from './menuHelpers.ts';

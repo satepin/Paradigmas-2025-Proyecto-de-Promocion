@@ -4,7 +4,7 @@
  */
 
 import promptSync from 'prompt-sync';
-import type { ValidationFlag } from '../../type.js';
+import type { ValidationFlag } from '../../type.ts';
 
 const ask = promptSync({ sigint: true });
 

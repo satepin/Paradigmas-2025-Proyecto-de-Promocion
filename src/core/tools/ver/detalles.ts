@@ -20,8 +20,8 @@
  dividir en dos secciones: ver detalles y editar
  */
 
-import { prompt } from '../input/promptSync.js';
-import type { Task } from '../../type.js';
+import { prompt } from '../input/promptSync.ts';
+import type { Task } from '../../type.ts';
 
 /**
  * Función pura que formatea una tarea como string para mostrar.
@@ -31,6 +31,7 @@ import type { Task } from '../../type.js';
 export function formatearTarea(tarea: Task): string {
     const lineas = [
         "Esta es la tarea que elegiste:",
+        `ID: ${tarea.id}`,
         `Titulo: ${tarea.titulo}`,
         `Descripcion: ${tarea.descripcion || 'Sin descripción'}`,
         `Estado: ${tarea.estado}`,

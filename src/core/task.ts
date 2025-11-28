@@ -10,6 +10,7 @@ import type { Task, TaskFlags, TaskStatus, TaskDifficulty, ValidationFlag } from
  * @type {Readonly<Task>}
  */
 const task: Readonly<Task> = {
+    id: '',
     titulo: '',
     descripcion: '',
     estado: 'pendiente',

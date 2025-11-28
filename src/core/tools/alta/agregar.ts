@@ -23,8 +23,8 @@ presiona cualquier tecla para continuar...
 agregar.ts recibe una tarea creada y verificada en crear.ts y la agrega a una lista de tareas
 */
 
-import { crear } from './crear.js';
-import type { Task } from '../../type.js';
+import { crear } from './crear.ts';
+import type { Task } from '../../type.ts';
 
 /**
  * Agrega una nueva tarea a la lista (función pura).

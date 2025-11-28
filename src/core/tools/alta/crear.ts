@@ -18,12 +18,14 @@ presiona cualquier tecla para continuar...
 crear.ts se encarga de la creacion y validacion de una unica unidad de tarea, que sera retornada para su manejo en agregar.ts
 */
 
-import { prompt, set, datePrompt} from '../input/promptSync.js';
-import { taskFlags } from '../../task.js';
-import type { Task, TaskStatus, TaskDifficulty } from '../../type.js';
+import { v4 as uuidv4 } from 'uuid';
+import { prompt, set, datePrompt} from '../input/promptSync.ts';
+import { taskFlags } from '../../task.ts';
+import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
 
 /**
  * Función pura que crea una tarea a partir de datos ya validados.
+ * @param {string} id - El ID de la tarea
  * @param {string} titulo - El título de la tarea
  * @param {string} descripcion - La descripción de la tarea
  * @param {TaskStatus} estado - El estado de la tarea
@@ -33,6 +35,7 @@ import type { Task, TaskStatus, TaskDifficulty } from '../../type.js';
  * @returns {Task} La tarea creada
  */
 export function crearTareaDesdeValores(
+    id: string,
     titulo: string,
     descripcion: string,
     estado: TaskStatus,
@@ -41,6 +44,7 @@ export function crearTareaDesdeValores(
     vencimiento: Date | null
 ): Task {
     return {
+        id,
         titulo,
         descripcion,
         estado,
@@ -96,6 +100,7 @@ export function crear(): Task {
     
     // Delegamos a la función pura
     const nuevaTarea = crearTareaDesdeValores(
+        uuidv4(),
         titulo,
         descripcion,
         estado,

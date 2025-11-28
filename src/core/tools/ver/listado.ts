@@ -3,9 +3,9 @@
  * @description Muestra una lista de tareas y permite al usuario seleccionar una para ver sus detalles.
  */
 
-import { menuPrompt, prompt } from "../input/promptSync.js";
-import type { Task } from '../../type.js';
-import { formatearTarea } from './detalles.js';
+import { menuPrompt, prompt } from "../input/promptSync.ts";
+import type { Task } from '../../type.ts';
+import { formatearTarea } from './detalles.ts';
 
 /**
  * Función pura que formatea una lista de tareas como strings para mostrar.

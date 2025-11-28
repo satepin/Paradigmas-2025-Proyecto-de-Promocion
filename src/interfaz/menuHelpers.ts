@@ -3,8 +3,8 @@
  * @description Funciones helper puras y reutilizables para construcción de resultados de menú.
  */
 
-import type { Task } from '../core/type.js';
-import type { MenuActionResult } from './menuActions.js';
+import type { Task } from '../core/type.ts';
+import type { MenuActionResult } from './menuActions.ts';
 
 /**
  * Función pura que crea un resultado de menú sin cambios.

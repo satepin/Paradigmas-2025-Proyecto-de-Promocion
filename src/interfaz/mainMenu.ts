@@ -3,10 +3,10 @@
  * @description Entry point del menú principal de la aplicación.
  */
 
-import { menuPrompt } from "../core/tools/input/promptSync.js";
-import { formatearMenuPrincipal } from "./menuRenderer.js";
-import { obtenerAccionPorOpcion, type MenuActionResult } from "./menuActions.js";
-import type { Task } from '../core/type.js';
+import { menuPrompt } from "../core/tools/input/promptSync.ts";
+import { formatearMenuPrincipal } from "./menuRenderer.ts";
+import { obtenerAccionPorOpcion, type MenuActionResult } from "./menuActions.ts";
+import type { Task } from '../core/type.ts';
 
 /**
  * Tipo para el resultado del menú principal.

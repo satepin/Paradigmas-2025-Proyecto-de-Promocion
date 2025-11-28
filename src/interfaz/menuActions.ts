@@ -3,20 +3,20 @@
  * @description Orquestadores de acciones del menú (con efectos secundarios controlados).
  */
 
-import { menuPrompt, prompt } from "../core/tools/input/promptSync.js";
-import { filtrarPorOpcion } from "../core/tools/ver/ver.js";
-import { filtrarPorTitulo } from "../core/tools/ver/buscar.js";
-import { listado } from "../core/tools/ver/listado.js";
-import { crear } from "../core/tools/alta/crear.js";
-import { agregarTarea } from "../core/tools/alta/agregar.js";
-import { taskFlags } from "../core/task.js";
-import type { Task } from '../core/type.js';
+import { menuPrompt, prompt } from "../core/tools/input/promptSync.ts";
+import { filtrarPorOpcion } from "../core/tools/ver/ver.ts";
+import { filtrarPorTitulo } from "../core/tools/ver/buscar.ts";
+import { listado } from "../core/tools/ver/listado.ts";
+import { crear } from "../core/tools/alta/crear.ts";
+import { agregarTarea } from "../core/tools/alta/agregar.ts";
+import { taskFlags } from "../core/task.ts";
+import type { Task } from '../core/type.ts';
 import { 
     crearResultadoSinCambios, 
     crearResultadoConCambios,
     generarLineasMenu,
     mostrarLineasMenu
-} from './menuHelpers.js';
+} from './menuHelpers.ts';
 
 /**
  * Tipo para el resultado de una acción del menú.

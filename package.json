@@ -15,11 +15,13 @@
   "devDependencies": {
     "@types/node": "^24.10.1",
     "@types/prompt-sync": "^4.2.3",
+    "@types/uuid": "^10.0.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "prompt-sync": "^4.2.0"
+    "prompt-sync": "^4.2.0",
+    "uuid": "^13.0.0"
   }
 }

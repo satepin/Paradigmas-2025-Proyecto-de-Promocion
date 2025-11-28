@@ -3,9 +3,9 @@
  * @description Proporciona un menú para filtrar y ver tareas.
  */
 
-import { menuPrompt } from '../input/promptSync.js';
-import { listado } from './listado.js';
-import type { Task, TaskStatus } from '../../type.js';
+import { menuPrompt } from '../input/promptSync.ts';
+import { listado } from './listado.ts';
+import type { Task, TaskStatus } from '../../type.ts';
 
 /**
  * Función pura que filtra tareas por estado.

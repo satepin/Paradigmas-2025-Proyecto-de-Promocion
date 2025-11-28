@@ -3,10 +3,10 @@
  * @description Permite al usuario buscar tareas por título.
  */
 
-import { prompt } from "../input/promptSync.js";
-import { taskFlags } from '../../task.js';
-import { listado } from './listado.js';
-import type { Task } from '../../type.js';
+import { prompt } from "../input/promptSync.ts";
+import { taskFlags } from '../../task.ts';
+import { listado } from './listado.ts';
+import type { Task } from '../../type.ts';
 
 /**
  * Función pura que filtra tareas por término de búsqueda en el título.

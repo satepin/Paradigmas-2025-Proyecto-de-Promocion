@@ -3,8 +3,8 @@
  * @description Entry point principal de la aplicación de gestión de tareas.
  */
 
-import { mainMenu } from './interfaz/mainMenu.js';
-import type { Task } from './core/type.js';
+import { mainMenu } from './interfaz/mainMenu.ts';
+import type { Task } from './core/type.ts';
 
 /**
  * Función principal que ejecuta el loop del programa.
