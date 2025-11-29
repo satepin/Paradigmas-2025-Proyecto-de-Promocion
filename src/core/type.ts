@@ -26,6 +26,7 @@ export type TaskDifficulty = 'facil ★☆☆' | 'medio ★★☆' | 'dificil �
  * @property {Date | null} uEdicion - La fecha de la última edición de la tarea.
  * @property {Date | null} vencimiento - La fecha de vencimiento de la tarea.
  * @property {TaskDifficulty} dificultad - El nivel de dificultad de la tarea.
+ * @property {boolean} eliminada - Indica si la tarea ha sido eliminada.
  */
 export interface Task {
     readonly id: string;
@@ -36,6 +37,7 @@ export interface Task {
     readonly uEdicion: Date | null;
     readonly vencimiento: Date | null;
     readonly dificultad: TaskDifficulty;
+    readonly eliminada: boolean;
 }
 
 /**

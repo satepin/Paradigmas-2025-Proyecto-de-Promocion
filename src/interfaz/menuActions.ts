@@ -6,7 +6,7 @@
 import { menuPrompt, prompt } from "../core/tools/modulos/promptSync.ts";
 import { filtrarPorOpcion } from "../core/tools/ver/ver.ts";
 import { filtrarPorTitulo } from "../core/tools/ver/buscar.ts";
-import { listado } from "../core/tools/ver/listado.ts";
+import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../core/tools/ver/listado.ts";
 import { crear } from "../core/tools/alta/crear.ts";
 import { agregarTarea } from "../core/tools/alta/agregar.ts";
 import { taskFlags } from "../core/task.ts";
@@ -32,6 +32,7 @@ export type MenuActionResult = {
  * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
  */
 export function ejecutarVerTareas(listaTareas: readonly Task[]): MenuActionResult {
+    const tareasVisibles = listaTareas.filter(t => !t.eliminada);
     const lineasMenu = generarLineasMenu(
         "¿Que tareas deseas ver?",
         ["1- Todas", "2- Pendientes", "3- En curso", "4- Terminadas"]
@@ -43,7 +44,7 @@ export function ejecutarVerTareas(listaTareas: readonly Task[]): MenuActionResul
         return crearResultadoSinCambios(listaTareas);
     }
     
-    const filtradas = filtrarPorOpcion(listaTareas, opcion);
+    const filtradas = filtrarPorOpcion(tareasVisibles, opcion);
     listado(filtradas, opcion);
     return crearResultadoSinCambios(listaTareas);
 }
@@ -58,7 +59,8 @@ export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionRe
     console.log("Buscar Tarea");
     const busqueda: string = prompt("Introduce el titulo de una tarea para buscarla: ", taskFlags.titulo);
     
-    const resultados = filtrarPorTitulo(listaTareas, busqueda);
+    const tareasVisibles = listaTareas.filter(t => !t.eliminada);
+    const resultados = filtrarPorTitulo(tareasVisibles, busqueda);
     
     if (resultados.length > 0) {
         listado(resultados, busqueda);
@@ -85,6 +87,62 @@ export function ejecutarAgregarTarea(listaTareas: readonly Task[]): MenuActionRe
 }
 
 /**
+ * Marca una tarea como elimanada (Eliminacion logica).
+ * @param {readonly Task[]} listaTareas - La lista de tareas.
+ * @param {string} idTarea - El ID de la tarea a eliminar.
+ * @returns {readonly Task[]} Nueva lista con la tarea marcada como eliminada.
+ */
+export function eliminarTareaLogicamente(
+    listaTareas: readonly Task[],
+    idTarea: string
+): readonly Task[] {
+    return listaTareas.map(tarea => 
+        tarea.id === idTarea ? { ...tarea, eliminada: true } : tarea
+    );
+}
+
+/**
+ * Ejecuta la acción de eliminar una tarea (modifica la lista).
+ * @param {readonly Task[]} listaTareas - La lista de tareas.
+ * @returns {MenuActionResult} Resultado con la lista actualizada.
+ */
+export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionResult {
+    console.clear();
+    console.log("Eliminar Tarea");
+
+    const tareasVisibles = listaTareas.filter(t => !t.eliminada);
+
+    if (tareasVisibles.length === 0) {
+        console.log("No hay tareas para eliminar.");
+        prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+        return crearResultadoSinCambios(listaTareas);
+    }
+
+    console.log("Selecciona la tarea que deseas eliminar:");
+    const lineasFormateadas = formatearListaTareas(tareasVisibles);
+    lineasFormateadas.forEach(linea => console.log(linea));
+
+    const indice = menuPrompt("\nIntroduce el número de la tarea a eliminar o 0 para volver: ", 0, tareasVisibles.length);
+
+    if (indice === 0) {
+        return crearResultadoSinCambios(listaTareas);
+    }
+
+    const tareaAEliminar = obtenerTareaPorIndice(tareasVisibles, indice);
+
+    if (tareaAEliminar) {
+        const listaActualizada = eliminarTareaLogicamente(listaTareas, tareaAEliminar.id);
+        console.log(`\n¡Tarea "${tareaAEliminar.titulo}" eliminada!`);
+        prompt("Presiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+        return crearResultadoConCambios(listaActualizada);
+    }
+
+    console.log("Índice no válido.");
+    prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+    return crearResultadoSinCambios(listaTareas);
+}
+
+/**
  * Ejecuta la acción de salir.
  * @param {readonly Task[]} listaTareas - La lista de tareas.
  * @returns {MenuActionResult} Resultado indicando no continuar.
@@ -106,6 +164,7 @@ export function obtenerAccionPorOpcion(
         case 1: return ejecutarVerTareas;
         case 2: return ejecutarBuscarTareas;
         case 3: return ejecutarAgregarTarea;
+        case 4: return ejecutarEliminarTarea;
         case 0: return ejecutarSalir;
         default: 
             return (lista) => {

@@ -32,6 +32,7 @@ import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
  * @param {TaskDifficulty} dificultad - La dificultad de la tarea
  * @param {Date} fechaActual - Fecha de creación
  * @param {Date | null} vencimiento - Fecha de vencimiento
+ * @param {boolean} eliminada - Indicador de eliminación
  * @returns {Task} La tarea creada
  */
 export function crearTareaDesdeValores(
@@ -51,7 +52,8 @@ export function crearTareaDesdeValores(
         creacion: fechaActual,
         uEdicion: fechaActual,
         vencimiento,
-        dificultad
+        dificultad,
+        eliminada: false
     };
 }
 

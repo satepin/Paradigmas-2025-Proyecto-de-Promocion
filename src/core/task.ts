@@ -17,7 +17,8 @@ const task: Readonly<Task> = {
     creacion: null,
     uEdicion: null,
     vencimiento: null,
-    dificultad: 'facil ★☆☆'
+    dificultad: 'facil ★☆☆',
+    eliminada: false
 } as const;
 
 /**
