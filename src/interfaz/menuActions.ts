@@ -4,6 +4,7 @@
  */
 
 import { menuPrompt, prompt } from "../core/tools/modulos/promptSync.ts";
+import { obtenerInfoAlmacenamiento } from "../core/tools/modulos/guardado.ts";
 import { filtrarPorOpcion } from "../core/tools/ver/ver.ts";
 import { filtrarPorTitulo } from "../core/tools/ver/buscar.ts";
 import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../core/tools/ver/listado.ts";
@@ -141,6 +142,19 @@ export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionR
     prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
     return crearResultadoSinCambios(listaTareas);
 }
+/**
+ * Ejecuta la acción de mostrar información del almacenamiento (no modifica la lista).
+ * @param {readonly Task[]} listaTareas - La lista de tareas.
+ * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
+ */
+export function ejecutarInfoAlmacenamiento(listaTareas: readonly Task[]): MenuActionResult {
+    console.clear();
+    console.log("Información del Almacenamiento");
+    const info = obtenerInfoAlmacenamiento();
+    console.log(info);
+    prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+    return crearResultadoSinCambios(listaTareas);
+}
 
 /**
  * Ejecuta la acción de salir.
@@ -165,6 +179,7 @@ export function obtenerAccionPorOpcion(
         case 2: return ejecutarBuscarTareas;
         case 3: return ejecutarAgregarTarea;
         case 4: return ejecutarEliminarTarea;
+         case 5: return ejecutarInfoAlmacenamiento;
         case 0: return ejecutarSalir;
         default: 
             return (lista) => {
