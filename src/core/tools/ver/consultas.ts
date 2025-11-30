@@ -19,17 +19,17 @@ export function verPrioridad(tareas: readonly Task[]): void {
     mostrarFiltradas(tareasPrioritarias, 'Tareas Prioritarias');
 }
 
-/**filtra las tareas relacionadas a la tarea parametro y muestra una lista de estas
+/**recibe una tarea, filtra las tareas relacionadas a la tarea parametro y muestra una lista de estas
  * se consideran tareas relacionadas aquellas que comparten categoria con la tarea selecta
  * @param tareas 
  */
-export function verRelacionadas(tareas: readonly Task[]): void {
+export function verRelacionadas(tareaBase: Task, tareas: readonly Task[]): void {
     for (const tarea of tareas) {
-        mensaje(`\nTarea seleccionada: ${tarea.titulo} (Categoria: ${tarea.categoria})`);
+        mensaje(`\nTarea seleccionada: ${tareaBase.titulo} (Categoria: ${tareaBase.categoria})`);
         const tareasRelacionadas = tareas.filter(t => 
-            t.id !== tarea.id && estaRelacionada(t, tarea.categoria)
+            t.id !== tareaBase.id && estaRelacionada(t, tareaBase.categoria)
         );
-        mostrarFiltradas(tareasRelacionadas, `Tareas relacionadas con "${tarea.titulo}"`);
+        mostrarFiltradas(tareasRelacionadas, `Tareas relacionadas con "${tareaBase.titulo}"`);
     }
 }
 

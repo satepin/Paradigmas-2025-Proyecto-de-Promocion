@@ -52,7 +52,6 @@ export function agregar(listaTareas: readonly Task[]): readonly Task[] {
     // Guardar en almacenamiento
     agregarTareaAlAlmacenamiento(nuevaTarea); 
 
-    console.log("\n¡Tarea Agregada a la Lista!");
     console.log(`Total de Tareas: ${listaActualizada.length}`);
     return listaActualizada;
 }

@@ -23,7 +23,7 @@
 import { prompt } from '../modulos/promptSync.ts';
 import type { Task } from '../../type.ts';
 import { mensaje,clearMensaje } from '../../../interfaz/mensajes.ts';
-
+import { verRelacionadas } from './consultas.ts';
 /**
  * Función pura que formatea una tarea como string para mostrar.
  * @param {Task} tarea - La tarea a formatear.
@@ -44,8 +44,6 @@ export function formatearTarea(tarea: Task): string {
     return lineas.join('\n');
 }
 
-// Función mostrarDetallesTarea() eliminada - usar formatearTarea() directamente
-
 /**
  * Muestra los detalles de una tarea y permite editarla (versión completa con edición).
  * @param {Task} tarea - La tarea a mostrar/editar.
@@ -53,11 +51,19 @@ export function formatearTarea(tarea: Task): string {
  */
 export function detalles(tarea: Task): void {
     const detalles = formatearTarea(tarea);
-    clearMensaje(`${detalles}\nSi deseas editarla, pulsa E, o presiona 0 para salir.`);
+clearMensaje(`${detalles}\nPara editar, pulsa E\nPara ver tareas relacionadas, pulsa R\nPara salir, pulsa 0.`);
     const opcion: string = prompt("Elige una opcion: ", { maxLength: 1, puedeVacio: false });
-    if (opcion.toLowerCase() === 'e') {
-        mensaje("Funcionalidad de edición pendiente de implementar.");
-    } else if (opcion === '0') {
-        mensaje("Saliendo...");
+    switch (opcion.toLowerCase()) {
+        case 'e':
+            // editarTarea(tarea);
+            break;
+        case 'r':
+            verRelacionadas(tarea, [tarea]);
+            break;
+        case '0':
+            mensaje("Saliendo...");
+            break;
+        default:
+            mensaje("Opción inválida.");
     }
 }

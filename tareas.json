@@ -71,7 +71,19 @@
       "dificultad": "medio ★★☆",
       "eliminada": false,
       "categoria": "estudio"
+    },
+    {
+      "id": "f315d40a-d2d1-4351-a222-53ca47463a27",
+      "titulo": "Y",
+      "descripcion": "la tarea Y",
+      "estado": "en curso",
+      "creacion": "2025-11-30T21:47:43.066Z",
+      "uEdicion": "2025-11-30T21:47:43.066Z",
+      "vencimiento": "2027-12-06T03:00:00.000Z",
+      "dificultad": "dificil ★★★",
+      "eliminada": false,
+      "categoria": "trabajo"
     }
   ],
-  "ultimaActualizacion": "2025-11-30T21:30:18.624Z"
+  "ultimaActualizacion": "2025-11-30T21:47:44.168Z"
 }
