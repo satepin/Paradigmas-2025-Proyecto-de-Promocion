@@ -19,6 +19,7 @@ export function formatearMenuPrincipal(username: string): readonly string[] {
         "5- Información del Almacenamiento",
         "6- Estadisticas para Nerds",
         "7- Consultas adicionales",
+        "8. Modificar una Tarea",
         "0- Salir"
     ];
 }

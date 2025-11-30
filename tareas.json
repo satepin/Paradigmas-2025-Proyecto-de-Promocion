@@ -3,10 +3,10 @@
     {
       "id": "9b10c486-c1fe-4bc2-8e9c-53b82567316c",
       "titulo": "tarea inicial",
-      "descripcion": "es la primera tarea",
+      "descripcion": "e",
       "estado": "pendiente",
       "creacion": "2025-11-30T15:51:32.972Z",
-      "uEdicion": "2025-11-30T15:51:32.972Z",
+      "uEdicion": "2025-11-30T22:48:15.636Z",
       "vencimiento": null,
       "dificultad": "medio ★★☆",
       "eliminada": false,
@@ -85,5 +85,5 @@
       "categoria": "trabajo"
     }
   ],
-  "ultimaActualizacion": "2025-11-30T21:47:44.168Z"
+  "ultimaActualizacion": "2025-11-30T22:48:15.637Z"
 }
