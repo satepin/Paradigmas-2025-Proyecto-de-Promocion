@@ -13,8 +13,8 @@ import { agregar, agregarTarea } from "../core/tools/alta/agregar.ts";
 import { eliminarTareaDelAlmacenamiento } from "../core/tools/modulos/guardado.ts";
 import { taskFlags } from "../core/task.ts";
 import type { Task } from '../core/type.ts';
-import { 
-    crearResultadoSinCambios, 
+import {
+    crearResultadoSinCambios,
     crearResultadoConCambios,
     generarLineasMenu,
     mostrarLineasMenu
@@ -40,12 +40,12 @@ export function ejecutarVerTareas(listaTareas: readonly Task[]): MenuActionResul
         ["1- Todas", "2- Pendientes", "3- En curso", "4- Terminadas"]
     );
     mostrarLineasMenu(lineasMenu);
-    
+
     const opcion: number = menuPrompt("Elige una opcion: ", 0, 4);
-    if (opcion === 0) { 
+    if (opcion === 0) {
         return crearResultadoSinCambios(listaTareas);
     }
-    
+
     const filtradas = filtrarPorOpcion(tareasVisibles, opcion);
     listado(filtradas, opcion);
     return crearResultadoSinCambios(listaTareas);
@@ -60,16 +60,16 @@ export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionRe
     console.clear();
     console.log("Buscar Tarea");
     const busqueda: string = prompt("Introduce el titulo de una tarea para buscarla: ", taskFlags.titulo);
-    
+
     const tareasVisibles = listaTareas.filter(t => !t.eliminada);
     const resultados = filtrarPorTitulo(tareasVisibles, busqueda);
-    
+
     if (resultados.length > 0) {
         listado(resultados, busqueda);
     } else {
         console.log("\nNo hay tareas relacionadas con la busqueda");
     }
-    
+
     return crearResultadoSinCambios(listaTareas);
 }
 
@@ -98,7 +98,7 @@ export function eliminarTareaLogicamente(
     listaTareas: readonly Task[],
     idTarea: string
 ): readonly Task[] {
-    return listaTareas.map(tarea => 
+    return listaTareas.map(tarea =>
         tarea.id === idTarea ? { ...tarea, eliminada: true } : tarea
     );
 }
@@ -181,9 +181,9 @@ export function obtenerAccionPorOpcion(
         case 2: return ejecutarBuscarTareas;
         case 3: return ejecutarAgregarTarea;
         case 4: return ejecutarEliminarTarea;
-         case 5: return ejecutarInfoAlmacenamiento;
+        case 5: return ejecutarInfoAlmacenamiento;
         case 0: return ejecutarSalir;
-        default: 
+        default:
             return (lista) => {
                 console.log("Opción no válida");
                 return crearResultadoSinCambios(lista);

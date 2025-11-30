@@ -18,7 +18,6 @@ function main(): void {
     // Estado inicial: lista vacía de tareas
     inicializarAlmacenamiento();
     let listaTareas: readonly Task[] = cargarTareas();
-    console.log(obtenerInfoAlmacenamiento()); //  Muestra información del almacenamiento
     let continuarEjecucion = true;
     const username = "Usuario"; // Puedes solicitar el nombre si lo deseas
 
