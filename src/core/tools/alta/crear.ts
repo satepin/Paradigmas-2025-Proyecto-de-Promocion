@@ -34,6 +34,7 @@ import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
  * @param {Date} fechaActual - Fecha de creación
  * @param {Date | null} vencimiento - Fecha de vencimiento
  * @param {boolean} eliminada - Indicador de eliminación
+ * @param {string} categoria - La categoría de la tarea
  * @returns {Task} La tarea creada
  */
 export function crearTareaDesdeValores(
@@ -43,7 +44,8 @@ export function crearTareaDesdeValores(
     estado: TaskStatus,
     dificultad: TaskDifficulty,
     fechaActual: Date,
-    vencimiento: Date | null
+    vencimiento: Date | null,
+    categoria: string
 ): Task {
     return {
         id,
@@ -54,7 +56,8 @@ export function crearTareaDesdeValores(
         uEdicion: fechaActual,
         vencimiento,
         dificultad,
-        eliminada: false
+        eliminada: false,
+        categoria: 'otro'
     };
 }
 
@@ -95,8 +98,15 @@ export function crear(): Task {
     const dificultadInput = prompt("   Opción: ");
     const dificultad = dificultadEntries.find(([_, value]) => value.toString() === dificultadInput)?.[0] || 'facil ★☆☆' as const;
     
-    // 5. Vencimiento (BONUS)
+    // 5. Vencimiento 
     const vencimiento: Date | null = datePrompt("5. Ingresa la fecha de vencimiento (aaaa/mm/dd) o deja en blanco: ");
+
+    // 6. Categoria
+    const categoriaEntries = Array.from(taskFlags.categoria.entries());
+    console.log("\n6. Selecciona una categoria:");
+    categoriaEntries.forEach(([key, value]) => console.log(`   ${value}. ${key}`));
+    const categoriaInput = prompt("   Opción: ");
+    const categoria = categoriaEntries.find(([_, value]) => value.toString() === categoriaInput)?.[0] || 'otro';
 
     // Fechas de creación y edición (efecto secundario aislado)
     const fechaActual: Date = obtenerFechaActual();
@@ -109,7 +119,8 @@ export function crear(): Task {
         estado,
         dificultad,
         fechaActual,
-        vencimiento
+        vencimiento,
+        categoria
     );
 
     console.log("\n¡Datos Guardados!");

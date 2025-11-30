@@ -18,6 +18,7 @@ const task: Readonly<Task> = {
     uEdicion: null,
     vencimiento: null,
     dificultad: 'facil ★☆☆',
+    categoria: 'otro',
     eliminada: false
 } as const;
 
@@ -67,6 +68,14 @@ const flagDificultad: ReadonlyMap<TaskDifficulty, number> = new Map<TaskDifficul
     ["dificil ★★★", 3]
 ]);
 
+const flagCategoria: Readonly<ReadonlyMap<string, number>> = new Map<string, number>([
+    ["programacion", 1],
+    ["estudio", 2],
+    ["trabajo", 3],
+    ["ocio", 4],
+    ["otro", 5]
+]);
+
 /**
  * Agrupa todas las flags inmutables de validación para una tarea.
  * @type {Readonly<TaskFlags>}
@@ -75,7 +84,8 @@ const taskFlags: Readonly<TaskFlags> = {
     titulo: flagTitulo,
     descripcion: flagDescripcion,
     estado: flagEstado,
-    dificultad: flagDificultad
+    dificultad: flagDificultad,
+    categoria: flagCategoria
 };
 
 export { task, taskFlags, listaTareas };

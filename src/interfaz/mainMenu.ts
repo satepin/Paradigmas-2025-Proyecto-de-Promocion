@@ -45,6 +45,6 @@ export function mainMenu(
     username: string
 ): MainMenuResult {
     formatearMenuPrincipal(username).forEach(linea => console.log(linea));
-    const menuIndex: number = menuPrompt("", 0, 6);
+    const menuIndex: number = menuPrompt("", 0, 7);
     return procesarOpcionMenu(listaTareas, menuIndex);
 }

@@ -37,7 +37,8 @@ export function formatearTarea(tarea: Task): string {
         `Estado: ${tarea.estado}`,
         `Dificultad: ${tarea.dificultad}`,
         `Vencimiento: ${tarea.vencimiento?.toLocaleDateString() || 'Sin fecha de vencimiento'}`,
-        `Creacion: ${tarea.creacion?.toLocaleDateString() || 'Sin fecha de creación'}`
+        `Creacion: ${tarea.creacion?.toLocaleDateString() || 'Sin fecha de creación'}`,
+        `Categoria: ${tarea.categoria}`
     ];
     return lineas.join('\n');
 }

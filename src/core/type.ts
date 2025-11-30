@@ -27,6 +27,7 @@ export type TaskDifficulty = 'facil ★☆☆' | 'medio ★★☆' | 'dificil �
  * @property {Date | null} vencimiento - La fecha de vencimiento de la tarea.
  * @property {TaskDifficulty} dificultad - El nivel de dificultad de la tarea.
  * @property {boolean} eliminada - Indica si la tarea ha sido eliminada.
+ * @property {string} categoria - La categoría de la tarea.
  */
 export interface Task {
     readonly id: string;
@@ -37,6 +38,7 @@ export interface Task {
     readonly uEdicion: Date | null;
     readonly vencimiento: Date | null;
     readonly dificultad: TaskDifficulty;
+    readonly categoria: string;
     readonly eliminada: boolean;
 }
 
@@ -58,12 +60,14 @@ export interface ValidationFlag {
  * @property {ValidationFlag} descripcion - Banderas para la descripción.
  * @property {ReadonlyMap<TaskStatus, number>} estado - Mapa inmutable de opciones para el estado.
  * @property {ReadonlyMap<TaskDifficulty, number>} dificultad - Mapa inmutable de opciones para la dificultad.
+ * @property {ReadonlyMap<string, number>} categoria - Mapa inmutable de opciones para la categoría.
  */
 export interface TaskFlags {
     readonly titulo: ValidationFlag;
     readonly descripcion: ValidationFlag;
     readonly estado: ReadonlyMap<TaskStatus, number>;
     readonly dificultad: ReadonlyMap<TaskDifficulty, number>;
+    readonly categoria: ReadonlyMap<string, number>;
 }
 
 /**

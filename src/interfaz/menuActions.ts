@@ -13,6 +13,7 @@ import { agregar, agregarTarea } from "../core/tools/alta/agregar.ts";
 import { eliminarTareaDelAlmacenamiento } from "../core/tools/modulos/guardado.ts";
 import { taskFlags } from "../core/task.ts";
 import type { Task } from '../core/type.ts';
+import { ejecutarConsultasAdicionales } from "./adicionales.ts";
 import {
     crearResultadoSinCambios,
     crearResultadoConCambios,
@@ -207,6 +208,7 @@ export function obtenerAccionPorOpcion(
         case 4: return ejecutarEliminarTarea;
         case 5: return ejecutarInfoAlmacenamiento;
         case 6: return ejecutarEstadisticasNerds;
+        case 7: return ejecutarConsultasAdicionales;
         case 0: return ejecutarSalir;
         default:
             return (lista) => {
