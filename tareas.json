@@ -1,0 +1,27 @@
+{
+  "tareas": [
+    {
+      "id": "9b10c486-c1fe-4bc2-8e9c-53b82567316c",
+      "titulo": "tarea inicial",
+      "descripcion": "es la primera tarea",
+      "estado": "pendiente",
+      "creacion": "2025-11-30T15:51:32.972Z",
+      "uEdicion": "2025-11-30T15:51:32.972Z",
+      "vencimiento": null,
+      "dificultad": "medio ★★☆",
+      "eliminada": false
+    },
+    {
+      "id": "56ee6c8c-3d4f-4f10-bcc4-cb970e9e0a87",
+      "titulo": "segunda tarea",
+      "descripcion": "sigue a la primera",
+      "estado": "pendiente",
+      "creacion": "2025-11-30T15:52:13.557Z",
+      "uEdicion": "2025-11-30T15:52:13.557Z",
+      "vencimiento": "2027-08-09T03:00:00.000Z",
+      "dificultad": "facil ★☆☆",
+      "eliminada": false
+    }
+  ],
+  "ultimaActualizacion": "2025-11-30T15:52:13.558Z"
+}

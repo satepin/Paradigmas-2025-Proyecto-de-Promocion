@@ -19,7 +19,8 @@ crear.ts se encarga de la creacion y validacion de una unica unidad de tarea, qu
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import { prompt, set, datePrompt} from '../modulos/promptSync.ts';
+import { prompt, set} from '../modulos/promptSync.ts';
+import { datePrompt } from '../modulos/fechas.ts';
 import { taskFlags } from '../../task.ts';
 import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
 
