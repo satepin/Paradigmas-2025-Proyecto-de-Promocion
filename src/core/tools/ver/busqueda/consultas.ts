@@ -1,8 +1,8 @@
-import { menuPrompt } from '../modulos/promptSync.ts';
-import { listado } from './listado.ts';
-import type { Task, TaskStatus } from '../../type.ts';
-import { datePrompt } from '../modulos/fechas.ts';
-import { mensaje } from "../../../interfaz/mensajes.ts";
+import { menuPrompt } from '../../modulos/promptSync.ts';
+import { listado } from '../listado.ts';
+import type { Task, TaskStatus } from '../../../type.ts';
+import { datePrompt } from '../../modulos/fechas.ts';
+import { mensaje } from "../../../../interfaz/mensajes.ts";
 /**filtra las tareas por prioridad alta y muestra la lista usando la función listado
  * se consideran prioritarias las tareas pendientes y en curso que expiran en 3 días o menos
  * @param tareas

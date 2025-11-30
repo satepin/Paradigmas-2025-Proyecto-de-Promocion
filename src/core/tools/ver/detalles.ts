@@ -24,7 +24,7 @@ import { prompt } from '../modulos/promptSync.ts';
 import type { Task } from '../../type.ts';
 import { editarTareaInteractiva } from '../modificar/modificar.ts';
 import { mensaje,clearMensaje } from '../../../interfaz/mensajes.ts';
-import { verRelacionadas } from './consultas.ts';
+import { verRelacionadas } from './busqueda/consultas.ts';
 /**
  * Función pura que formatea una tarea como string para mostrar.
  * @param {Task} tarea - La tarea a formatear.

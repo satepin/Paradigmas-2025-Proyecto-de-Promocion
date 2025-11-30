@@ -1,9 +1,8 @@
 /**
  * @module tools/alta/agregar
  * @description Orquesta la adición de una nueva tarea a la lista.
- */
-
-/* Estas creando una nueva tarea
+ * Requisitos Funcionales:
+* Estas creando una nueva tarea
 *1. Ingresa el titulo: -
 *2. Ingresa la descripcion: -
 *3. estado (pendiente, en curso, terminada): -
@@ -21,7 +20,7 @@
 *- Fecha de Vencimiento (BONUS)
 *
 *agregar.ts recibe una tarea creada y verificada en crear.ts y la agrega a una lista de tareas
-*/
+**/
 
 import { crear } from './crear.ts';
 import { agregarTareaAlAlmacenamiento } from '../modulos/guardado.ts'; // Función para guardar tarea en JSON

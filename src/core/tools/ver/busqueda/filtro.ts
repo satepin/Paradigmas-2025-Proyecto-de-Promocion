@@ -1,4 +1,4 @@
-import type { Task, TaskStatus } from "../../type.ts";
+import type { Task, TaskStatus } from "../../../type.ts";
 
 
 export function filtrarPorEstado(
@@ -25,4 +25,13 @@ export function filtrarPorOpcion(
         case 4: return filtrarPorEstado(tareas, 'completada');
         default: return [];
     }
+}
+export function filtrarPorTitulo(
+    listaTareas: readonly Task[],
+    terminoBusqueda: string
+): readonly Task[] {
+    const busquedaLower = terminoBusqueda.toLowerCase();
+    return listaTareas.filter(tarea => 
+        tarea.titulo.toLowerCase().includes(busquedaLower)
+    );
 }

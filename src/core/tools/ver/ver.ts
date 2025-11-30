@@ -6,7 +6,7 @@
 import { menuPrompt } from '../modulos/promptSync.ts';
 import { listado } from './listado.ts';
 import type { Task } from '../../type.ts';
-import { filtrarPorOpcion } from './filtro.ts';
+import { filtrarPorOpcion } from './busqueda/filtro.ts';
 import { clearMensaje } from '../../../interfaz/mensajes.ts';
 
 /**

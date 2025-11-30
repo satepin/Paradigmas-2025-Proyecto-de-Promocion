@@ -3,24 +3,24 @@
  * @description Orquestadores de acciones del menú (con efectos secundarios controlados).
  */
 
-import { menuPrompt, prompt } from "../core/tools/modulos/promptSync.ts";
-import { obtenerInfoAlmacenamiento } from "../core/tools/modulos/guardado.ts";
-import { filtrarPorOpcion } from "../core/tools/ver/filtro.ts";
-import { filtrarPorTitulo } from "../core/tools/ver/buscar.ts";
-import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../core/tools/ver/listado.ts";
-import { agregar} from "../core/tools/alta/agregar.ts";
-import { eliminarTareaDelAlmacenamiento } from "../core/tools/modulos/guardado.ts";
-import { taskFlags } from "../core/task.ts";
-import type { Task } from '../core/type.ts';
-import { modificarTareaEnLista } from "../core/tools/modificar/modificar.ts";
-import { ejecutarConsultasAdicionales } from "./adicionales.ts";
-import { mensaje, clearMensaje } from "./mensajes.ts";
+import { menuPrompt, prompt } from "../../core/tools/modulos/promptSync.ts";
+import { obtenerInfoAlmacenamiento } from "../../core/tools/modulos/guardado.ts";
+import { filtrarPorOpcion, filtrarPorTitulo } from "../../core/tools/ver/busqueda/filtro.ts";
+import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../../core/tools/ver/listado.ts";
+import { agregar} from "../../core/tools/alta/agregar.ts";
+import { eliminarTareaDelAlmacenamiento } from "../../core/tools/modulos/guardado.ts";
+import { eliminarTareaLogicamente } from "../../core/tools/eliminar/eliminar.ts";
+import { taskFlags } from "../../core/task.ts";
+import type { Task } from '../../core/type.ts';
+import { modificarTareaEnLista } from "../../core/tools/modificar/modificar.ts";
+import { ejecutarConsultasAdicionales } from "../adicionales.ts";
+import { mensaje, clearMensaje } from "../mensajes.ts";
 import {
     crearResultadoSinCambios,
     crearResultadoConCambios,
     generarLineasMenu,
     mostrarLineasMenu
-} from './menuHelpers.ts';
+} from "./menuHelpers.ts";
 import { clear } from "console";
 
 /**
@@ -86,21 +86,6 @@ export function ejecutarAgregarTarea(listaTareas: readonly Task[]): MenuActionRe
     const listaActualizada = agregar(listaTareas);
     mensaje(`\n¡Tarea Agregada a la Lista!\nTotal de Tareas: ${listaActualizada.length}`);
     return crearResultadoConCambios(listaActualizada);
-}
-
-/**
- * Marca una tarea como elimanada (Eliminacion logica).
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @param {string} idTarea - El ID de la tarea a eliminar.
- * @returns {readonly Task[]} Nueva lista con la tarea marcada como eliminada.
- */
-export function eliminarTareaLogicamente(
-    listaTareas: readonly Task[],
-    idTarea: string
-): readonly Task[] {
-    return listaTareas.map(tarea =>
-        tarea.id === idTarea ? { ...tarea, eliminada: true } : tarea
-    );
 }
 
 /**
