@@ -16,6 +16,7 @@ export function formatearMenuPrincipal(username: string): readonly string[] {
         "2- Buscar una Tarea",
         "3- Agregar una nueva Tarea",
         "4- Eliminar una Tarea",
+        "5- Información del Almacenamiento",
         "0- Salir"
     ];
 }
