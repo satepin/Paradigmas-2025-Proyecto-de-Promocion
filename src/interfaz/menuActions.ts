@@ -12,6 +12,7 @@ import { agregar} from "../core/tools/alta/agregar.ts";
 import { eliminarTareaDelAlmacenamiento } from "../core/tools/modulos/guardado.ts";
 import { taskFlags } from "../core/task.ts";
 import type { Task } from '../core/type.ts';
+import { modificarTareaEnLista } from "../core/tools/ver/modificar.ts";
 import { ejecutarConsultasAdicionales } from "./adicionales.ts";
 import { mensaje, clearMensaje } from "./mensajes.ts";
 import {
@@ -178,6 +179,34 @@ export function ejecutarEstadisticasNerds(listaTareas: readonly Task[]): MenuAct
 }
 
 /**
+ * Ejecuta la acción de modificar una tarea (modifica la lista).
+ * @param {readonly Task[]} listaTareas - La lista de tareas.
+ * @returns {MenuActionResult} Resultado con la lista actualizada.
+ */
+export function ejecutarModificarTarea(listaTareas: readonly Task[]): MenuActionResult {
+    console.clear();
+    console.log("Modificar Tarea");
+    const tareasVisibles = listaTareas.filter(t => !t.eliminada);
+
+    if (tareasVisibles.length === 0) {
+        console.log("No hay tareas para modificar.");
+        prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+        return crearResultadoSinCambios(listaTareas);
+    }
+
+    const lineasFormateadas = formatearListaTareas(tareasVisibles);
+    lineasFormateadas.forEach(linea => console.log(linea));
+
+    const indice = menuPrompt("\nIntroduce el número de la tarea a modificar o 0 para volver: ", 0, tareasVisibles.length);
+    if (indice === 0) {
+        return crearResultadoSinCambios(listaTareas);
+    }
+    const listaActualizada = modificarTareaEnLista(listaTareas, indice);
+    prompt("Presiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+    return crearResultadoConCambios(listaActualizada);
+}
+
+/**
  * Ejecuta la acción de salir.
  * @param {readonly Task[]} listaTareas - La lista de tareas.
  * @returns {MenuActionResult} Resultado indicando no continuar.
@@ -203,6 +232,7 @@ export function obtenerAccionPorOpcion(
         case 5: return ejecutarInfoAlmacenamiento;
         case 6: return ejecutarEstadisticasNerds;
         case 7: return ejecutarConsultasAdicionales;
+        case 8: return ejecutarModificarTarea;
         case 0: return ejecutarSalir;
         default:
             return (lista) => {
