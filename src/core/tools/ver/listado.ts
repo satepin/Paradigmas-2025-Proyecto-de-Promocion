@@ -50,7 +50,7 @@ export function listado(tareas: readonly Task[], etiqueta: string | number = '')
     lineasFormateadas.forEach(linea => console.log(linea));
     
     console.log("\n¿Deseas ver los detalles de alguna?");
-    elegir(tareas);
+    elegir(tareasOrdenadas);
 }
 
 /**
