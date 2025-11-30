@@ -2,7 +2,6 @@ import { menuPrompt } from '../modulos/promptSync.ts';
 import { listado } from './listado.ts';
 import type { Task, TaskStatus } from '../../type.ts';
 import { datePrompt } from '../modulos/fechas.ts';
-import { and, or, lvar, eq } from '../modulos/logic.ts';
 import { mensaje } from "../../../interfaz/mensajes.ts";
 /**filtra las tareas por prioridad alta y muestra la lista usando la función listado
  * se consideran prioritarias las tareas pendientes y en curso que expiran en 3 días o menos
@@ -35,7 +34,7 @@ export function verRelacionadas(tareas: readonly Task[]): void {
 }
 
 function estaRelacionada(tarea: Task, categoria: string): boolean {
-    return eq(lvar(tarea.categoria), categoria);
+    return tarea.categoria === categoria;
 }
 /*filtra las tareas vencidas (fecha de vencimiento anterior a la fecha actual, no completadas)
 * y muestra la lista usando la función listado

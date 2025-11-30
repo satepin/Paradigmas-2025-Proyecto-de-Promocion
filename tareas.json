@@ -9,7 +9,8 @@
       "uEdicion": "2025-11-30T15:51:32.972Z",
       "vencimiento": null,
       "dificultad": "medio ★★☆",
-      "eliminada": false
+      "eliminada": false,
+      "categoria": "estudio"
     },
     {
       "id": "56ee6c8c-3d4f-4f10-bcc4-cb970e9e0a87",
@@ -20,7 +21,8 @@
       "uEdicion": "2025-11-30T15:52:13.557Z",
       "vencimiento": "2027-08-09T03:00:00.000Z",
       "dificultad": "facil ★☆☆",
-      "eliminada": false
+      "eliminada": false,
+      "categoria": "estudio"
     },
     {
       "id": "311a48bc-3cbe-41cd-a1d1-7852ec4521bc",
@@ -31,7 +33,8 @@
       "uEdicion": "2025-11-30T16:56:16.921Z",
       "vencimiento": "2025-12-01T03:00:00.000Z",
       "dificultad": "dificil ★★★",
-      "eliminada": false
+      "eliminada": false,
+      "categoria": "estudio"
     },
     {
       "id": "c4b01570-020b-4e5f-91cb-47e04c958715",
@@ -42,7 +45,8 @@
       "uEdicion": "2025-11-30T16:56:52.456Z",
       "vencimiento": "2025-12-01T03:00:00.000Z",
       "dificultad": "dificil ★★★",
-      "eliminada": false
+      "eliminada": false,
+      "categoria": "estudio"
     },
     {
       "id": "072ede7f-7ed7-458c-ad5e-be299fc0e15a",
@@ -53,8 +57,21 @@
       "uEdicion": "2025-11-30T16:57:09.854Z",
       "vencimiento": "2025-12-01T03:00:00.000Z",
       "dificultad": "dificil ★★★",
-      "eliminada": false
+      "eliminada": false,
+      "categoria": "estudio"
+    },
+    {
+      "id": "f7ef3688-8148-44fc-9a07-4d76dec519aa",
+      "titulo": "G",
+      "descripcion": "Tarea G",
+      "estado": "pendiente",
+      "creacion": "2025-11-30T21:30:13.359Z",
+      "uEdicion": "2025-11-30T21:30:13.359Z",
+      "vencimiento": "2025-12-02T03:00:00.000Z",
+      "dificultad": "medio ★★☆",
+      "eliminada": false,
+      "categoria": "estudio"
     }
   ],
-  "ultimaActualizacion": "2025-11-30T16:57:09.858Z"
+  "ultimaActualizacion": "2025-11-30T21:30:18.624Z"
 }

@@ -18,9 +18,8 @@ const ask = promptSync({ sigint: true });
 export function prompt(question: string, flags: ValidationFlag = { maxLength: Infinity, puedeVacio: false }): string {
     while (true) {
         let value: string = ask(question);
-        if (!flags.puedeVacio && value.trim().length === 0) {
+        if (flags.puedeVacio == false && value.trim().length === 0) {
             mensaje('La entrada no puede estar vacía.');
-            continue;
         }
         if (value.length > flags.maxLength) {
             mensaje(`Se ha recortado el texto a ${flags.maxLength} caracteres.`);
