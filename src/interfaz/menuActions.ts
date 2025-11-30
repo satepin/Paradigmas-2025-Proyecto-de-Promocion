@@ -158,6 +158,30 @@ export function ejecutarInfoAlmacenamiento(listaTareas: readonly Task[]): MenuAc
     return crearResultadoSinCambios(listaTareas);
 }
 
+export function ejecutarEstadisticasNerds(listaTareas: readonly Task[]): MenuActionResult {
+    console.clear();
+    console.log("Estadísticas para Nerds");
+    const totalTareas = listaTareas.length;
+    const tareasEliminadas = listaTareas.filter(t => t.eliminada).length;
+    const tareasPendientes = listaTareas.filter(t => t.estado === 'pendiente' && !t.eliminada).length;
+    const tareasEnCurso = listaTareas.filter(t => t.estado === 'en curso' && !t.eliminada).length;
+    const tareasCompletadas = listaTareas.filter(t => t.estado === 'completada' && !t.eliminada).length;
+
+    console.log(`Total de Tareas: ${totalTareas}`);
+    console.log(`-------------------------`);
+    console.log(`Tareas Eliminadas: ${tareasEliminadas}`);
+    console.log(`Tareas Pendientes: ${tareasPendientes}`);
+    console.log(`Tareas En Curso: ${tareasEnCurso}`);
+    console.log(`Tareas Completadas: ${tareasCompletadas}`);
+    console.log(`-------------------------`);
+    console.log(`Tareas Faciles: ${listaTareas.filter(t => t.dificultad === 'facil ★☆☆' && !t.eliminada).length}`);
+    console.log(`Tareas Medias: ${listaTareas.filter(t => t.dificultad === 'medio ★★☆' && !t.eliminada).length}`);
+    console.log(`Tareas Dificiles: ${listaTareas.filter(t => t.dificultad === 'dificil ★★★' && !t.eliminada).length}`);
+
+    prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+    return crearResultadoSinCambios(listaTareas);
+}
+
 /**
  * Ejecuta la acción de salir.
  * @param {readonly Task[]} listaTareas - La lista de tareas.
@@ -182,6 +206,7 @@ export function obtenerAccionPorOpcion(
         case 3: return ejecutarAgregarTarea;
         case 4: return ejecutarEliminarTarea;
         case 5: return ejecutarInfoAlmacenamiento;
+        case 6: return ejecutarEstadisticasNerds;
         case 0: return ejecutarSalir;
         default:
             return (lista) => {

@@ -21,7 +21,40 @@
       "vencimiento": "2027-08-09T03:00:00.000Z",
       "dificultad": "facil ★☆☆",
       "eliminada": false
+    },
+    {
+      "id": "311a48bc-3cbe-41cd-a1d1-7852ec4521bc",
+      "titulo": "A Task",
+      "descripcion": "A Descripcion",
+      "estado": "en curso",
+      "creacion": "2025-11-30T16:56:16.921Z",
+      "uEdicion": "2025-11-30T16:56:16.921Z",
+      "vencimiento": "2025-12-01T03:00:00.000Z",
+      "dificultad": "dificil ★★★",
+      "eliminada": false
+    },
+    {
+      "id": "c4b01570-020b-4e5f-91cb-47e04c958715",
+      "titulo": "B Task",
+      "descripcion": "B Descripcion",
+      "estado": "en curso",
+      "creacion": "2025-11-30T16:56:52.456Z",
+      "uEdicion": "2025-11-30T16:56:52.456Z",
+      "vencimiento": "2025-12-01T03:00:00.000Z",
+      "dificultad": "dificil ★★★",
+      "eliminada": false
+    },
+    {
+      "id": "072ede7f-7ed7-458c-ad5e-be299fc0e15a",
+      "titulo": "Z Task",
+      "descripcion": "Z Descripcion",
+      "estado": "en curso",
+      "creacion": "2025-11-30T16:57:09.854Z",
+      "uEdicion": "2025-11-30T16:57:09.854Z",
+      "vencimiento": "2025-12-01T03:00:00.000Z",
+      "dificultad": "dificil ★★★",
+      "eliminada": false
     }
   ],
-  "ultimaActualizacion": "2025-11-30T15:52:13.558Z"
+  "ultimaActualizacion": "2025-11-30T16:57:09.858Z"
 }

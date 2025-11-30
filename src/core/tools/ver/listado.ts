@@ -42,8 +42,10 @@ export function listado(tareas: readonly Task[], etiqueta: string | number = '')
         console.log('No hay tareas para mostrar.');
         return;
     }
+
+    const tareasOrdenadas = [...tareas].sort((a, b) => a.titulo.localeCompare(b.titulo));
     
-    const lineasFormateadas = formatearListaTareas(tareas);
+    const lineasFormateadas = formatearListaTareas(tareasOrdenadas);
     lineasFormateadas.forEach(linea => console.log(linea));
     
     console.log("\n¿Deseas ver los detalles de alguna?");
