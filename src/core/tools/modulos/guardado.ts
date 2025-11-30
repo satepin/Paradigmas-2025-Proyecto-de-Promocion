@@ -49,25 +49,18 @@ interface StoredTask {
  * Inicializa el archivo de almacenamiento si no existe.
  * @returns {void}
  */
-export function inicializarAlmacenamiento(): void { 
+export function inicializarAlmacenamiento(nowIso?: string): void { 
     if (!existsSync(RUTA_ALMACENAMIENTO)) {// Si el archivo no existe, lo crea con datos iniciales
+        const fechaIso = nowIso ?? new Date().toISOString();
         const datosIniciales: DatosAlmacenamiento = { // Datos iniciales vacíos
             tareas: [],// Array vacío de tareas
-            ultimaActualizacion: new Date().toISOString()// Fecha actual en formato ISO
+            ultimaActualizacion: fechaIso// Fecha actual en formato ISO
         };
-    writeFileSync(RUTA_ALMACENAMIENTO, JSON.stringify(datosIniciales, null, 2), 'utf-8'); // Escribe el archivo JSON
-     // Crear archivo de exportación `guardado.json` con solo metadata
-        const metadatosIniciales: MetadatosAlmacenamiento = {
-            ruta: RUTA_ALMACENAMIENTO,
-            tareasActivas: 0,
-            tareasEliminadas: 0,
-            total: 0,
-            ultimaActualizacion: datosIniciales.ultimaActualizacion
-        };
-        escribirMetadatos(metadatosIniciales);
+        // Utilizar guardarTareas para mantener consistencia de metadatos
+        guardarTareas([], RUTA_ALMACENAMIENTO, fechaIso);
         mensaje(`✓ Archivo de almacenamiento creado en: ${RUTA_ALMACENAMIENTO}`); // Mensaje de éxito
-        }
     }
+}
 
 /**
  * Carga la lista de tareas desde el archivo JSON.
@@ -125,15 +118,16 @@ export function prepararDatosParaGuardar(tareas: readonly Task[], ultimaActualiz
  * Esta función centraliza la E/S: escribe de forma atómica el archivo de tareas y
  * luego actualiza `guardado.json` con metadatos calculados a partir de `tareas`.
  */
-export function guardarTareas(tareas: readonly Task[], ruta: string = RUTA_ALMACENAMIENTO): boolean {
+export function guardarTareas(tareas: readonly Task[], ruta: string = RUTA_ALMACENAMIENTO, ultimaActualizacionISO?: string): boolean {
     try {
-        const datosGuardar: DatosAlmacenamiento = prepararDatosParaGuardar(tareas, new Date().toISOString());
+        const nowIso = ultimaActualizacionISO ?? new Date().toISOString();
+        const datosGuardar: DatosAlmacenamiento = prepararDatosParaGuardar(tareas, nowIso);
         // Escribir de forma atómica en un archivo temporal y renombrar
         const tempRuta = `${ruta}.tmp`;
         writeFileSync(tempRuta, JSON.stringify(datosGuardar, null, 2), 'utf-8');
         renameSync(tempRuta, ruta);
         // Actualizar metadatos
-        const metadatos: MetadatosAlmacenamiento = calcularMetadatos(tareas);
+        const metadatos: MetadatosAlmacenamiento = calcularMetadatos(tareas, nowIso);
         escribirMetadatos(metadatos);
         return true;
     } catch (error) {
@@ -145,7 +139,7 @@ export function guardarTareas(tareas: readonly Task[], ruta: string = RUTA_ALMAC
 /**
  * Calcula metadatos (conteos y fechas) a partir de una lista de tareas.
  */
-export function calcularMetadatos(tareas: readonly Task[]): MetadatosAlmacenamiento {
+export function calcularMetadatos(tareas: readonly Task[], ultimaActualizacionISO: string): MetadatosAlmacenamiento {
     const tareasActivas = tareas.filter(t => !t.eliminada).length;
     const tareasEliminadas = tareas.filter(t => t.eliminada).length;
     return {
@@ -153,7 +147,7 @@ export function calcularMetadatos(tareas: readonly Task[]): MetadatosAlmacenamie
         tareasActivas,
         tareasEliminadas,
         total: tareas.length,
-        ultimaActualizacion: new Date().toISOString()
+        ultimaActualizacion: ultimaActualizacionISO
     };
 }
 
@@ -179,7 +173,7 @@ export function escribirMetadatos(metadatos: MetadatosAlmacenamiento, ruta: stri
  */
 export function agregarTareaAlAlmacenamiento(nuevaTarea: Task): readonly Task[] {
     const tareasActuales: readonly Task[] = cargarTareas();
-    const tareasActualizadas: readonly Task[] = [...tareasActuales, nuevaTarea];
+    const tareasActualizadas: readonly Task[] = agregarTareaPure(tareasActuales as Task[], nuevaTarea);
     
     if (guardarTareas(tareasActualizadas)) {
         mensaje('✓ Tarea guardada en almacenamiento');
@@ -197,9 +191,7 @@ export function agregarTareaAlAlmacenamiento(nuevaTarea: Task): readonly Task[] 
  */
 export function actualizarTareaEnAlmacenamiento(tareaActualizada: Task): readonly Task[] {
     const tareasActuales: readonly Task[] = cargarTareas();
-    const tareasActualizadas: readonly Task[] = tareasActuales.map(tarea =>
-        tarea.id === tareaActualizada.id ? tareaActualizada : tarea
-    );
+    const tareasActualizadas: readonly Task[] = actualizarTareaPure(tareasActuales as Task[], tareaActualizada);
     
     if (guardarTareas(tareasActualizadas)) {
         mensaje('✓ Tarea actualizada en almacenamiento');
@@ -231,7 +223,14 @@ export function eliminarTareaDelAlmacenamiento(tareaId: string): readonly Task[]
         uEdicion: new Date()
     };
     
-    return actualizarTareaEnAlmacenamiento(tareaActualizada);
+    // Usamos la función pura para producir la lista actualizada, luego la guardamos
+    const tareasActualizadas: readonly Task[] = eliminarTareaPure(tareasActuales as Task[], tareaId, tareaActualizada.uEdicion as Date);
+    if (guardarTareas(tareasActualizadas)) {
+        mensaje('✓ Tarea eliminada en almacenamiento');
+        return tareasActualizadas;
+    }
+    console.error('✗ Error al eliminar tarea en almacenamiento');
+    return tareasActuales;
 }
 
 /**
@@ -247,13 +246,11 @@ export function obtenerCantidadTareas(): number {
  * Limpia el archivo de almacenamiento (elimina todas las tareas).
  * @returns {boolean} true si se limpió exitosamente.
  */
-export function limpiarAlmacenamiento(): boolean {
+export function limpiarAlmacenamiento(nowIso?: string): boolean {
     try {
-        const datosVacios: DatosAlmacenamiento = {
-            tareas: [],
-            ultimaActualizacion: new Date().toISOString()
-        };
-        writeFileSync(RUTA_ALMACENAMIENTO, JSON.stringify(datosVacios, null, 2), 'utf-8');
+        const fechaIso = nowIso ?? new Date().toISOString();
+        // Reutilizar guardarTareas para limpieza y metadatos
+        guardarTareas([], RUTA_ALMACENAMIENTO, fechaIso);
         mensaje('✓ Almacenamiento limpiado');
         return true;
     } catch (error) {
