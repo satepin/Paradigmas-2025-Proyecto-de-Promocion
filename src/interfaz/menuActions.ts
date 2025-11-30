@@ -9,7 +9,8 @@ import { filtrarPorOpcion } from "../core/tools/ver/ver.ts";
 import { filtrarPorTitulo } from "../core/tools/ver/buscar.ts";
 import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../core/tools/ver/listado.ts";
 import { crear } from "../core/tools/alta/crear.ts";
-import { agregarTarea } from "../core/tools/alta/agregar.ts";
+import { agregar, agregarTarea } from "../core/tools/alta/agregar.ts";
+import { eliminarTareaDelAlmacenamiento } from "../core/tools/modulos/guardado.ts";
 import { taskFlags } from "../core/task.ts";
 import type { Task } from '../core/type.ts';
 import { 
@@ -80,8 +81,8 @@ export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionRe
 export function ejecutarAgregarTarea(listaTareas: readonly Task[]): MenuActionResult {
     console.clear();
     console.log("Agregar Tarea");
-    const nuevaTarea = crear();
-    const listaActualizada = agregarTarea(listaTareas, nuevaTarea);
+    // Usamos la función que hace la creación + guardado para persistir
+    const listaActualizada = agregar(listaTareas);
     console.log("\n¡Tarea Agregada a la Lista!");
     console.log(`Total de Tareas: ${listaActualizada.length}`);
     return crearResultadoConCambios(listaActualizada);
@@ -132,7 +133,8 @@ export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionR
     const tareaAEliminar = obtenerTareaPorIndice(tareasVisibles, indice);
 
     if (tareaAEliminar) {
-        const listaActualizada = eliminarTareaLogicamente(listaTareas, tareaAEliminar.id);
+        // Actualizar también en el almacenamiento persistente
+        const listaActualizada = eliminarTareaDelAlmacenamiento(tareaAEliminar.id);
         console.log(`\n¡Tarea "${tareaAEliminar.titulo}" eliminada!`);
         prompt("Presiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
         return crearResultadoConCambios(listaActualizada);
