@@ -2,7 +2,13 @@ import promptSync from 'prompt-sync';
 import type { ValidationFlag } from '../../type.ts';
 
 const ask = promptSync({ sigint: true });
-
+/**
+ * Función de utilidad que obtiene la fecha actual (efectos secundarios aislados).
+ * @returns {Date} La fecha actual.
+ */
+export function obtenerFechaActual(): Date {
+    return new Date();
+}
 /**
  * Función pura que valida si una fecha es correcta.
  * @param {number} yyyy - Año

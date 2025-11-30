@@ -19,11 +19,10 @@ crear.ts se encarga de la creacion y validacion de una unica unidad de tarea, qu
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import { prompt, set} from '../modulos/promptSync.ts';
 import { datePrompt } from '../modulos/fechas.ts';
-import { taskFlags } from '../../task.ts';
 import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
-
+import { setCategoria, setDescripcion, setDificultad, setEstado, setTitulo } from './funcionesCrear.ts';
+import { obtenerFechaActual } from '../modulos/fechas.ts';
 /**
  * Función pura que crea una tarea a partir de datos ya validados.
  * @param {string} id - El ID de la tarea
@@ -57,16 +56,8 @@ export function crearTareaDesdeValores(
         vencimiento,
         dificultad,
         eliminada: false,
-        categoria: 'otro'
+        categoria
     };
-}
-
-/**
- * Función de utilidad que obtiene la fecha actual (efectos secundarios aislados).
- * @returns {Date} La fecha actual.
- */
-function obtenerFechaActual(): Date {
-    return new Date();
 }
 
 /**
@@ -78,37 +69,12 @@ export function crear(): Task {
     console.clear();
     console.log("Estas creando una nueva tarea");
 
-    // 1. Título
-    const titulo: string = prompt("1. Ingresa el titulo: ", taskFlags.titulo);
-
-    // 2. Descripción
-    const descripcion: string = prompt("2. Ingresa la descripcion: ", taskFlags.descripcion);
-
-    // 3. Estado - Convertir ReadonlyMap a Array de entries
-    const estadoEntries = Array.from(taskFlags.estado.entries());
-    console.log("\n3. Selecciona un estado:");
-    estadoEntries.forEach(([key, value]) => console.log(`   ${value}. ${key}`));
-    const estadoInput = prompt("   Opción: ");
-    const estado = estadoEntries.find(([_, value]) => value.toString() === estadoInput)?.[0] || 'pendiente' as const;
-
-    // 4. Dificultad - Convertir ReadonlyMap a Array de entries
-    const dificultadEntries = Array.from(taskFlags.dificultad.entries());
-    console.log("\n4. Selecciona una dificultad:");
-    dificultadEntries.forEach(([key, value]) => console.log(`   ${value}. ${key}`));
-    const dificultadInput = prompt("   Opción: ");
-    const dificultad = dificultadEntries.find(([_, value]) => value.toString() === dificultadInput)?.[0] || 'facil ★☆☆' as const;
-    
-    // 5. Vencimiento 
+    const titulo: string = setTitulo();
+    const descripcion: string = setDescripcion();
+    const estado: TaskStatus = setEstado() as TaskStatus;
+    const dificultad: TaskDifficulty = setDificultad() as TaskDifficulty;
     const vencimiento: Date | null = datePrompt("5. Ingresa la fecha de vencimiento (aaaa/mm/dd) o deja en blanco: ");
-
-    // 6. Categoria
-    const categoriaEntries = Array.from(taskFlags.categoria.entries());
-    console.log("\n6. Selecciona una categoria:");
-    categoriaEntries.forEach(([key, value]) => console.log(`   ${value}. ${key}`));
-    const categoriaInput = prompt("   Opción: ");
-    const categoria = categoriaEntries.find(([_, value]) => value.toString() === categoriaInput)?.[0] || 'otro';
-
-    // Fechas de creación y edición (efecto secundario aislado)
+    const categoria: string = setCategoria();
     const fechaActual: Date = obtenerFechaActual();
     
     // Delegamos a la función pura
