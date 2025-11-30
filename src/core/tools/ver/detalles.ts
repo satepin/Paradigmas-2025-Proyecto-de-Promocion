@@ -22,7 +22,7 @@
 
 import { prompt } from '../modulos/promptSync.ts';
 import type { Task } from '../../type.ts';
-import { editarTareaInteractiva } from './modificar.ts';
+import { editarTareaInteractiva } from '../modificar/modificar.ts';
 import { mensaje,clearMensaje } from '../../../interfaz/mensajes.ts';
 import { verRelacionadas } from './consultas.ts';
 /**

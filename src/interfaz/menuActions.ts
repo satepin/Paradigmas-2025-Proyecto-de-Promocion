@@ -5,14 +5,14 @@
 
 import { menuPrompt, prompt } from "../core/tools/modulos/promptSync.ts";
 import { obtenerInfoAlmacenamiento } from "../core/tools/modulos/guardado.ts";
-import { filtrarPorOpcion } from "../core/tools/ver/ver.ts";
+import { filtrarPorOpcion } from "../core/tools/ver/filtro.ts";
 import { filtrarPorTitulo } from "../core/tools/ver/buscar.ts";
 import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../core/tools/ver/listado.ts";
 import { agregar} from "../core/tools/alta/agregar.ts";
 import { eliminarTareaDelAlmacenamiento } from "../core/tools/modulos/guardado.ts";
 import { taskFlags } from "../core/task.ts";
 import type { Task } from '../core/type.ts';
-import { modificarTareaEnLista } from "../core/tools/ver/modificar.ts";
+import { modificarTareaEnLista } from "../core/tools/modificar/modificar.ts";
 import { ejecutarConsultasAdicionales } from "./adicionales.ts";
 import { mensaje, clearMensaje } from "./mensajes.ts";
 import {
