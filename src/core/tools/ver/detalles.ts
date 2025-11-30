@@ -22,6 +22,7 @@
 
 import { prompt } from '../modulos/promptSync.ts';
 import type { Task } from '../../type.ts';
+import { mensaje,clearMensaje } from '../../../interfaz/mensajes.ts';
 
 /**
  * Función pura que formatea una tarea como string para mostrar.
@@ -51,14 +52,12 @@ export function formatearTarea(tarea: Task): string {
  * @returns {void}
  */
 export function detalles(tarea: Task): void {
-    console.clear();
     const detalles = formatearTarea(tarea);
-    console.log(detalles);
-    console.log("\nSi deseas editarla, pulsa E, o presiona 0 para salir.");
+    clearMensaje(`${detalles}\nSi deseas editarla, pulsa E, o presiona 0 para salir.`);
     const opcion: string = prompt("Elige una opcion: ", { maxLength: 1, puedeVacio: false });
     if (opcion.toLowerCase() === 'e') {
-        console.log("Funcionalidad de edición pendiente de implementar.");
+        mensaje("Funcionalidad de edición pendiente de implementar.");
     } else if (opcion === '0') {
-        console.log("Saliendo...");
+        mensaje("Saliendo...");
     }
 }

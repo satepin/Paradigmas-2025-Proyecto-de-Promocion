@@ -2,15 +2,10 @@ import { verPrioridad, verRelacionadas, verVencidas } from "../core/tools/ver/co
 import { crearResultadoSinCambios } from "./exports.ts";
 import type { Task } from '../core/type.ts';
 import { menuPrompt } from "../core/tools/modulos/promptSync.ts";
-
+import { clearMensaje } from "./mensajes.ts";
 //menu para acceder a las consultas adicionales
 export function ejecutarConsultasAdicionales(listaTareas: readonly Task[]): { continuarEjecucion: boolean; listaTareasActualizada: readonly Task[]; } {
-    console.clear();
-    console.log("Consultas Adicionales");
-    console.log("1- Ver Tareas Prioritarias");
-    console.log("2- Ver Tareas Relacionadas");
-    console.log("3- Ver Tareas Vencidas");
-    console.log("0- Volver");
+    clearMensaje("Consultas Adicionales\n1- Ver Tareas Prioritarias\n2- Ver Tareas Relacionadas\n3- Ver Tareas Vencidas\n0- Volver");
     const opcion: number = menuPrompt("Elige una opcion: ", 0, 3);
     switch(opcion) {
         case 1: verPrioridad(listaTareas); break;

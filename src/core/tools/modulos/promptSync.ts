@@ -5,6 +5,7 @@
 
 import promptSync from 'prompt-sync';
 import type { ValidationFlag } from '../../type.ts';
+import { mensaje } from '../../../interfaz/mensajes.ts';
 
 const ask = promptSync({ sigint: true });
 
@@ -18,11 +19,11 @@ export function prompt(question: string, flags: ValidationFlag = { maxLength: In
     while (true) {
         let value: string = ask(question);
         if (!flags.puedeVacio && value.trim().length === 0) {
-            console.log('La entrada no puede estar vacía.');
+            mensaje('La entrada no puede estar vacía.');
             continue;
         }
         if (value.length > flags.maxLength) {
-            console.log(`Se ha recortado el texto a ${flags.maxLength} caracteres.`);
+            mensaje(`Se ha recortado el texto a ${flags.maxLength} caracteres.`);
             value = value.slice(0, flags.maxLength);
         }
         return value;
@@ -38,7 +39,7 @@ export function prompt(question: string, flags: ValidationFlag = { maxLength: In
 export function set<T>(flags: Map<T, number>): T {
     // mostrar todas las opciones disponibles del mapa
     Array.from(flags.entries()).forEach(([opcion, numero]) => {
-        console.log(`${numero} - ${opcion}`);
+        mensaje(`${numero} - ${opcion}`);
     });
     
     while (true) {
@@ -50,7 +51,7 @@ export function set<T>(flags: Map<T, number>): T {
         if (opcionEncontrada) {
             return opcionEncontrada[0];
         }
-        console.log('Opción inválida, intenta nuevamente.');
+        mensaje('Opción inválida, intenta nuevamente.');
     }
 }
 
@@ -66,12 +67,12 @@ export function menuPrompt(question: string, min: number, max: number): number {
         const raw: string = ask(question);
         const num: number = Number(raw);
         if (!Number.isFinite(num)) {
-            console.log('Ingresa un número válido.');
+            mensaje('Ingresa un número válido.');
             continue;
         }
         const n: number = Math.trunc(num);
         if (n < min || n > max) {
-            console.log(`Ingresa un número entre ${min} y ${max}.`);
+            mensaje(`Ingresa un número entre ${min} y ${max}.`);
             continue;
         }
         return n;

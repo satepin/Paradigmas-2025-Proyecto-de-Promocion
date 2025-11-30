@@ -21,7 +21,7 @@ crear.ts se encarga de la creacion y validacion de una unica unidad de tarea, qu
 import { v4 as uuidv4 } from 'uuid';
 import { datePrompt } from '../modulos/fechas.ts';
 import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
-import { setCategoria, setDescripcion, setDificultad, setEstado, setTitulo } from './funcionesCrear.ts';
+import { nuevaTareaMensajeGuardado, nuevaTareaMensajeInicio, setCategoria, setDescripcion, setDificultad, setEstado, setTitulo, setVencimiento } from './funcionesCrear.ts';
 import { obtenerFechaActual } from '../modulos/fechas.ts';
 /**
  * Función pura que crea una tarea a partir de datos ya validados.
@@ -66,14 +66,13 @@ export function crearTareaDesdeValores(
  * @returns {Task} El objeto de tarea recién creado.
  */
 export function crear(): Task {
-    console.clear();
-    console.log("Estas creando una nueva tarea");
+    nuevaTareaMensajeInicio();
 
     const titulo: string = setTitulo();
     const descripcion: string = setDescripcion();
     const estado: TaskStatus = setEstado() as TaskStatus;
     const dificultad: TaskDifficulty = setDificultad() as TaskDifficulty;
-    const vencimiento: Date | null = datePrompt("5. Ingresa la fecha de vencimiento (aaaa/mm/dd) o deja en blanco: ");
+    const vencimiento: Date | null = setVencimiento();
     const categoria: string = setCategoria();
     const fechaActual: Date = obtenerFechaActual();
     
@@ -89,7 +88,7 @@ export function crear(): Task {
         categoria
     );
 
-    console.log("\n¡Datos Guardados!");
+    nuevaTareaMensajeGuardado();
 
     return nuevaTarea;
 }

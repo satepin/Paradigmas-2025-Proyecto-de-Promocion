@@ -3,6 +3,7 @@ import { listado } from './listado.ts';
 import type { Task, TaskStatus } from '../../type.ts';
 import { datePrompt } from '../modulos/fechas.ts';
 import { and, or, lvar, eq } from '../modulos/logic.ts';
+import { mensaje } from "../../../interfaz/mensajes.ts";
 /**filtra las tareas por prioridad alta y muestra la lista usando la función listado
  * se consideran prioritarias las tareas pendientes y en curso que expiran en 3 días o menos
  * @param tareas
@@ -25,7 +26,7 @@ export function verPrioridad(tareas: readonly Task[]): void {
  */
 export function verRelacionadas(tareas: readonly Task[]): void {
     for (const tarea of tareas) {
-        console.log(`\nTarea seleccionada: ${tarea.titulo} (Categoria: ${tarea.categoria})`);
+        mensaje(`\nTarea seleccionada: ${tarea.titulo} (Categoria: ${tarea.categoria})`);
         const tareasRelacionadas = tareas.filter(t => 
             t.id !== tarea.id && estaRelacionada(t, tarea.categoria)
         );
@@ -51,10 +52,10 @@ export function verVencidas(tareas: readonly Task[]): void {
 */
 function mostrarFiltradas(tareasFiltradas: readonly Task[], condicion: string): void {
     if (tareasFiltradas.length === 0) {
-        console.log(`No hay  ${condicion.toLowerCase()}.`);
+        mensaje(`No hay  ${condicion.toLowerCase()}.`);
     }
     else {
-        console.log(`\n===${condicion} (${tareasFiltradas.length}) ===\n`);
+        mensaje(`\n===${condicion} (${tareasFiltradas.length}) ===\n`);
         listado(tareasFiltradas);
     }
 }

@@ -7,7 +7,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs'; 
 import { join } from 'path';
 import type { Task } from '../../type.ts';
-
+import { mensaje } from '../../../interfaz/mensajes.ts';
 /**
  * Ruta del archivo de almacenamiento JSON.
  * @type {string}
@@ -50,7 +50,7 @@ export function inicializarAlmacenamiento(): void {
             ultimaActualizacion: datosIniciales.ultimaActualizacion
         };
         writeFileSync(RUTA_GUARDADO, JSON.stringify(metadatosIniciales, null, 2), 'utf-8');
-        console.log(`✓ Archivo de almacenamiento creado en: ${RUTA_ALMACENAMIENTO}`); // Mensaje de éxito
+        mensaje(`✓ Archivo de almacenamiento creado en: ${RUTA_ALMACENAMIENTO}`); // Mensaje de éxito
         }
     }
 
@@ -106,7 +106,7 @@ export function agregarTareaAlAlmacenamiento(nuevaTarea: Task): readonly Task[] 
     const tareasActualizadas: readonly Task[] = [...tareasActuales, nuevaTarea];
     
     if (guardarTareas(tareasActualizadas)) {
-        console.log('✓ Tarea guardada en almacenamiento');
+        mensaje('✓ Tarea guardada en almacenamiento');
         return tareasActualizadas;
     }
     
@@ -126,7 +126,7 @@ export function actualizarTareaEnAlmacenamiento(tareaActualizada: Task): readonl
     );
     
     if (guardarTareas(tareasActualizadas)) {
-        console.log('✓ Tarea actualizada en almacenamiento');
+        mensaje('✓ Tarea actualizada en almacenamiento');
         return tareasActualizadas;
     }
     
@@ -177,7 +177,7 @@ export function limpiarAlmacenamiento(): boolean {
             ultimaActualizacion: new Date().toISOString()
         };
         writeFileSync(RUTA_ALMACENAMIENTO, JSON.stringify(datosVacios, null, 2), 'utf-8');
-        console.log('✓ Almacenamiento limpiado');
+        mensaje('✓ Almacenamiento limpiado');
         return true;
     } catch (error) {
         console.error('Error al limpiar almacenamiento:', error);

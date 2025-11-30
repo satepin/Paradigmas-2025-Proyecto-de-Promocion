@@ -6,14 +6,13 @@
 import { mainMenu } from './interfaz/mainMenu.ts';
 import { cargarTareas, inicializarAlmacenamiento, obtenerInfoAlmacenamiento } from './core/tools/modulos/guardado.ts';
 import type { Task } from './core/type.ts';
-
+import { mensaje, clearMensaje } from './interfaz/mensajes.ts';
 /**
  * Función principal que ejecuta el loop del programa.
  * @returns {void}
  */
 function main(): void {
-    console.clear();
-    console.log("=== Sistema de Gestión de Tareas ===\n");
+    clearMensaje("=== Sistema de Gestión de Tareas ===\n");
     
     // Estado inicial: lista vacía de tareas
     inicializarAlmacenamiento();
@@ -28,7 +27,7 @@ function main(): void {
         continuarEjecucion = resultado.continuarEjecucion;
     }
 
-    console.log("\n¡Hasta luego!");
+    mensaje("\n¡Hasta luego!");
 }
 
 // Ejecutar el programa

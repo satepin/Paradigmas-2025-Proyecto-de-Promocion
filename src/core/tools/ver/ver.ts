@@ -6,6 +6,8 @@
 import { menuPrompt } from '../modulos/promptSync.ts';
 import { listado } from './listado.ts';
 import type { Task, TaskStatus } from '../../type.ts';
+import { clear } from 'console';
+import { clearMensaje } from '../../../interfaz/mensajes.ts';
 
 /**
  * Función pura que filtra tareas por estado.
@@ -45,13 +47,7 @@ export function filtrarPorOpcion(
  * @returns {void}
  */
 export function ver(tareas: readonly Task[]): void {
-    console.clear();
-    console.log("¿Que tareas deseas ver?");
-    console.log("1- Todas");
-    console.log("2- Pendientes");
-    console.log("3- En curso");
-    console.log("4- Terminadas");
-    console.log("0- Volver");
+    clearMensaje('¿Que tareas deseas ver?\n1- Todas\n2- Pendientes\n3- En curso\n4- Terminadas\n0- Volver');
     
     const opcion: number = menuPrompt("Elige una opcion: ", 0, 4);
     if (opcion === 0) { return; }

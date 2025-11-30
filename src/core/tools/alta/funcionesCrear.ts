@@ -1,4 +1,5 @@
 import { taskFlags } from "../../task.ts";
+import { datePrompt } from "../modulos/fechas.ts";
 import { prompt } from "../modulos/promptSync.ts";
 
 /**
@@ -20,22 +21,38 @@ function seleccionarOpcionDeMap<K extends string>(
     return entries.find(([_, value]) => value.toString() === input)?.[0] || defaultValue;
 }
 
-export function setTitulo(): string {
+function setTitulo(): string {
     return prompt("1. Ingresa el titulo: ", taskFlags.titulo);
 }
 
-export function setDescripcion(): string {
+function setDescripcion(): string {
     return prompt("2. Ingresa la descripcion: ", taskFlags.descripcion);
 }  
 
-export function setEstado(): string {
+function setEstado(): string {
     return seleccionarOpcionDeMap("3. Selecciona un estado", taskFlags.estado, 'pendiente');
 }
 
-export function setDificultad(): string {
+function setVencimiento(): Date | null {
+    return datePrompt("5. Ingresa la fecha de vencimiento (aaaa/mm/dd) o deja en blanco: ");
+}
+
+function setDificultad(): string {
     return seleccionarOpcionDeMap("4. Selecciona una dificultad", taskFlags.dificultad, 'facil ★☆☆');
 }
 
-export function setCategoria(): string {
+function setCategoria(): string {
     return seleccionarOpcionDeMap("6. Selecciona una categoria", taskFlags.categoria, 'otro');
 }
+
+function nuevaTareaMensajeInicio(): void {
+    console.clear();
+    console.log("\nCreación de nueva tarea:");
+}
+
+function nuevaTareaMensajeGuardado(): void {
+    console.log("\n¡Datos Guardados!");
+    prompt("presiona cualquier tecla para continuar...");
+}
+
+export { setTitulo, setDescripcion, setEstado, setDificultad, setCategoria, setVencimiento, nuevaTareaMensajeInicio, nuevaTareaMensajeGuardado };

@@ -8,18 +8,19 @@ import { obtenerInfoAlmacenamiento } from "../core/tools/modulos/guardado.ts";
 import { filtrarPorOpcion } from "../core/tools/ver/ver.ts";
 import { filtrarPorTitulo } from "../core/tools/ver/buscar.ts";
 import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../core/tools/ver/listado.ts";
-import { crear } from "../core/tools/alta/crear.ts";
-import { agregar, agregarTarea } from "../core/tools/alta/agregar.ts";
+import { agregar} from "../core/tools/alta/agregar.ts";
 import { eliminarTareaDelAlmacenamiento } from "../core/tools/modulos/guardado.ts";
 import { taskFlags } from "../core/task.ts";
 import type { Task } from '../core/type.ts';
 import { ejecutarConsultasAdicionales } from "./adicionales.ts";
+import { mensaje, clearMensaje } from "./mensajes.ts";
 import {
     crearResultadoSinCambios,
     crearResultadoConCambios,
     generarLineasMenu,
     mostrarLineasMenu
 } from './menuHelpers.ts';
+import { clear } from "console";
 
 /**
  * Tipo para el resultado de una acción del menú.
@@ -58,8 +59,7 @@ export function ejecutarVerTareas(listaTareas: readonly Task[]): MenuActionResul
  * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
  */
 export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionResult {
-    console.clear();
-    console.log("Buscar Tarea");
+    clearMensaje("Buscar Tarea");
     const busqueda: string = prompt("Introduce el titulo de una tarea para buscarla: ", taskFlags.titulo);
 
     const tareasVisibles = listaTareas.filter(t => !t.eliminada);
@@ -68,7 +68,7 @@ export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionRe
     if (resultados.length > 0) {
         listado(resultados, busqueda);
     } else {
-        console.log("\nNo hay tareas relacionadas con la busqueda");
+        mensaje("\nNo hay tareas relacionadas con la busqueda");
     }
 
     return crearResultadoSinCambios(listaTareas);
@@ -80,12 +80,10 @@ export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionRe
  * @returns {MenuActionResult} Resultado con la lista actualizada.
  */
 export function ejecutarAgregarTarea(listaTareas: readonly Task[]): MenuActionResult {
-    console.clear();
-    console.log("Agregar Tarea");
+    clearMensaje("Agregar Tarea");
     // Usamos la función que hace la creación + guardado para persistir
     const listaActualizada = agregar(listaTareas);
-    console.log("\n¡Tarea Agregada a la Lista!");
-    console.log(`Total de Tareas: ${listaActualizada.length}`);
+    mensaje(`\n¡Tarea Agregada a la Lista!\nTotal de Tareas: ${listaActualizada.length}`);
     return crearResultadoConCambios(listaActualizada);
 }
 
@@ -110,18 +108,17 @@ export function eliminarTareaLogicamente(
  * @returns {MenuActionResult} Resultado con la lista actualizada.
  */
 export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionResult {
-    console.clear();
-    console.log("Eliminar Tarea");
+    clearMensaje("Eliminar Tarea");
 
     const tareasVisibles = listaTareas.filter(t => !t.eliminada);
 
     if (tareasVisibles.length === 0) {
-        console.log("No hay tareas para eliminar.");
+        mensaje("No hay tareas para eliminar.");
         prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
         return crearResultadoSinCambios(listaTareas);
     }
 
-    console.log("Selecciona la tarea que deseas eliminar:");
+    mensaje("Selecciona la tarea que deseas eliminar:");
     const lineasFormateadas = formatearListaTareas(tareasVisibles);
     lineasFormateadas.forEach(linea => console.log(linea));
 
@@ -136,12 +133,12 @@ export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionR
     if (tareaAEliminar) {
         // Actualizar también en el almacenamiento persistente
         const listaActualizada = eliminarTareaDelAlmacenamiento(tareaAEliminar.id);
-        console.log(`\n¡Tarea "${tareaAEliminar.titulo}" eliminada!`);
+        mensaje(`\n¡Tarea "${tareaAEliminar.titulo}" eliminada!`);
         prompt("Presiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
         return crearResultadoConCambios(listaActualizada);
     }
 
-    console.log("Índice no válido.");
+    mensaje("Índice no válido.");
     prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
     return crearResultadoSinCambios(listaTareas);
 }
@@ -151,34 +148,31 @@ export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionR
  * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
  */
 export function ejecutarInfoAlmacenamiento(listaTareas: readonly Task[]): MenuActionResult {
-    console.clear();
-    console.log("Información del Almacenamiento");
+    clearMensaje("Información del Almacenamiento");
     const info = obtenerInfoAlmacenamiento();
-    console.log(info);
+    mensaje(info);
     prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
     return crearResultadoSinCambios(listaTareas);
 }
 
 export function ejecutarEstadisticasNerds(listaTareas: readonly Task[]): MenuActionResult {
-    console.clear();
-    console.log("Estadísticas para Nerds");
+    clearMensaje("Estadísticas para Nerds");
     const totalTareas = listaTareas.length;
     const tareasEliminadas = listaTareas.filter(t => t.eliminada).length;
     const tareasPendientes = listaTareas.filter(t => t.estado === 'pendiente' && !t.eliminada).length;
     const tareasEnCurso = listaTareas.filter(t => t.estado === 'en curso' && !t.eliminada).length;
     const tareasCompletadas = listaTareas.filter(t => t.estado === 'completada' && !t.eliminada).length;
 
-    console.log(`Total de Tareas: ${totalTareas}`);
-    console.log(`-------------------------`);
-    console.log(`Tareas Eliminadas: ${tareasEliminadas}`);
-    console.log(`Tareas Pendientes: ${tareasPendientes}`);
-    console.log(`Tareas En Curso: ${tareasEnCurso}`);
-    console.log(`Tareas Completadas: ${tareasCompletadas}`);
-    console.log(`-------------------------`);
-    console.log(`Tareas Faciles: ${listaTareas.filter(t => t.dificultad === 'facil ★☆☆' && !t.eliminada).length}`);
-    console.log(`Tareas Medias: ${listaTareas.filter(t => t.dificultad === 'medio ★★☆' && !t.eliminada).length}`);
-    console.log(`Tareas Dificiles: ${listaTareas.filter(t => t.dificultad === 'dificil ★★★' && !t.eliminada).length}`);
-
+    mensaje(`Total de Tareas: ${totalTareas}`);
+    mensaje(`-------------------------`);
+    mensaje(`Tareas Eliminadas: ${tareasEliminadas}`);
+    mensaje(`Tareas Pendientes: ${tareasPendientes}`);
+    mensaje(`Tareas En Curso: ${tareasEnCurso}`);
+    mensaje(`Tareas Completadas: ${tareasCompletadas}`);
+    mensaje(`-------------------------`);
+    mensaje(`Tareas Faciles: ${listaTareas.filter(t => t.dificultad === 'facil ★☆☆' && !t.eliminada).length}`);
+    mensaje(`Tareas Medias: ${listaTareas.filter(t => t.dificultad === 'medio ★★☆' && !t.eliminada).length}`);
+    mensaje(`Tareas Dificiles: ${listaTareas.filter(t => t.dificultad === 'dificil ★★★' && !t.eliminada).length}`);
     prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
     return crearResultadoSinCambios(listaTareas);
 }
@@ -189,7 +183,7 @@ export function ejecutarEstadisticasNerds(listaTareas: readonly Task[]): MenuAct
  * @returns {MenuActionResult} Resultado indicando no continuar.
  */
 export function ejecutarSalir(listaTareas: readonly Task[]): MenuActionResult {
-    console.log("Saliendo...");
+    mensaje("Saliendo...");
     return crearResultadoSinCambios(listaTareas, false);
 }
 

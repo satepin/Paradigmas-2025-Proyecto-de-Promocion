@@ -6,6 +6,7 @@
 import { menuPrompt, prompt } from "../modulos/promptSync.ts";
 import type { Task } from '../../type.ts';
 import { formatearTarea } from './detalles.ts';
+import { mensaje, pausaMensaje } from "../../../interfaz/mensajes.ts";
 
 /**
  * Función pura que formatea una lista de tareas como strings para mostrar.
@@ -65,8 +66,7 @@ function elegir(tareas: readonly Task[]): void {
     if (tareaSeleccionada) {
         console.clear();
         const detalles = formatearTarea(tareaSeleccionada);
-        console.log(detalles);
-        console.log("\nPresiona cualquier tecla para continuar...");
-        prompt("", { maxLength: 100, puedeVacio: true });
+        mensaje(detalles);
+        pausaMensaje();
     }
 }
