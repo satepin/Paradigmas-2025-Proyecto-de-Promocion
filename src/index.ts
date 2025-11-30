@@ -4,6 +4,7 @@
  */
 
 import { mainMenu } from './interfaz/mainMenu.ts';
+import { cargarTareas, inicializarAlmacenamiento, obtenerInfoAlmacenamiento } from './core/tools/modulos/guardado.ts';
 import type { Task } from './core/type.ts';
 
 /**
@@ -15,7 +16,9 @@ function main(): void {
     console.log("=== Sistema de Gestión de Tareas ===\n");
     
     // Estado inicial: lista vacía de tareas
-    let listaTareas: readonly Task[] = [];
+    inicializarAlmacenamiento();
+    let listaTareas: readonly Task[] = cargarTareas();
+    console.log(obtenerInfoAlmacenamiento()); //  Muestra información del almacenamiento
     let continuarEjecucion = true;
     const username = "Usuario"; // Puedes solicitar el nombre si lo deseas
 

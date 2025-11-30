@@ -24,6 +24,7 @@ agregar.ts recibe una tarea creada y verificada en crear.ts y la agrega a una li
 */
 
 import { crear } from './crear.ts';
+import { agregarTareaAlAlmacenamiento } from '../modulos/guardado.ts'; // Función para guardar tarea en JSON
 import type { Task } from '../../type.ts';
 
 /**
@@ -33,11 +34,12 @@ import type { Task } from '../../type.ts';
  * @returns {Task[]} Una nueva lista con la tarea agregada.
  */
 export function agregarTarea(listaTareas: readonly Task[], nuevaTarea: Task): readonly Task[] {
-    return [...listaTareas, nuevaTarea];
+    return [...listaTareas, nuevaTarea]; // Retorna una nueva lista con la nueva tarea añadida
 }
 
 /**
  * Orquesta la adición de una nueva tarea a la lista (con efectos secundarios).
+ * Guarda la nueva tarea en el almacenamiento.
  * @param {Task[]} listaTareas - La lista de tareas a la que se agregará la nueva tarea.
  * @returns {Task[]} La nueva lista con la tarea agregada.
  */
@@ -46,6 +48,10 @@ export function agregar(listaTareas: readonly Task[]): readonly Task[] {
     console.log("Agregar Tarea");
     const nuevaTarea = crear();
     const listaActualizada = agregarTarea(listaTareas, nuevaTarea);
+
+    // Guardar en almacenamiento
+    agregarTareaAlAlmacenamiento(nuevaTarea); 
+
     console.log("\n¡Tarea Agregada a la Lista!");
     console.log(`Total de Tareas: ${listaActualizada.length}`);
     return listaActualizada;

@@ -13,14 +13,22 @@ import type { Task } from '../../type.ts';
  * @type {string}
  */
 const RUTA_ALMACENAMIENTO: string = join(process.cwd(), 'tareas.json');
+const RUTA_GUARDADO: string = join(process.cwd(), 'guardado.json');
 
 /**
  * Interfaz para la estructura del archivo de almacenamiento.
  */
+interface MetadatosAlmacenamiento {
+    ruta: string;
+    tareasActivas: number;
+    tareasEliminadas: number;
+    total: number;
+    ultimaActualizacion: string;
+}
 interface DatosAlmacenamiento {
     tareas: Task[];
     ultimaActualizacion: string;
-}
+}   
 
 /**
  * Inicializa el archivo de almacenamiento si no existe.
@@ -32,10 +40,19 @@ export function inicializarAlmacenamiento(): void {
             tareas: [],// Array vacío de tareas
             ultimaActualizacion: new Date().toISOString()// Fecha actual en formato ISO
         };
-        writeFileSync(RUTA_ALMACENAMIENTO, JSON.stringify(datosIniciales, null, 2), 'utf-8'); // Escribe el archivo JSON
+       writeFileSync(RUTA_ALMACENAMIENTO, JSON.stringify(datosIniciales, null, 2), 'utf-8'); // Escribe el archivo JSON
+        // Crear archivo de exportación `guardado.json` con solo metadata
+        const metadatosIniciales: MetadatosAlmacenamiento = {
+            ruta: RUTA_ALMACENAMIENTO,
+            tareasActivas: 0,
+            tareasEliminadas: 0,
+            total: 0,
+            ultimaActualizacion: datosIniciales.ultimaActualizacion
+        };
+        writeFileSync(RUTA_GUARDADO, JSON.stringify(metadatosIniciales, null, 2), 'utf-8');
         console.log(`✓ Archivo de almacenamiento creado en: ${RUTA_ALMACENAMIENTO}`); // Mensaje de éxito
+        }
     }
-}
 
 /**
  * Carga la lista de tareas desde el archivo JSON.
@@ -189,4 +206,3 @@ export function obtenerInfoAlmacenamiento(): string {
 └── Total: ${tareas.length}
     `.trim(); // Retorna la información formateada
 }
-
