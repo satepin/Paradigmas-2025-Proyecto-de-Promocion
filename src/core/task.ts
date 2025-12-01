@@ -68,6 +68,10 @@ const flagDificultad: ReadonlyMap<TaskDifficulty, number> = new Map<TaskDifficul
     ["dificil ★★★", 3]
 ]);
 
+/**
+ * Mapa inmutable de opciones para la categoría de una tarea.
+ * @type {Readonly<ReadonlyMap<string, number>>}
+ */
 const flagCategoria: Readonly<ReadonlyMap<string, number>> = new Map<string, number>([
     ["programacion", 1],
     ["estudio", 2],

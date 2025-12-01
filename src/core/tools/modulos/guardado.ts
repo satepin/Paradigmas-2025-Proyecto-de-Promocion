@@ -16,7 +16,12 @@ const RUTA_ALMACENAMIENTO: string = join(process.cwd(), 'tareas.json');
 const RUTA_GUARDADO: string = join(process.cwd(), 'guardado.json');
 
 /**
- * Interfaz para la estructura del archivo de almacenamiento.
+ * Interfaz para los metadatos del archivo de almacenamiento.
+ * @property {string} ruta - Ruta del archivo de almacenamiento
+ * @property {number} tareasActivas - Número de tareas no eliminadas
+ * @property {number} tareasEliminadas - Número de tareas eliminadas
+ * @property {number} total - Total de tareas
+ * @property {string} ultimaActualizacion - Fecha de última actualización en formato ISO
  */
 interface MetadatosAlmacenamiento {
     ruta: string;
@@ -25,6 +30,12 @@ interface MetadatosAlmacenamiento {
     total: number;
     ultimaActualizacion: string;
 }
+
+/**
+ * Interfaz para los datos del archivo de almacenamiento.
+ * @property {StoredTask[]} tareas - Array de tareas serializadas
+ * @property {string} ultimaActualizacion - Fecha de última actualización en formato ISO
+ */
 interface DatosAlmacenamiento {
     tareas: StoredTask[];
     ultimaActualizacion: string;
@@ -32,6 +43,16 @@ interface DatosAlmacenamiento {
 
 /**
  * Interfaz para tareas persistidas (fechas como strings).
+ * @property {string} id - Identificador único de la tarea
+ * @property {string} titulo - Título de la tarea
+ * @property {string} descripcion - Descripción de la tarea
+ * @property {string} estado - Estado de la tarea
+ * @property {string | null} creacion - Fecha de creación en formato ISO o null
+ * @property {string | null} uEdicion - Fecha de última edición en formato ISO o null
+ * @property {string | null} vencimiento - Fecha de vencimiento en formato ISO o null
+ * @property {string} dificultad - Nivel de dificultad
+ * @property {string} categoria - Categoría de la tarea
+ * @property {boolean} eliminada - Indica si la tarea está eliminada
  */
 interface StoredTask {
     id: string;
@@ -63,8 +84,9 @@ export function inicializarAlmacenamiento(nowIso?: string): void {
 }
 
 /**
- * Carga la lista de tareas desde el archivo JSON.
- * @returns {readonly Task[]} Array inmutable de tareas almacenadas.
+ * Función pura que convierte una tarea serializada a Task con fechas como Date.
+ * @param {StoredTask} tarea - Tarea con fechas en formato string
+ * @returns {Task} Tarea con fechas como objetos Date
  */
 export function parseTaskDates(tarea: StoredTask): Task {
     return {
@@ -77,6 +99,11 @@ export function parseTaskDates(tarea: StoredTask): Task {
     };
 }
 
+/**
+ * Función pura que serializa una tarea convirtiendo fechas Date a strings ISO.
+ * @param {Task} tarea - Tarea con fechas como objetos Date
+ * @returns {StoredTask} Tarea serializada con fechas en formato string
+ */
 export function serializarTaskDates(tarea: Task): StoredTask {
     return {
         ...tarea,
@@ -88,6 +115,8 @@ export function serializarTaskDates(tarea: Task): StoredTask {
 
 /**
  * Cargar tareas desde el archivo (wrapper con E/S). Mantiene compatibilidad con llamadas externas.
+ * @param {string} ruta - Ruta del archivo de almacenamiento (por defecto: tareas.json)
+ * @returns {readonly Task[]} Array inmutable de tareas cargadas
  */
 export function cargarTareas(ruta: string = RUTA_ALMACENAMIENTO): readonly Task[] {
     try {
@@ -281,18 +310,42 @@ export function obtenerInfoAlmacenamiento(): string {
     `.trim(); // Retorna la información formateada
 }
 
+/**
+ * Función pura que agrega una tarea a un array.
+ * @param {Task[]} tareas - Array de tareas
+ * @param {Task} nuevaTarea - Tarea a agregar
+ * @returns {Task[]} Nuevo array con la tarea agregada
+ */
 export function agregarTareaPure(tareas: Task[], nuevaTarea: Task): Task[] {
     return [...tareas, nuevaTarea];
 }
 
+/**
+ * Función pura que actualiza una tarea en un array.
+ * @param {Task[]} tareas - Array de tareas
+ * @param {Task} tareaActualizada - Tarea con datos actualizados
+ * @returns {Task[]} Nuevo array con la tarea actualizada
+ */
 export function actualizarTareaPure(tareas: Task[], tareaActualizada: Task): Task[] {
     return tareas.map(t => (t.id === tareaActualizada.id ? tareaActualizada : t));
 }
 
+/**
+ * Función pura que marca una tarea como eliminada.
+ * @param {Task[]} tareas - Array de tareas
+ * @param {string} tareaId - ID de la tarea a eliminar
+ * @param {Date} uEdicion - Fecha de edición
+ * @returns {Task[]} Nuevo array con la tarea marcada como eliminada
+ */
 export function eliminarTareaPure(tareas: Task[], tareaId: string, uEdicion: Date): Task[] {
     return tareas.map(t => (t.id === tareaId ? { ...t, eliminada: true, uEdicion } : t));
 }
 
+/**
+ * Función pura que cuenta las tareas activas (no eliminadas).
+ * @param {Task[]} tareas - Array de tareas
+ * @returns {number} Cantidad de tareas activas
+ */
 export function contarTareasActivasPure(tareas: Task[]): number {
     return tareas.filter(t => !t.eliminada).length;
 }

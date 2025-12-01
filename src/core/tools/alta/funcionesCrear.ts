@@ -53,34 +53,66 @@ function seleccionarOpcionDeMap<K extends string>(
     return obtenerOpcionDeMap(map, input, defaultValue);
 }
 
+/**
+ * Solicita al usuario ingresar el título de la tarea.
+ * @returns {string} El título ingresado
+ */
 function setTitulo(): string {
     return prompt("1. Ingresa el titulo: ", taskFlags.titulo);
 }
 
+/**
+ * Solicita al usuario ingresar la descripción de la tarea.
+ * @returns {string} La descripción ingresada
+ */
 function setDescripcion(): string {
     return prompt("2. Ingresa la descripcion: ", taskFlags.descripcion);
 }  
 
+/**
+ * Solicita al usuario seleccionar el estado de la tarea.
+ * @returns {string} El estado seleccionado
+ */
 function setEstado(): string {
     return seleccionarOpcionDeMap("3. Selecciona un estado", taskFlags.estado, 'pendiente');
 }
 
+/**
+ * Solicita al usuario ingresar la fecha de vencimiento de la tarea.
+ * @returns {Date | null} La fecha ingresada o null si se deja vacío
+ */
 function setVencimiento(): Date | null {
     return datePrompt("5. Ingresa la fecha de vencimiento (aaaa/mm/dd) o deja en blanco: ");
 }
 
+/**
+ * Solicita al usuario seleccionar la dificultad de la tarea.
+ * @returns {string} La dificultad seleccionada
+ */
 function setDificultad(): string {
     return seleccionarOpcionDeMap("4. Selecciona una dificultad", taskFlags.dificultad, 'facil ★☆☆');
 }
 
+/**
+ * Solicita al usuario seleccionar la categoría de la tarea.
+ * @returns {string} La categoría seleccionada
+ */
 function setCategoria(): string {
     return seleccionarOpcionDeMap("6. Selecciona una categoria", taskFlags.categoria, 'otro');
 }
 
+/**
+ * Muestra el mensaje inicial al comenzar la creación de una tarea.
+ * @returns {void}
+ */
 function nuevaTareaMensajeInicio(): void {
     clearMensaje("\nCreación de nueva tarea:");
 }
 
+/**
+ * Muestra el mensaje de confirmación al guardar una tarea.
+ * @returns {void}
+ */
 function nuevaTareaMensajeGuardado(): void {
     mensaje("\n¡Datos Guardados!");
     prompt("presiona cualquier tecla para continuar...");

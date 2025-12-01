@@ -32,7 +32,8 @@ export type MenuActionResult = {
 
 /**
  * Muestra el menú de opciones para ver tareas.
- * @returns Número de opción seleccionada
+ * Responsabilidad: Presentar menú y capturar selección.
+ * @returns {number} Número de opción seleccionada (0-4)
  */
 function mostrarMenuVerTareas(): number {
     const lineasMenu = generarLineasMenu(
@@ -64,7 +65,8 @@ export function ejecutarVerTareas(listaTareas: readonly Task[]): MenuActionResul
 
 /**
  * Solicita el término de búsqueda al usuario.
- * @returns Término de búsqueda
+ * Responsabilidad: Capturar entrada de búsqueda.
+ * @returns {string} Término de búsqueda ingresado
  */
 function solicitarTerminoBusqueda(): string {
     clearMensaje("Buscar Tarea");
@@ -73,8 +75,10 @@ function solicitarTerminoBusqueda(): string {
 
 /**
  * Muestra resultados de búsqueda o mensaje de no encontrados.
- * @param resultados - Tareas encontradas
- * @param busqueda - Término buscado
+ * Responsabilidad: Presentar resultados de búsqueda.
+ * @param {readonly Task[]} resultados - Tareas encontradas
+ * @param {string} busqueda - Término buscado
+ * @returns {void}
  */
 function mostrarResultadosBusqueda(resultados: readonly Task[], busqueda: string): void {
     if (resultados.length > 0) {
@@ -100,6 +104,7 @@ export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionRe
 
 /**
  * Ejecuta la acción de agregar una tarea (modifica la lista).
+ * Responsabilidad: Orquestar flujo de adición de tarea.
  * @param {readonly Task[]} listaTareas - La lista de tareas.
  * @returns {MenuActionResult} Resultado con la lista actualizada.
  */
@@ -182,6 +187,7 @@ export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionR
 }
 /**
  * Ejecuta la acción de mostrar información del almacenamiento (no modifica la lista).
+ * Responsabilidad: Orquestar visualización de información del almacenamiento.
  * @param {readonly Task[]} listaTareas - La lista de tareas.
  * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
  */
@@ -193,6 +199,12 @@ export function ejecutarInfoAlmacenamiento(listaTareas: readonly Task[]): MenuAc
     return crearResultadoSinCambios(listaTareas);
 }
 
+/**
+ * Ejecuta la acción de mostrar estadísticas detalladas de las tareas (no modifica la lista).
+ * Responsabilidad: Orquestar visualización de estadísticas.
+ * @param {readonly Task[]} listaTareas - La lista de tareas.
+ * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
+ */
 export function ejecutarEstadisticasNerds(listaTareas: readonly Task[]): MenuActionResult {
     clearMensaje("Estadísticas para Nerds");
     const totalTareas = listaTareas.length;

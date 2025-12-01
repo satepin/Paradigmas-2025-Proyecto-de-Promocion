@@ -94,8 +94,13 @@ export function verVencidas(tareas: readonly Task[]): void {
     mostrarFiltradas(tareasVencidas, 'Tareas Vencidas');
 }
 
-/*recibe y muestra la lista filtrada
-*/
+/**
+ * Muestra una lista de tareas filtradas con un mensaje de condición.
+ * Responsabilidad: Presentar resultados filtrados o mensaje vacío.
+ * @param {readonly Task[]} tareasFiltradas - Las tareas filtradas a mostrar
+ * @param {string} condicion - La descripción de la condición de filtrado
+ * @returns {void}
+ */
 function mostrarFiltradas(tareasFiltradas: readonly Task[], condicion: string): void {
     if (tareasFiltradas.length === 0) {
         mensaje(`No hay  ${condicion.toLowerCase()}.`);
