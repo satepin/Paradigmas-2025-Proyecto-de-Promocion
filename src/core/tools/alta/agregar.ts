@@ -25,7 +25,7 @@
 import { crear } from './crear.ts';
 import { agregarTareaAlAlmacenamiento } from '../modulos/guardado.ts'; // Función para guardar tarea en JSON
 import type { Task } from '../../type.ts';
-
+import { mensaje,clearMensaje } from '../../../interfaz/mensajes.ts';
 /**
  * Agrega una nueva tarea a la lista (función pura).
  * @param {Task[]} listaTareas - La lista original de tareas (no se muta).
@@ -37,20 +37,33 @@ export function agregarTarea(listaTareas: readonly Task[], nuevaTarea: Task): re
 }
 
 /**
- * Orquesta la adición de una nueva tarea a la lista (con efectos secundarios).
- * Guarda la nueva tarea en el almacenamiento.
- * @param {Task[]} listaTareas - La lista de tareas a la que se agregará la nueva tarea.
+ * Función que crea una tarea mediante input del usuario.
+ * @returns {Task} Nueva tarea creada
+ */
+function crearTareaInteractiva(): Task {
+    clearMensaje("Agregar Tarea");
+    return crear();
+}
+
+/**
+ * Función que guarda una tarea y muestra confirmación.
+ * @param {Task} tarea - Tarea a guardar
+ * @returns {void}
+ */
+function guardarYConfirmar(tarea: Task, totalTareas: number): void {
+    agregarTareaAlAlmacenamiento(tarea); 
+    mensaje(`Total de Tareas: ${totalTareas}`);
+}
+
+/**
+ * Orquesta la adición de una nueva tarea a la lista.
+ * Responsabilidad única: coordinar flujo de agregar tarea.
+ * @param {Task[]} listaTareas - La lista de tareas.
  * @returns {Task[]} La nueva lista con la tarea agregada.
  */
 export function agregar(listaTareas: readonly Task[]): readonly Task[] {
-    console.clear();
-    console.log("Agregar Tarea");
-    const nuevaTarea = crear();
+    const nuevaTarea = crearTareaInteractiva();
     const listaActualizada = agregarTarea(listaTareas, nuevaTarea);
-
-    // Guardar en almacenamiento
-    agregarTareaAlAlmacenamiento(nuevaTarea); 
-
-    console.log(`Total de Tareas: ${listaActualizada.length}`);
+    guardarYConfirmar(nuevaTarea, listaActualizada.length);
     return listaActualizada;
 }

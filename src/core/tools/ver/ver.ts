@@ -17,16 +17,38 @@ import { clearMensaje } from '../../../interfaz/mensajes.ts';
  */
 
 /**
+ * Muestra el menú de opciones de visualización y obtiene la selección del usuario.
+ * Responsabilidad: Presentar opciones y capturar input.
+ * @returns Opción seleccionada (0-4)
+ */
+function mostrarMenuVerYObtenerOpcion(): number {
+    clearMensaje('¿Que tareas deseas ver?\n1- Todas\n2- Pendientes\n3- En curso\n4- Terminadas\n0- Volver');
+    return menuPrompt("Elige una opcion: ", 0, 4);
+}
+
+/**
+ * Filtra tareas según la opción y las muestra en formato listado.
+ * Responsabilidad: Filtrar y delegar presentación.
+ * @param tareas - Lista de tareas
+ * @param opcion - Opción de filtrado seleccionada
+ */
+function filtrarYMostrarListado(tareas: readonly Task[], opcion: number): void {
+    const filtradas = filtrarPorOpcion(tareas, opcion);
+    listado(filtradas, opcion);
+}
+
+/**
  * Orquesta el menú de visualización de tareas (con efectos secundarios de I/O).
+ * Responsabilidad: Coordinar flujo de visualización.
  * @param {Task[]} tareas - La lista completa de tareas a filtrar.
  * @returns {void}
  */
 export function ver(tareas: readonly Task[]): void {
-    clearMensaje('¿Que tareas deseas ver?\n1- Todas\n2- Pendientes\n3- En curso\n4- Terminadas\n0- Volver');
+    const opcion = mostrarMenuVerYObtenerOpcion();
     
-    const opcion: number = menuPrompt("Elige una opcion: ", 0, 4);
-    if (opcion === 0) { return; }
+    if (opcion === 0) { 
+        return; 
+    }
     
-    const filtradas = filtrarPorOpcion(tareas, opcion);
-    listado(filtradas, opcion);
+    filtrarYMostrarListado(tareas, opcion);
 }

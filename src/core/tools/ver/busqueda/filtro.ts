@@ -1,6 +1,11 @@
 import type { Task, TaskStatus } from "../../../type.ts";
 
-
+/**
+ * Función pura que filtra tareas por estado.
+ * @param {readonly Task[]} tareas - La lista de tareas a filtrar
+ * @param {TaskStatus} estado - El estado por el cual filtrar
+ * @returns {readonly Task[]} Las tareas filtradas por estado
+ */
 export function filtrarPorEstado(
     tareas: readonly Task[],
     estado: TaskStatus
@@ -26,6 +31,13 @@ export function filtrarPorOpcion(
         default: return [];
     }
 }
+
+/**
+ * Función pura que filtra tareas por término de búsqueda en el título.
+ * @param {readonly Task[]} listaTareas - La lista de tareas a filtrar
+ * @param {string} terminoBusqueda - El término a buscar en los títulos
+ * @returns {readonly Task[]} Las tareas que coinciden con la búsqueda
+ */
 export function filtrarPorTitulo(
     listaTareas: readonly Task[],
     terminoBusqueda: string
