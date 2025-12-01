@@ -21,7 +21,6 @@ import {
     generarLineasMenu,
     mostrarLineasMenu
 } from "./menuHelpers.ts";
-import { clear } from "console";
 
 /**
  * Tipo para el resultado de una acción del menú.
@@ -32,19 +31,28 @@ export type MenuActionResult = {
 };
 
 /**
- * Ejecuta la acción de ver tareas (no modifica la lista).
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
+ * Muestra el menú de opciones para ver tareas.
+ * @returns Número de opción seleccionada
  */
-export function ejecutarVerTareas(listaTareas: readonly Task[]): MenuActionResult {
-    const tareasVisibles = listaTareas.filter(t => !t.eliminada);
+function mostrarMenuVerTareas(): number {
     const lineasMenu = generarLineasMenu(
         "¿Que tareas deseas ver?",
         ["1- Todas", "2- Pendientes", "3- En curso", "4- Terminadas"]
     );
     mostrarLineasMenu(lineasMenu);
+    return menuPrompt("Elige una opcion: ", 0, 4);
+}
 
-    const opcion: number = menuPrompt("Elige una opcion: ", 0, 4);
+/**
+ * Ejecuta la acción de ver tareas (no modifica la lista).
+ * Responsabilidad: Orquestar el flujo de visualización de tareas.
+ * @param {readonly Task[]} listaTareas - La lista de tareas.
+ * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
+ */
+export function ejecutarVerTareas(listaTareas: readonly Task[]): MenuActionResult {
+    const tareasVisibles = listaTareas.filter(t => !t.eliminada);
+    const opcion = mostrarMenuVerTareas();
+    
     if (opcion === 0) {
         return crearResultadoSinCambios(listaTareas);
     }
@@ -55,23 +63,38 @@ export function ejecutarVerTareas(listaTareas: readonly Task[]): MenuActionResul
 }
 
 /**
- * Ejecuta la acción de buscar tareas (no modifica la lista).
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
+ * Solicita el término de búsqueda al usuario.
+ * @returns Término de búsqueda
  */
-export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionResult {
+function solicitarTerminoBusqueda(): string {
     clearMensaje("Buscar Tarea");
-    const busqueda: string = prompt("Introduce el titulo de una tarea para buscarla: ", taskFlags.titulo);
+    return prompt("Introduce el titulo de una tarea para buscarla: ", taskFlags.titulo);
+}
 
-    const tareasVisibles = listaTareas.filter(t => !t.eliminada);
-    const resultados = filtrarPorTitulo(tareasVisibles, busqueda);
-
+/**
+ * Muestra resultados de búsqueda o mensaje de no encontrados.
+ * @param resultados - Tareas encontradas
+ * @param busqueda - Término buscado
+ */
+function mostrarResultadosBusqueda(resultados: readonly Task[], busqueda: string): void {
     if (resultados.length > 0) {
         listado(resultados, busqueda);
     } else {
         mensaje("\nNo hay tareas relacionadas con la busqueda");
     }
+}
 
+/**
+ * Ejecuta la acción de buscar tareas (no modifica la lista).
+ * Responsabilidad: Orquestar el flujo de búsqueda.
+ * @param {readonly Task[]} listaTareas - La lista de tareas.
+ * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
+ */
+export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionResult {
+    const busqueda = solicitarTerminoBusqueda();
+    const tareasVisibles = listaTareas.filter(t => !t.eliminada);
+    const resultados = filtrarPorTitulo(tareasVisibles, busqueda);
+    mostrarResultadosBusqueda(resultados, busqueda);
     return crearResultadoSinCambios(listaTareas);
 }
 
@@ -89,26 +112,58 @@ export function ejecutarAgregarTarea(listaTareas: readonly Task[]): MenuActionRe
 }
 
 /**
+ * Verifica si hay tareas disponibles para eliminar.
+ * @param tareasVisibles - Tareas no eliminadas
+ * @returns true si no hay tareas
+ */
+function validarTareasDisponibles(tareasVisibles: readonly Task[]): boolean {
+    if (tareasVisibles.length === 0) {
+        mensaje("No hay tareas para eliminar.");
+        prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Muestra la lista de tareas y solicita selección.
+ * @param tareasVisibles - Tareas a mostrar
+ * @returns Índice seleccionado
+ */
+function seleccionarTareaParaEliminar(tareasVisibles: readonly Task[]): number {
+    clearMensaje("Eliminar Tarea");
+    mensaje("Selecciona la tarea que deseas eliminar:");
+    const lineasFormateadas = formatearListaTareas(tareasVisibles);
+    lineasFormateadas.forEach(linea => mensaje(linea));
+    return menuPrompt("\nIntroduce el número de la tarea a eliminar o 0 para volver: ", 0, tareasVisibles.length);
+}
+
+/**
+ * Elimina una tarea y muestra confirmación.
+ * @param tarea - Tarea a eliminar
+ * @returns Lista actualizada
+ */
+function eliminarYConfirmar(tarea: Task): readonly Task[] {
+    const listaActualizada = eliminarTareaDelAlmacenamiento(tarea.id);
+    mensaje(`\n¡Tarea "${tarea.titulo}" eliminada!`);
+    prompt("Presiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+    return listaActualizada;
+}
+
+/**
  * Ejecuta la acción de eliminar una tarea (modifica la lista).
+ * Responsabilidad: Orquestar el flujo de eliminación.
  * @param {readonly Task[]} listaTareas - La lista de tareas.
  * @returns {MenuActionResult} Resultado con la lista actualizada.
  */
 export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionResult {
-    clearMensaje("Eliminar Tarea");
-
     const tareasVisibles = listaTareas.filter(t => !t.eliminada);
 
-    if (tareasVisibles.length === 0) {
-        mensaje("No hay tareas para eliminar.");
-        prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+    if (validarTareasDisponibles(tareasVisibles)) {
         return crearResultadoSinCambios(listaTareas);
     }
 
-    mensaje("Selecciona la tarea que deseas eliminar:");
-    const lineasFormateadas = formatearListaTareas(tareasVisibles);
-    lineasFormateadas.forEach(linea => console.log(linea));
-
-    const indice = menuPrompt("\nIntroduce el número de la tarea a eliminar o 0 para volver: ", 0, tareasVisibles.length);
+    const indice = seleccionarTareaParaEliminar(tareasVisibles);
 
     if (indice === 0) {
         return crearResultadoSinCambios(listaTareas);
@@ -117,10 +172,7 @@ export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionR
     const tareaAEliminar = obtenerTareaPorIndice(tareasVisibles, indice);
 
     if (tareaAEliminar) {
-        // Actualizar también en el almacenamiento persistente
-        const listaActualizada = eliminarTareaDelAlmacenamiento(tareaAEliminar.id);
-        mensaje(`\n¡Tarea "${tareaAEliminar.titulo}" eliminada!`);
-        prompt("Presiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+        const listaActualizada = eliminarYConfirmar(tareaAEliminar);
         return crearResultadoConCambios(listaActualizada);
     }
 
@@ -164,30 +216,64 @@ export function ejecutarEstadisticasNerds(listaTareas: readonly Task[]): MenuAct
 }
 
 /**
+ * Valida que existan tareas disponibles para modificar.
+ * @param tareasVisibles - Tareas no eliminadas
+ * @returns true si no hay tareas (debe abortar), false si hay tareas
+ */
+function validarTareasParaModificar(tareasVisibles: readonly Task[]): boolean {
+    if (tareasVisibles.length === 0) {
+        clearMensaje("Modificar Tarea");
+        mensaje("No hay tareas para modificar.");
+        prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Muestra la lista de tareas y solicita al usuario seleccionar una para modificar.
+ * @param tareasVisibles - Tareas a mostrar
+ * @returns Índice seleccionado
+ */
+function seleccionarTareaParaModificar(tareasVisibles: readonly Task[]): number {
+    clearMensaje("Modificar Tarea");
+    const lineasFormateadas = formatearListaTareas(tareasVisibles);
+    lineasFormateadas.forEach(linea => mensaje(linea));
+    return menuPrompt("\nIntroduce el número de la tarea a modificar o 0 para volver: ", 0, tareasVisibles.length);
+}
+
+/**
+ * Modifica una tarea y muestra confirmación.
+ * @param listaTareas - Lista completa de tareas
+ * @param indice - Índice de la tarea a modificar (relativo a tareas visibles)
+ * @returns Lista actualizada
+ */
+function modificarYConfirmar(listaTareas: readonly Task[], indice: number): readonly Task[] {
+    const listaActualizada = modificarTareaEnLista(listaTareas, indice);
+    prompt("Presiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+    return listaActualizada;
+}
+
+/**
  * Ejecuta la acción de modificar una tarea (modifica la lista).
+ * Responsabilidad: Orquestar el flujo de modificación.
  * @param {readonly Task[]} listaTareas - La lista de tareas.
  * @returns {MenuActionResult} Resultado con la lista actualizada.
  */
 export function ejecutarModificarTarea(listaTareas: readonly Task[]): MenuActionResult {
-    console.clear();
-    console.log("Modificar Tarea");
     const tareasVisibles = listaTareas.filter(t => !t.eliminada);
 
-    if (tareasVisibles.length === 0) {
-        console.log("No hay tareas para modificar.");
-        prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+    if (validarTareasParaModificar(tareasVisibles)) {
         return crearResultadoSinCambios(listaTareas);
     }
 
-    const lineasFormateadas = formatearListaTareas(tareasVisibles);
-    lineasFormateadas.forEach(linea => console.log(linea));
+    const indice = seleccionarTareaParaModificar(tareasVisibles);
 
-    const indice = menuPrompt("\nIntroduce el número de la tarea a modificar o 0 para volver: ", 0, tareasVisibles.length);
     if (indice === 0) {
         return crearResultadoSinCambios(listaTareas);
     }
-    const listaActualizada = modificarTareaEnLista(listaTareas, indice);
-    prompt("Presiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+
+    const listaActualizada = modificarYConfirmar(listaTareas, indice);
     return crearResultadoConCambios(listaActualizada);
 }
 
@@ -221,7 +307,7 @@ export function obtenerAccionPorOpcion(
         case 0: return ejecutarSalir;
         default:
             return (lista) => {
-                console.log("Opción no válida");
+                mensaje("Opción no válida");
                 return crearResultadoSinCambios(lista);
             };
     }

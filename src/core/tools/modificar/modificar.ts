@@ -9,7 +9,7 @@ import { datePrompt } from '../modulos/fechas.ts';
 import { actualizarTareaEnAlmacenamiento, cargarTareas } from '../modulos/guardado.ts';
 import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
 import { taskFlags } from '../../task.ts';
-
+import { mensaje, clearMensaje } from '../../../interfaz/mensajes.ts';
 /**
  * Aplica cambios a una tarea (pura).
  */
@@ -22,16 +22,16 @@ export function aplicarCambiosA(tarea: Task, cambios: Partial<Task>): Task {
  * Devuelve la tarea actualizada si se guardaron cambios; null si se canceló.
  */
 export function editarTareaInteractiva(tarea: Task): Task | null {
-    console.log("Editar tarea:");
+    mensaje("Editar tarea:");
     let editable: Task = { ...tarea } as Task;
     let continuar = true;
     while (continuar) {
-        console.log('\nCampos editables:');
-        console.log('1 - Descripción');
-        console.log('2 - Estado');
-        console.log('3 - Dificultad');
-        console.log('4 - Vencimiento');
-        console.log('0 - Finalizar edición');
+        mensaje('\nCampos editables:');
+        mensaje('1 - Descripción');
+        mensaje('2 - Estado');
+        mensaje('3 - Dificultad');
+        mensaje('4 - Vencimiento');
+        mensaje('0 - Finalizar edición');
         const campo = prompt('Selecciona el número del campo a editar: ', { maxLength: 1, puedeVacio: false });
         switch (campo) {
             case '1': {
@@ -40,13 +40,13 @@ export function editarTareaInteractiva(tarea: Task): Task | null {
                 break;
             }
             case '2': {
-                console.log('\nEstado actual: ' + editable.estado);
+                mensaje('\nEstado actual: ' + editable.estado);
                 const nuevoEstado = set<TaskStatus>(taskFlags.estado as Map<TaskStatus, number>);
                 editable = { ...editable, estado: nuevoEstado } as Task;
                 break;
             }
             case '3': {
-                console.log('\nDificultad actual: ' + editable.dificultad);
+                mensaje('\nDificultad actual: ' + editable.dificultad);
                 const nuevaDificultad = set<TaskDifficulty>(taskFlags.dificultad as Map<TaskDifficulty, number>);
                 editable = { ...editable, dificultad: nuevaDificultad } as Task;
                 break;
@@ -62,7 +62,7 @@ export function editarTareaInteractiva(tarea: Task): Task | null {
                 break;
             }
             default: {
-                console.log('Opción inválida. Intenta nuevamente.');
+                mensaje('Opción inválida. Intenta nuevamente.');
             }
         }
         if (continuar) {
@@ -73,14 +73,14 @@ export function editarTareaInteractiva(tarea: Task): Task | null {
 
     const confirmar = prompt('Guardar cambios? (S/n): ', { maxLength: 1, puedeVacio: true });
     if (confirmar.toLowerCase() === 'n') {
-        console.log('\nCambios descartados.');
+        mensaje('\nCambios descartados.');
         return null;
     }
 
     const tareaActualizada = aplicarCambiosA(editable, { uEdicion: new Date() as unknown as Date });
     // Persistir cambios
     actualizarTareaEnAlmacenamiento(tareaActualizada);
-    console.log('\n¡Tarea actualizada!');
+    mensaje('\n¡Tarea actualizada!');
     return tareaActualizada;
 }
 

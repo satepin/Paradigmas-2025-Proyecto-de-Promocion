@@ -7,9 +7,11 @@ function mensaje(texto: string): void {
 function pausaMensaje(): void {
     prompt("Presiona Enter para continuar...", { maxLength: Infinity, puedeVacio: true });
 }
-function clearMensaje(texto: string): void {
+function clearMensaje(texto: string|void): void {
     console.clear();
-    mensaje(texto);
+    if(texto !== void 0) {
+        mensaje(texto);
+    }
 }
 
 export { mensaje, pausaMensaje, clearMensaje };

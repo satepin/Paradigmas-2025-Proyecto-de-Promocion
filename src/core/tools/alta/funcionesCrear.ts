@@ -1,9 +1,42 @@
 import { taskFlags } from "../../task.ts";
 import { datePrompt } from "../modulos/fechas.ts";
 import { prompt } from "../modulos/promptSync.ts";
+import { mensaje,clearMensaje} from "../../../interfaz/mensajes.ts";
+/**
+ * Función pura que genera las líneas del menú de opciones.
+ * @param label - Etiqueta descriptiva
+ * @param map - Map con las opciones disponibles
+ * @returns Array de líneas formateadas
+ */
+function generarLineasOpcionesMap<K extends string>(
+    label: string,
+    map: ReadonlyMap<K, number>
+): readonly string[] {
+    const entries = Array.from(map.entries());
+    return [
+        `\n${label}:`,
+        ...entries.map(([key, value]) => `   ${value}. ${key}`)
+    ];
+}
 
 /**
- * Función auxiliar para seleccionar una opción de un Map.
+ * Función pura que busca la opción seleccionada en el Map.
+ * @param map - Map con las opciones disponibles
+ * @param input - Entrada del usuario
+ * @param defaultValue - Valor por defecto
+ * @returns La clave seleccionada o el valor por defecto
+ */
+function obtenerOpcionDeMap<K extends string>(
+    map: ReadonlyMap<K, number>,
+    input: string,
+    defaultValue: K
+): K {
+    const entries = Array.from(map.entries());
+    return entries.find(([_, value]) => value.toString() === input)?.[0] || defaultValue;
+}
+
+/**
+ * Función que orquesta la selección de una opción de un Map.
  * @param label - Etiqueta descriptiva para mostrar al usuario
  * @param map - Map con las opciones disponibles
  * @param defaultValue - Valor por defecto si no se selecciona ninguno
@@ -14,11 +47,10 @@ function seleccionarOpcionDeMap<K extends string>(
     map: ReadonlyMap<K, number>,
     defaultValue: K
 ): K {
-    const entries = Array.from(map.entries());
-    console.log(`\n${label}:`);
-    entries.forEach(([key, value]) => console.log(`   ${value}. ${key}`));
+    const lineas = generarLineasOpcionesMap(label, map);
+    lineas.forEach(linea => mensaje(linea));
     const input = prompt("   Opción: ");
-    return entries.find(([_, value]) => value.toString() === input)?.[0] || defaultValue;
+    return obtenerOpcionDeMap(map, input, defaultValue);
 }
 
 function setTitulo(): string {
@@ -46,12 +78,11 @@ function setCategoria(): string {
 }
 
 function nuevaTareaMensajeInicio(): void {
-    console.clear();
-    console.log("\nCreación de nueva tarea:");
+    clearMensaje("\nCreación de nueva tarea:");
 }
 
 function nuevaTareaMensajeGuardado(): void {
-    console.log("\n¡Datos Guardados!");
+    mensaje("\n¡Datos Guardados!");
     prompt("presiona cualquier tecla para continuar...");
 }
 

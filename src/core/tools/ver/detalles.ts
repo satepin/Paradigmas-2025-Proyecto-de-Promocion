@@ -46,15 +46,32 @@ export function formatearTarea(tarea: Task): string {
 }
 
 /**
- * Muestra los detalles de una tarea y permite editarla (versión completa con edición).
- * @param {Task} tarea - La tarea a mostrar/editar.
- * @returns {void}
+ * Muestra los detalles formateados de la tarea y las opciones disponibles.
+ * Responsabilidad: Presentar detalles y menú de opciones.
+ * @param detalles - Detalles formateados de la tarea
  */
-export function detalles(tarea: Task): void {
-    const detalles = formatearTarea(tarea);
-clearMensaje(`${detalles}\nPara editar, pulsa E\nPara ver tareas relacionadas, pulsa R\nPara salir, pulsa 0.`);
-    const opcion: string = prompt("Elige una opcion: ", { maxLength: 1, puedeVacio: false });
-    switch (opcion.toLowerCase()) {
+function mostrarDetallesYOpciones(detalles: string): void {
+    clearMensaje(`${detalles}\nPara editar, pulsa E\nPara ver tareas relacionadas, pulsa R\nPara salir, pulsa 0.`);
+}
+
+/**
+ * Solicita al usuario una opción del menú de detalles.
+ * Responsabilidad: Capturar entrada del usuario.
+ * @returns Opción seleccionada (normalizada a minúsculas)
+ */
+function solicitarOpcionDetalles(): string {
+    const opcion = prompt("Elige una opcion: ", { maxLength: 1, puedeVacio: false });
+    return opcion.toLowerCase();
+}
+
+/**
+ * Ejecuta la acción correspondiente a la opción seleccionada.
+ * Responsabilidad: Delegar acciones según opción.
+ * @param opcion - Opción seleccionada
+ * @param tarea - Tarea sobre la cual ejecutar la acción
+ */
+function ejecutarOpcionDetalles(opcion: string, tarea: Task): void {
+    switch (opcion) {
         case 'e':
             // editarTarea(tarea);
             break;
@@ -67,4 +84,18 @@ clearMensaje(`${detalles}\nPara editar, pulsa E\nPara ver tareas relacionadas, p
         default:
             mensaje("Opción inválida.");
     }
+}
+
+/**
+ * Muestra los detalles de una tarea y permite editarla (versión completa con edición).
+ * Responsabilidad: Orquestar flujo de visualización de detalles.
+ * @param {Task} tarea - La tarea a mostrar/editar.
+ * @returns {void}
+ */
+export function detalles(tarea: Task): void {
+    const detallesFormateados = formatearTarea(tarea);
+    mostrarDetallesYOpciones(detallesFormateados);
+    
+    const opcion = solicitarOpcionDetalles();
+    ejecutarOpcionDetalles(opcion, tarea);
 }

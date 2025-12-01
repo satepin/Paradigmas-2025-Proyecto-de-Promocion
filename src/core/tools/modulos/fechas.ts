@@ -1,5 +1,5 @@
 import promptSync from 'prompt-sync';
-import type { ValidationFlag } from '../../type.ts';
+import { mensaje } from '../../../interfaz/mensajes.ts';
 
 const ask = promptSync({ sigint: true });
 /**
@@ -63,7 +63,7 @@ export function datePrompt(question: string = 'Fecha (yyyy/mm/dd): ', allowEmpty
             return resultado.fecha;
         }
         
-        console.log(resultado.error);
+        mensaje(resultado.error);
         return pedirFecha(); // Recursión en lugar de while
     };
     

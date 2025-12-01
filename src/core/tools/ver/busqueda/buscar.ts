@@ -18,20 +18,38 @@ import { filtrarPorTitulo } from './filtro.ts';
  */
 
 /**
- * Orquesta la búsqueda de tareas (con efectos secundarios de I/O).
- * @param {Task[]} listaTareas - La lista de tareas en la que buscar.
- * @returns {void}
+ * Solicita al usuario un término de búsqueda.
+ * Responsabilidad: Capturar entrada del usuario.
+ * @returns Término de búsqueda introducido
  */
-export function buscar(listaTareas: readonly Task[]): void {
+function solicitarTerminoBusqueda(): string {
     clearMensaje("Buscar Tarea");
-    const busqueda: string = prompt("Introduce el titulo de una tarea para buscarla: ", taskFlags.titulo);
-    
-    const resultados = filtrarPorTitulo(listaTareas, busqueda);
-    
+    return prompt("Introduce el titulo de una tarea para buscarla: ", taskFlags.titulo);
+}
+
+/**
+ * Muestra los resultados de la búsqueda o un mensaje si no hay coincidencias.
+ * Responsabilidad: Presentar resultados.
+ * @param resultados - Tareas encontradas
+ * @param busqueda - Término de búsqueda usado
+ */
+function mostrarResultadosBusqueda(resultados: readonly Task[], busqueda: string): void {
     if (resultados.length > 0) {
         listado(resultados, busqueda);
     } else {
         mensaje("\nNo hay tareas relacionadas con la busqueda");
     }
+}
+
+/**
+ * Orquesta la búsqueda de tareas (con efectos secundarios de I/O).
+ * Responsabilidad: Coordinar flujo de búsqueda.
+ * @param {Task[]} listaTareas - La lista de tareas en la que buscar.
+ * @returns {void}
+ */
+export function buscar(listaTareas: readonly Task[]): void {
+    const busqueda = solicitarTerminoBusqueda();
+    const resultados = filtrarPorTitulo(listaTareas, busqueda);
+    mostrarResultadosBusqueda(resultados, busqueda);
     //presione cualquier tecla para continuar...
 }

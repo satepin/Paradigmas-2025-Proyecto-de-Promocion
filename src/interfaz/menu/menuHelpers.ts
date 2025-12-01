@@ -5,6 +5,7 @@
 
 import type { Task } from "../../core/type.ts";
 import type { MenuActionResult } from "./menuActions.ts";
+import { mensaje, clearMensaje } from "../mensajes.ts";
 
 /**
  * Función pura que crea un resultado de menú sin cambios.
@@ -59,6 +60,6 @@ export function generarLineasMenu(
  * @returns {void}
  */
 export function mostrarLineasMenu(lineas: readonly string[]): void {
-    console.clear();
-    lineas.forEach(linea => console.log(linea));
+    clearMensaje();
+    lineas.forEach(linea => mensaje(linea));
 }

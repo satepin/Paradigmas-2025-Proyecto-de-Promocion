@@ -6,7 +6,7 @@
 import { menuPrompt, prompt } from "../modulos/promptSync.ts";
 import type { Task } from '../../type.ts';
 import { formatearTarea } from './detalles.ts';
-import { mensaje, pausaMensaje } from "../../../interfaz/mensajes.ts";
+import { clearMensaje, mensaje, pausaMensaje } from "../../../interfaz/mensajes.ts";
 
 /**
  * Función pura que formatea una lista de tareas como strings para mostrar.
@@ -32,41 +32,93 @@ export function obtenerTareaPorIndice(
 }
 
 /**
+ * Función pura que ordena tareas alfabéticamente por título.
+ * @param tareas - Tareas a ordenar
+ * @returns Tareas ordenadas
+ */
+function ordenarTareasPorTitulo(tareas: readonly Task[]): readonly Task[] {
+    return [...tareas].sort((a, b) => a.titulo.localeCompare(b.titulo));
+}
+
+/**
+ * Muestra la etiqueta de resultados si existe.
+ * Responsabilidad: Presentar encabezado de resultados.
+ * @param etiqueta - Etiqueta opcional
+ */
+function mostrarEtiquetaResultados(etiqueta: string | number): void {
+    if (etiqueta) {
+        mensaje(`\nResultados para: ${etiqueta}`);
+    }
+}
+
+/**
+ * Muestra la lista de tareas formateadas en consola.
+ * Responsabilidad: Presentar lista de tareas.
+ * @param tareas - Tareas a mostrar (ya ordenadas)
+ */
+function mostrarListaTareas(tareas: readonly Task[]): void {
+    const lineasFormateadas = formatearListaTareas(tareas);
+    lineasFormateadas.forEach(linea => mensaje(linea));
+    mensaje("\n¿Deseas ver los detalles de alguna?");
+}
+
+/**
+ * Solicita al usuario elegir una tarea y devuelve el índice.
+ * Responsabilidad: Capturar selección del usuario.
+ * @param cantidadTareas - Cantidad de tareas disponibles
+ * @returns Índice seleccionado (0 para cancelar)
+ */
+function solicitarSeleccionTarea(cantidadTareas: number): number {
+    return menuPrompt("Introduce el número de la tarea a ver o 0 para volver: ", 0, cantidadTareas);
+}
+
+/**
+ * Muestra los detalles de una tarea seleccionada.
+ * Responsabilidad: Presentar detalles de tarea.
+ * @param tarea - Tarea a mostrar
+ */
+function mostrarDetallesTarea(tarea: Task): void {
+    clearMensaje();
+    const detalles = formatearTarea(tarea);
+    mensaje(detalles);
+    pausaMensaje();
+}
+
+/**
+ * Permite al usuario elegir una tarea de la lista para ver sus detalles.
+ * Responsabilidad: Orquestar flujo de selección y visualización.
+ * @param {Task[]} tareas - La lista de tareas de la que elegir.
+ * @private
+ */
+function elegir(tareas: readonly Task[]): void {
+    const index = solicitarSeleccionTarea(tareas.length);
+    
+    if (index === 0) {
+        return;
+    }
+    
+    const tareaSeleccionada = obtenerTareaPorIndice(tareas, index);
+    if (tareaSeleccionada) {
+        mostrarDetallesTarea(tareaSeleccionada);
+    }
+}
+
+/**
  * Muestra una lista de tareas en la consola y permite seleccionar una.
+ * Responsabilidad: Orquestar flujo de listado.
  * @param {Task[]} tareas - La lista de tareas a mostrar.
  * @param {string | number} [etiqueta=''] - Una etiqueta opcional para mostrar sobre la lista.
  * @returns {void}
  */
 export function listado(tareas: readonly Task[], etiqueta: string | number = ''): void {
-    if (etiqueta) console.log(`\nResultados para: ${etiqueta}`);
+    mostrarEtiquetaResultados(etiqueta);
+    
     if (!Array.isArray(tareas) || tareas.length === 0) {
-        console.log('No hay tareas para mostrar.');
+        mensaje('No hay tareas para mostrar.');
         return;
     }
 
-    const tareasOrdenadas = [...tareas].sort((a, b) => a.titulo.localeCompare(b.titulo));
-    
-    const lineasFormateadas = formatearListaTareas(tareasOrdenadas);
-    lineasFormateadas.forEach(linea => console.log(linea));
-    
-    console.log("\n¿Deseas ver los detalles de alguna?");
+    const tareasOrdenadas = ordenarTareasPorTitulo(tareas);
+    mostrarListaTareas(tareasOrdenadas);
     elegir(tareasOrdenadas);
-}
-
-/**
- * Permite al usuario elegir una tarea de la lista para ver sus detalles.
- * @param {Task[]} tareas - La lista de tareas de la que elegir.
- * @private
- */
-function elegir(tareas: readonly Task[]): void {
-    const index: number = menuPrompt("Introduce el número de la tarea a ver o 0 para volver: ", 0, tareas.length);
-    if (index === 0) return;
-    
-    const tareaSeleccionada = obtenerTareaPorIndice(tareas, index);
-    if (tareaSeleccionada) {
-        console.clear();
-        const detalles = formatearTarea(tareaSeleccionada);
-        mensaje(detalles);
-        pausaMensaje();
-    }
 }
