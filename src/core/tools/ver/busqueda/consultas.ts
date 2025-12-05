@@ -1,8 +1,6 @@
-import { menuPrompt } from '../../modulos/promptSync.ts';
 import { listado } from '../listado.ts';
-import type { Task, TaskStatus } from '../../../type.ts';
-import { datePrompt } from '../../modulos/fechas.ts';
-import { mensaje } from "../../../../interfaz/mensajes.ts";
+import type { Task } from '../../../type.ts';
+import { mensaje, pausaMensaje } from "../../../../interfaz/mensajes.ts";
 /**
  * Función pura que filtra tareas prioritarias.
  * Se consideran prioritarias las tareas pendientes y en curso que expiran en 3 días o menos.
@@ -104,6 +102,7 @@ export function verVencidas(tareas: readonly Task[]): void {
 function mostrarFiltradas(tareasFiltradas: readonly Task[], condicion: string): void {
     if (tareasFiltradas.length === 0) {
         mensaje(`No hay  ${condicion.toLowerCase()}.`);
+        pausaMensaje();
     }
     else {
         mensaje(`\n===${condicion} (${tareasFiltradas.length}) ===\n`);

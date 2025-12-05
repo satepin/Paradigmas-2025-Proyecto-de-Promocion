@@ -22,9 +22,9 @@
 
 import { prompt } from '../modulos/promptSync.ts';
 import type { Task } from '../../type.ts';
-import { editarTareaInteractiva } from '../modificar/modificar.ts';
 import { mensaje,clearMensaje } from '../../../interfaz/mensajes.ts';
 import { verRelacionadas } from './busqueda/consultas.ts';
+import { editarTareaInteractiva } from '../modificar/modificar.ts';
 /**
  * Función pura que formatea una tarea como string para mostrar.
  * @param {Task} tarea - La tarea a formatear.
@@ -69,20 +69,23 @@ function solicitarOpcionDetalles(): string {
  * Responsabilidad: Delegar acciones según opción.
  * @param opcion - Opción seleccionada
  * @param tarea - Tarea sobre la cual ejecutar la acción
+ * @param listaTareas - Lista completa de tareas
+ * @returns true si se realizaron cambios que requieren recargar la lista
  */
-function ejecutarOpcionDetalles(opcion: string, tarea: Task): void {
+function ejecutarOpcionDetalles(opcion: string, tarea: Task, listaTareas: readonly Task[]): boolean {
     switch (opcion) {
         case 'e':
-            // editarTarea(tarea);
-            break;
+            const tareaEditada = editarTareaInteractiva(tarea);
+            return tareaEditada !== null; // Retorna true si hubo cambios
         case 'r':
-            verRelacionadas(tarea, [tarea]);
-            break;
+            verRelacionadas(tarea, listaTareas);
+            return false;
         case '0':
             mensaje("Saliendo...");
-            break;
+            return false;
         default:
             mensaje("Opción inválida.");
+            return false;
     }
 }
 
@@ -90,12 +93,13 @@ function ejecutarOpcionDetalles(opcion: string, tarea: Task): void {
  * Muestra los detalles de una tarea y permite editarla (versión completa con edición).
  * Responsabilidad: Orquestar flujo de visualización de detalles.
  * @param {Task} tarea - La tarea a mostrar/editar.
- * @returns {void}
+ * @param {readonly Task[]} listaTareas - La lista completa de tareas.
+ * @returns {boolean} true si se realizaron cambios que requieren recargar la lista
  */
-export function detalles(tarea: Task): void {
+export function detalles(tarea: Task, listaTareas: readonly Task[]): boolean {
     const detallesFormateados = formatearTarea(tarea);
     mostrarDetallesYOpciones(detallesFormateados);
     
     const opcion = solicitarOpcionDetalles();
-    ejecutarOpcionDetalles(opcion, tarea);
+    return ejecutarOpcionDetalles(opcion, tarea, listaTareas);
 }

@@ -9,7 +9,7 @@ import { datePrompt } from '../modulos/fechas.ts';
 import { actualizarTareaEnAlmacenamiento, cargarTareas } from '../modulos/guardado.ts';
 import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
 import { taskFlags } from '../../task.ts';
-import { mensaje, clearMensaje } from '../../../interfaz/mensajes.ts';
+import { mensaje } from '../../../interfaz/mensajes.ts';
 /**
  * Aplica cambios a una tarea (pura).
  */

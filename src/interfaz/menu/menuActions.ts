@@ -9,7 +9,6 @@ import { filtrarPorOpcion, filtrarPorTitulo } from "../../core/tools/ver/busqued
 import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../../core/tools/ver/listado.ts";
 import { agregar} from "../../core/tools/alta/agregar.ts";
 import { eliminarTareaDelAlmacenamiento } from "../../core/tools/modulos/guardado.ts";
-import { eliminarTareaLogicamente } from "../../core/tools/eliminar/eliminar.ts";
 import { taskFlags } from "../../core/task.ts";
 import type { Task } from '../../core/type.ts';
 import { modificarTareaEnLista } from "../../core/tools/modificar/modificar.ts";

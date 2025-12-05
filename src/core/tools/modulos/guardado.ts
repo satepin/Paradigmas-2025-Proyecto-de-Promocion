@@ -8,6 +8,7 @@ import { readFileSync, writeFileSync, existsSync, renameSync } from 'fs';
 import { join } from 'path';
 import type { Task, TaskDifficulty, TaskStatus} from '../../type.ts';
 import { mensaje } from '../../../interfaz/mensajes.ts';
+import { eliminarTareaLogicamente } from '../eliminar/eliminar.ts';
 /**
  * Ruta del archivo de almacenamiento JSON.
  * @type {string}
@@ -246,14 +247,9 @@ export function eliminarTareaDelAlmacenamiento(tareaId: string): readonly Task[]
         return tareasActuales;
     }
     
-    const tareaActualizada: Task = {
-        ...tareaAEliminar,
-        eliminada: true,
-        uEdicion: new Date()
-    };
-    
+    const fechaEdicion = new Date();
     // Usamos la función pura para producir la lista actualizada, luego la guardamos
-    const tareasActualizadas: readonly Task[] = eliminarTareaPure(tareasActuales as Task[], tareaId, tareaActualizada.uEdicion as Date);
+    const tareasActualizadas: readonly Task[] = eliminarTareaLogicamente(tareasActuales, tareaId, fechaEdicion);
     if (guardarTareas(tareasActualizadas)) {
         mensaje('✓ Tarea eliminada en almacenamiento');
         return tareasActualizadas;
@@ -328,17 +324,6 @@ export function agregarTareaPure(tareas: Task[], nuevaTarea: Task): Task[] {
  */
 export function actualizarTareaPure(tareas: Task[], tareaActualizada: Task): Task[] {
     return tareas.map(t => (t.id === tareaActualizada.id ? tareaActualizada : t));
-}
-
-/**
- * Función pura que marca una tarea como eliminada.
- * @param {Task[]} tareas - Array de tareas
- * @param {string} tareaId - ID de la tarea a eliminar
- * @param {Date} uEdicion - Fecha de edición
- * @returns {Task[]} Nuevo array con la tarea marcada como eliminada
- */
-export function eliminarTareaPure(tareas: Task[], tareaId: string, uEdicion: Date): Task[] {
-    return tareas.map(t => (t.id === tareaId ? { ...t, eliminada: true, uEdicion } : t));
 }
 
 /**

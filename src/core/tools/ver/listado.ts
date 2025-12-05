@@ -5,8 +5,9 @@
 
 import { menuPrompt, prompt } from "../modulos/promptSync.ts";
 import type { Task } from '../../type.ts';
-import { formatearTarea } from './detalles.ts';
-import { clearMensaje, mensaje, pausaMensaje } from "../../../interfaz/mensajes.ts";
+import { detalles } from './detalles.ts';
+import { clearMensaje, mensaje } from "../../../interfaz/mensajes.ts";
+import { cargarTareas } from '../modulos/guardado.ts';
 
 /**
  * Función pura que formatea una lista de tareas como strings para mostrar.
@@ -76,31 +77,33 @@ function solicitarSeleccionTarea(cantidadTareas: number): number {
  * Muestra los detalles de una tarea seleccionada.
  * Responsabilidad: Presentar detalles de tarea.
  * @param tarea - Tarea a mostrar
+ * @param listaTareas - Lista completa de tareas
+ * @returns true si se realizaron cambios que requieren recargar
  */
-function mostrarDetallesTarea(tarea: Task): void {
+function mostrarDetallesTarea(tarea: Task, listaTareas: readonly Task[]): boolean {
     clearMensaje();
-    const detalles = formatearTarea(tarea);
-    mensaje(detalles);
-    pausaMensaje();
+    return detalles(tarea, listaTareas);
 }
 
 /**
  * Permite al usuario elegir una tarea de la lista para ver sus detalles.
  * Responsabilidad: Orquestar flujo de selección y visualización.
  * @param {Task[]} tareas - La lista de tareas de la que elegir.
+ * @returns true si se realizaron cambios que requieren recargar
  * @private
  */
-function elegir(tareas: readonly Task[]): void {
+function elegir(tareas: readonly Task[]): boolean {
     const index = solicitarSeleccionTarea(tareas.length);
     
     if (index === 0) {
-        return;
+        return false;
     }
     
     const tareaSeleccionada = obtenerTareaPorIndice(tareas, index);
     if (tareaSeleccionada) {
-        mostrarDetallesTarea(tareaSeleccionada);
+        return mostrarDetallesTarea(tareaSeleccionada, tareas);
     }
+    return false;
 }
 
 /**
@@ -120,5 +123,11 @@ export function listado(tareas: readonly Task[], etiqueta: string | number = '')
 
     const tareasOrdenadas = ordenarTareasPorTitulo(tareas);
     mostrarListaTareas(tareasOrdenadas);
-    elegir(tareasOrdenadas);
+    const huboCambios = elegir(tareasOrdenadas);
+    
+    // Si hubo cambios (edición), recargar y mostrar nuevamente
+    if (huboCambios) {
+        const tareasActualizadas = cargarTareas();
+        listado(tareasActualizadas, etiqueta);
+    }
 }

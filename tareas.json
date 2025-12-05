@@ -4,9 +4,9 @@
       "id": "9b10c486-c1fe-4bc2-8e9c-53b82567316c",
       "titulo": "tarea inicial",
       "descripcion": "e",
-      "estado": "pendiente",
+      "estado": "en curso",
       "creacion": "2025-11-30T15:51:32.972Z",
-      "uEdicion": "2025-11-30T22:48:15.636Z",
+      "uEdicion": "2025-12-05T04:08:34.435Z",
       "vencimiento": null,
       "dificultad": "medio ★★☆",
       "eliminada": false,
@@ -18,7 +18,7 @@
       "descripcion": "sigue a la primera",
       "estado": "pendiente",
       "creacion": "2025-11-30T15:52:13.557Z",
-      "uEdicion": "2025-11-30T15:52:13.557Z",
+      "uEdicion": "2025-12-05T05:06:15.030Z",
       "vencimiento": "2027-08-09T03:00:00.000Z",
       "dificultad": "facil ★☆☆",
       "eliminada": false,
@@ -78,12 +78,12 @@
       "descripcion": "la tarea Y",
       "estado": "en curso",
       "creacion": "2025-11-30T21:47:43.066Z",
-      "uEdicion": "2025-11-30T21:47:43.066Z",
+      "uEdicion": "2025-12-05T04:31:28.097Z",
       "vencimiento": "2027-12-06T03:00:00.000Z",
       "dificultad": "dificil ★★★",
-      "eliminada": false,
+      "eliminada": true,
       "categoria": "trabajo"
     }
   ],
-  "ultimaActualizacion": "2025-11-30T22:48:15.637Z"
+  "ultimaActualizacion": "2025-12-05T05:06:15.031Z"
 }

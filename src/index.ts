@@ -4,7 +4,7 @@
  */
 
 import { mainMenu } from './interfaz/exports.ts';
-import { cargarTareas, inicializarAlmacenamiento, obtenerInfoAlmacenamiento } from './core/tools/modulos/guardado.ts';
+import { cargarTareas, inicializarAlmacenamiento } from './core/tools/modulos/guardado.ts';
 import type { Task } from './core/type.ts';
 import { mensaje, clearMensaje } from './interfaz/mensajes.ts';
 /**

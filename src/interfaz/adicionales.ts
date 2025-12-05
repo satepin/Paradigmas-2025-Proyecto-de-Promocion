@@ -1,4 +1,4 @@
-import { verPrioridad, verRelacionadas, verVencidas } from "../core/tools/ver/busqueda/consultas.ts";
+import { verPrioridad, verVencidas } from "../core/tools/ver/busqueda/consultas.ts";
 import { crearResultadoSinCambios } from "./exports.ts";
 import type { Task } from '../core/type.ts';
 import { menuPrompt } from "../core/tools/modulos/promptSync.ts";

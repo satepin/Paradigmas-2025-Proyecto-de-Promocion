@@ -19,7 +19,6 @@ crear.ts se encarga de la creacion y validacion de una unica unidad de tarea, qu
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import { datePrompt } from '../modulos/fechas.ts';
 import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
 import { nuevaTareaMensajeGuardado, nuevaTareaMensajeInicio, setCategoria, setDescripcion, setDificultad, setEstado, setTitulo, setVencimiento } from './funcionesCrear.ts';
 import { obtenerFechaActual } from '../modulos/fechas.ts';
