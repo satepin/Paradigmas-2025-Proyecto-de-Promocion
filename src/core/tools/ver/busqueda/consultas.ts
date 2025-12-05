@@ -1,111 +1,134 @@
 import { listado } from '../listado.ts';
 import type { Task } from '../../../type.ts';
 import { mensaje, pausaMensaje } from "../../../../interfaz/mensajes.ts";
+// ===========================
 /**
- * Función pura que filtra tareas prioritarias.
- * Se consideran prioritarias las tareas pendientes y en curso que expiran en 3 días o menos.
- * @param tareas - Lista de tareas
- * @param fechaReferencia - Fecha de referencia (default: ahora)
- * @returns Tareas prioritarias filtradas
+ * Suma días a una fecha sin mutar
  */
-export function filtrarTareasPrioritarias(
-    tareas: readonly Task[],
-    fechaReferencia: Date = new Date()
-): readonly Task[] {
-    const tresDiasDespues = new Date(fechaReferencia);
-    tresDiasDespues.setDate(fechaReferencia.getDate() + 3);
-    return tareas.filter(tarea => 
-        (tarea.estado === 'pendiente' || tarea.estado === 'en curso') &&
-        tarea.vencimiento !== null &&
-        tarea.vencimiento <= tresDiasDespues
-    );
-}
+const sumarDias = (dias: number, fecha: Date): Date => {
+    const resultado = new Date(fecha);
+    resultado.setDate(fecha.getDate() + dias);
+    return resultado;
+};
 
 /**
- * Orquestador que filtra y muestra tareas prioritarias.
- * @param tareas - Lista de tareas
+ * Composición de predicados: AND lógico
  */
-export function verPrioridad(tareas: readonly Task[]): void {
-    const tareasPrioritarias = filtrarTareasPrioritarias(tareas);
-    mostrarFiltradas(tareasPrioritarias, 'Tareas Prioritarias');
-}
+const y = <T,>(...predicados: ((x: T) => boolean)[]): (x: T) => boolean =>
+    (x: T) => predicados.every(p => p(x));
 
 /**
- * Función pura que verifica si una tarea está relacionada por categoría.
- * @param tarea - Tarea a verificar
- * @param categoria - Categoría de referencia
- * @returns true si la tarea pertenece a la categoría
+ * Composición de predicados: OR lógico
  */
-function estaRelacionada(tarea: Task, categoria: string): boolean {
-    return tarea.categoria === categoria;
-}
+const o = <T,>(...predicados: ((x: T) => boolean)[]): (x: T) => boolean =>
+    (x: T) => predicados.some(p => p(x));
 
 /**
- * Función pura que filtra tareas relacionadas por categoría.
- * @param tareaBase - Tarea de referencia
- * @param tareas - Lista de tareas a filtrar
- * @returns Tareas relacionadas (misma categoría, diferente ID)
+ * Negación de un predicado
  */
-export function filtrarTareasRelacionadas(
-    tareaBase: Task,
-    tareas: readonly Task[]
-): readonly Task[] {
-    return tareas.filter(t => 
-        t.id !== tareaBase.id && estaRelacionada(t, tareaBase.categoria)
-    );
-}
+const no = <T,>(predicado: (x: T) => boolean): (x: T) => boolean =>
+    (x: T) => !predicado(x);
+
+// ============== PREDICADOS ATÓMICOS (PUROS) ==============
+const esActiva = (tarea: Task): boolean => 
+    o(
+        (t: Task) => t.estado === 'pendiente',
+        (t: Task) => t.estado === 'en curso'
+    )(tarea);
+
+const tieneVencimiento = (tarea: Task): boolean => 
+    tarea.vencimiento !== null;
+
+const noEstaCompletada = (tarea: Task): boolean => 
+    tarea.estado !== 'completada';
+
+const venceAntes = (fecha: Date) => (tarea: Task): boolean =>
+    y(tieneVencimiento, (t: Task) => t.vencimiento! < fecha)(tarea);
+
+const venceEnDias = (dias: number, fecha: Date) => (tarea: Task): boolean =>
+    y(tieneVencimiento, (t: Task) => t.vencimiento! <= sumarDias(dias, fecha))(tarea);
+
+const perteneceA = (categoria: string) => (tarea: Task): boolean =>
+    tarea.categoria === categoria;
+
+const esDistintaDe = (tareaBase: Task) => (tarea: Task): boolean =>
+    tarea.id !== tareaBase.id;
+
+// ============== PREDICADOS COMPUESTOS==============
+const esPrioritaria = (fecha: Date) => (tarea: Task): boolean =>
+    y(esActiva, venceEnDias(3, fecha))(tarea);
+
+const estaVencida = (fecha: Date) => (tarea: Task): boolean =>
+    y(tieneVencimiento, noEstaCompletada, venceAntes(fecha))(tarea);
+
+const estaRelacionada = (tareaBase: Task) => (tarea: Task): boolean =>
+    y(esDistintaDe(tareaBase), perteneceA(tareaBase.categoria))(tarea);
+
+// ============== TRANSFORMADORES ==============
+/**
+ * Filtra tareas con un predicado (PURO)
+ */
+const filtrar = (predicado: (t: Task) => boolean) => (tareas: readonly Task[]): readonly Task[] =>
+    tareas.filter(predicado);
 
 /**
- * Orquestador que filtra y muestra tareas relacionadas.
- * @param tareaBase - Tarea de referencia
- * @param tareas - Lista de tareas
+ * Retorna tupla [vacío, tareas] para manejo funcional (PURO)
  */
-export function verRelacionadas(tareaBase: Task, tareas: readonly Task[]): void {
-    mensaje(`\nTarea seleccionada: ${tareaBase.titulo} (Categoria: ${tareaBase.categoria})`);
-    const tareasRelacionadas = filtrarTareasRelacionadas(tareaBase, tareas);
-    mostrarFiltradas(tareasRelacionadas, `Tareas relacionadas con "${tareaBase.titulo}"`);
-}
-/**
- * Función pura que filtra tareas vencidas.
- * Tareas vencidas son aquellas con fecha de vencimiento anterior a la fecha de referencia y no completadas.
- * @param tareas - Lista de tareas
- * @param fechaReferencia - Fecha de referencia (default: ahora)
- * @returns Tareas vencidas filtradas
- */
-export function filtrarTareasVencidas(
-    tareas: readonly Task[],
-    fechaReferencia: Date = new Date()
-): readonly Task[] {
-    return tareas.filter(tarea => 
-        tarea.vencimiento !== null && 
-        tarea.vencimiento < fechaReferencia && 
-        tarea.estado !== 'completada'
-    );
-}
+const dividirPorVacio = (tareas: readonly Task[]): [boolean, readonly Task[]] =>
+    [tareas.length === 0, tareas];
 
+// ============== EFECTOS SECUNDARIOS (IMPUROS) ==============
 /**
- * Orquestador que filtra y muestra tareas vencidas.
- * @param tareas - Lista de tareas
+ * Muestra tareas o mensaje vacío (CON EFECTOS)
  */
-export function verVencidas(tareas: readonly Task[]): void {
-    const tareasVencidas = filtrarTareasVencidas(tareas);
-    mostrarFiltradas(tareasVencidas, 'Tareas Vencidas');
-}
-
-/**
- * Muestra una lista de tareas filtradas con un mensaje de condición.
- * Responsabilidad: Presentar resultados filtrados o mensaje vacío.
- * @param {readonly Task[]} tareasFiltradas - Las tareas filtradas a mostrar
- * @param {string} condicion - La descripción de la condición de filtrado
- * @returns {void}
- */
-function mostrarFiltradas(tareasFiltradas: readonly Task[], condicion: string): void {
-    if (tareasFiltradas.length === 0) {
-        mensaje(`No hay  ${condicion.toLowerCase()}.`);
+const mostrar = (condicion: string) => (tareasFiltradas: readonly Task[]): void => {
+    const [estaVacia] = dividirPorVacio(tareasFiltradas);
+    
+    if (estaVacia) {
+        mensaje(`No hay ${condicion.toLowerCase()}.`);
         pausaMensaje();
-    }
-    else {
+    } else {
         mensaje(`\n===${condicion} (${tareasFiltradas.length}) ===\n`);
         listado(tareasFiltradas);
     }
-}
+};
+
+// ============== ORQUESTADORES (COMPOSICIÓN) ==============
+/**
+ * Composición: filtro + visualización
+ */
+const buscarYMostrar = 
+    (predicado: (t: Task) => boolean) => 
+    (condicion: string) => 
+    (tareas: readonly Task[]): void => 
+        mostrar(condicion)(filtrar(predicado)(tareas));
+
+/**
+ * Muestra tareas prioritarias
+ */
+export const verPrioridad = (tareas: readonly Task[]): void =>
+    buscarYMostrar(esPrioritaria(new Date()))('Tareas Prioritarias')(tareas);
+
+/**
+ * Muestra tareas vencidas
+ */
+export const verVencidas = (tareas: readonly Task[]): void =>
+    buscarYMostrar(estaVencida(new Date()))('Tareas Vencidas')(tareas);
+
+/**
+ * Muestra tareas relacionadas
+ */
+export const verRelacionadas = (tareaBase: Task, tareas: readonly Task[]): void => {
+    mensaje(`\nTarea seleccionada: ${tareaBase.titulo} (Categoria: ${tareaBase.categoria})`);
+    buscarYMostrar(estaRelacionada(tareaBase))(`Tareas relacionadas con "${tareaBase.titulo}"`)(tareas);
+};
+
+// ============== EXPORTADOS PARA PRUEBAS (PUROS) ==============
+export const filtrarTareasPrioritarias = (tareas: readonly Task[], fecha: Date = new Date()) =>
+    filtrar(esPrioritaria(fecha))(tareas);
+
+export const filtrarTareasVencidas = (tareas: readonly Task[], fecha: Date = new Date()) =>
+    filtrar(estaVencida(fecha))(tareas);
+
+export const filtrarTareasRelacionadas = (tareaBase: Task, tareas: readonly Task[]) =>
+    filtrar(estaRelacionada(tareaBase))(tareas);
