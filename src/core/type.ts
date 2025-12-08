@@ -1,4 +1,28 @@
-import type { StoredTask } from './tools/modulos/guardado.ts';
+/**
+ * Interfaz para tareas persistidas (fechas como strings).
+ * @property {string} id - Identificador único de la tarea
+ * @property {string} titulo - Título de la tarea
+ * @property {string} descripcion - Descripción de la tarea
+ * @property {string} estado - Estado de la tarea
+ * @property {string | null} creacion - Fecha de creación en formato ISO o null
+ * @property {string | null} uEdicion - Fecha de última edición en formato ISO o null
+ * @property {string | null} vencimiento - Fecha de vencimiento en formato ISO o null
+ * @property {string} dificultad - Nivel de dificultad
+ * @property {string} categoria - Categoría de la tarea
+ * @property {boolean} eliminada - Indica si la tarea está eliminada
+ */
+export interface StoredTask {
+    id: string;
+    titulo: string;
+    descripcion: string;
+    estado: string;
+    creacion: string | null;
+    uEdicion: string | null;
+    vencimiento: string | null;
+    dificultad: string;
+    categoria: string;
+    eliminada: boolean;
+}
 
 /**
  * @module types/taskTypes

@@ -206,7 +206,7 @@ export function ejecutarInfoAlmacenamiento(listaTareas: readonly Task[]): MenuAc
  * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
  */
 export function ejecutarEstadisticasNerds(listaTareas: readonly Task[]): MenuActionResult {
-    clearMensaje("Estadísticas para Nerds");
+    clearMensaje("Estadísticas");
     const totalTareas = listaTareas.length;
     const tareasEliminadas = listaTareas.filter(t => t.eliminada).length;
     const tareasPendientes = listaTareas.filter(t => t.estado === 'pendiente' && !t.eliminada).length;

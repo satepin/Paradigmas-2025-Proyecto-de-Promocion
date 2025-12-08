@@ -101,7 +101,7 @@ export function verVencidas(tareas: readonly Task[]): void {
  */
 function mostrarFiltradas(tareasFiltradas: readonly Task[], condicion: string): void {
     if (tareasFiltradas.length === 0) {
-        mensaje(`No hay  ${condicion.toLowerCase()}.`);
+        mensaje(`No hay ${condicion.toLowerCase()}.`);
         pausaMensaje();
     }
     else {

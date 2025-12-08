@@ -11,7 +11,7 @@ import { clearMensaje } from "./mensajes.ts";
  * @returns {{ continuarEjecucion: boolean; listaTareasActualizada: readonly Task[]; }} Resultado sin cambios en la lista
  */
 export function ejecutarConsultasAdicionales(listaTareas: readonly Task[]): { continuarEjecucion: boolean; listaTareasActualizada: readonly Task[]; } {
-    clearMensaje("Consultas Adicionales\n1- Ver Tareas Prioritarias\n2 Ver Tareas Vencidas\n0- Volver");
+    clearMensaje("Consultas Adicionales\n1- Ver Tareas Prioritarias\n2- Ver Tareas Vencidas\n0- Volver");
     const opcion: number = menuPrompt("Elige una opcion: ", 0, 2);
     switch(opcion) {
         case 1: verPrioridad(listaTareas); break;

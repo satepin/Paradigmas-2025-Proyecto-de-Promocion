@@ -4,9 +4,9 @@
  * Maneja la lectura y escritura de tareas en un archivo de almacenamiento.
  */
 
-import { readFileSync, writeFileSync, existsSync, renameSync } from 'fs'; 
-import { join } from 'path';
-import { Task } from '../../type.ts';
+import { readFileSync, writeFileSync, existsSync, renameSync, mkdirSync } from 'fs'; 
+import { join, dirname } from 'path';
+import { Task, type StoredTask } from '../../type.ts';
 
 /**
  * Ruta del archivo de almacenamiento JSON.
@@ -41,47 +41,36 @@ interface DatosAlmacenamiento {
     ultimaActualizacion: string;
 }   
 
-/**
- * Interfaz para tareas persistidas (fechas como strings).
- * @property {string} id - Identificador único de la tarea
- * @property {string} titulo - Título de la tarea
- * @property {string} descripcion - Descripción de la tarea
- * @property {string} estado - Estado de la tarea
- * @property {string | null} creacion - Fecha de creación en formato ISO o null
- * @property {string | null} uEdicion - Fecha de última edición en formato ISO o null
- * @property {string | null} vencimiento - Fecha de vencimiento en formato ISO o null
- * @property {string} dificultad - Nivel de dificultad
- * @property {string} categoria - Categoría de la tarea
- * @property {boolean} eliminada - Indica si la tarea está eliminada
- */
-export interface StoredTask {
-    id: string;
-    titulo: string;
-    descripcion: string;
-    estado: string;
-    creacion: string | null;
-    uEdicion: string | null;
-    vencimiento: string | null;
-    dificultad: string;
-    categoria: string;
-    eliminada: boolean;
-}
-
 export class TaskRepository {
     private rutaAlmacenamiento: string;
     private rutaMetadatos: string;
 
-    constructor(rutaAlmacenamiento: string = join(process.cwd(), 'tareas.json')) {
+    constructor(rutaAlmacenamiento: string = RUTA_ALMACENAMIENTO) {
         this.rutaAlmacenamiento = rutaAlmacenamiento;
-        this.rutaMetadatos = join(process.cwd(), 'guardado.json');
+        this.rutaMetadatos = join(dirname(rutaAlmacenamiento), 'guardado.json');
+        console.log(`Rutas configuradas:`);
+        console.log(`- Almacenamiento: ${this.rutaAlmacenamiento}`);
+        console.log(`- Metadatos: ${this.rutaMetadatos}`);
+        this.inicializar();
     }
 
     public cargar(): readonly Task[] {
         try {
-            this.inicializar();
+            if (!existsSync(this.rutaAlmacenamiento)) {
+                console.warn(`Archivo no encontrado: ${this.rutaAlmacenamiento}`);
+                return [];
+            }
+            
             const contenido = readFileSync(this.rutaAlmacenamiento, 'utf-8');
             const datos = JSON.parse(contenido) as DatosAlmacenamiento;
-            return datos.tareas.map(Task.fromJSON);
+            
+            if (!Array.isArray(datos.tareas)) {
+                console.warn('Estructura de datos inválida');
+                return [];
+            }
+            
+            console.log(`Cargadas ${datos.tareas.length} tareas`);
+            return datos.tareas.map(t => Task.fromJSON(t));
         } catch (error) {
             console.error('Error al cargar tareas:', error);
             return [];
@@ -90,14 +79,53 @@ export class TaskRepository {
 
     public guardar(tareas: readonly Task[]): boolean {
         try {
+            const directorio = dirname(this.rutaAlmacenamiento);
+            
+            // Crear directorio si no existe
+            if (!existsSync(directorio)) {
+                mkdirSync(directorio, { recursive: true });
+                console.log(`📁 Directorio creado: ${directorio}`);
+            }
+
+            // Serializar tareas
+            const tareasSerializadas = tareas.map(t => {
+                if (!(t instanceof Task)) {
+                    console.warn(`Objeto no es instancia de Task:`, t);
+                    // Intentar reconstruir como Task si es posible
+                    if (t && typeof t === 'object' && 'id' in t) {
+                        return Task.fromJSON(t as any);
+                    }
+                    throw new Error(`Objeto inválido: ${JSON.stringify(t)}`);
+                }
+                return t.toJSON();
+            });
+
+            // Escribir a archivo temporal
             const datos: DatosAlmacenamiento = {
-                tareas: tareas.map(t => t.toJSON()),
+                tareas: tareasSerializadas,
                 ultimaActualizacion: new Date().toISOString()
             };
+
             const tempRuta = `${this.rutaAlmacenamiento}.tmp`;
             writeFileSync(tempRuta, JSON.stringify(datos, null, 2), 'utf-8');
+            console.log(`Archivo temporal escrito: ${tempRuta}`);
+
+            // Renombrar temporal al archivo final
+            if (existsSync(this.rutaAlmacenamiento)) {
+                const backupRuta = `${this.rutaAlmacenamiento}.bak`;
+                renameSync(this.rutaAlmacenamiento, backupRuta);
+                console.log(`Backup creado: ${backupRuta}`);
+            }
+            
             renameSync(tempRuta, this.rutaAlmacenamiento);
+            
+            // Verificar que se escribió correctamente
+            if (!existsSync(this.rutaAlmacenamiento)) {
+                throw new Error('El archivo no se creó después de renameSync');
+            }
+            
             this.actualizarMetadatos(tareas);
+            console.log(`Tareas guardadas correctamente: ${tareas.length}`);
             return true;
         } catch (error) {
             console.error('Error al guardar:', error);
@@ -108,21 +136,32 @@ export class TaskRepository {
     public agregar(tarea: Task): readonly Task[] {
         const tareas = this.cargar();
         const nuevas = [...tareas, tarea];
-        this.guardar(nuevas);
+        const exito = this.guardar(nuevas);
+        
+        if (!exito) {
+            console.error('No se pudo guardar la nueva tarea');
+        }
         return nuevas;
     }
 
     public actualizar(tarea: Task): readonly Task[] {
         const tareas = this.cargar();
         const nuevas = tareas.map(t => (t.id === tarea.id ? tarea : t));
-        this.guardar(nuevas);
+        const exito = this.guardar(nuevas);
+        
+        if (!exito) {
+            console.error('No se pudo actualizar la tarea');
+        }
         return nuevas;
     }
 
     public eliminar(id: string): readonly Task[] {
         const tareas = this.cargar();
         const tarea = tareas.find(t => t.id === id);
-        if (!tarea) return tareas;
+        if (!tarea) {
+            console.warn(`Tarea no encontrada: ${id}`);
+            return tareas;
+        }
         const eliminada = tarea.marcarEliminada();
         return this.actualizar(eliminada);
     }
@@ -142,24 +181,41 @@ export class TaskRepository {
 
     public inicializar(): void {
         if (!existsSync(this.rutaAlmacenamiento)) {
-            const datos: DatosAlmacenamiento = {
-                tareas: [],
-                ultimaActualizacion: new Date().toISOString()
-            };
-            writeFileSync(this.rutaAlmacenamiento, JSON.stringify(datos, null, 2), 'utf-8');
+            try {
+                const directorio = dirname(this.rutaAlmacenamiento);
+                if (!existsSync(directorio)) {
+                    mkdirSync(directorio, { recursive: true });
+                    console.log(`📁 Directorio creado: ${directorio}`);
+                }
+                
+                const datos: DatosAlmacenamiento = {
+                    tareas: [],
+                    ultimaActualizacion: new Date().toISOString()
+                };
+                writeFileSync(this.rutaAlmacenamiento, JSON.stringify(datos, null, 2), 'utf-8');
+                console.log(`Archivo de almacenamiento inicializado`);
+            } catch (error) {
+                console.error('Error al inicializar almacenamiento:', error);
+            }
+        } else {
+            console.log(`Archivo de almacenamiento ya existe`);
         }
     }
 
     private actualizarMetadatos(tareas: readonly Task[]): void {
-        const activas = tareas.filter(t => !t.eliminada).length;
-        const eliminadas = tareas.filter(t => t.eliminada).length;
-        const metadatos = {
-            ruta: this.rutaAlmacenamiento,
-            tareasActivas: activas,
-            tareasEliminadas: eliminadas,
-            total: tareas.length,
-            ultimaActualizacion: new Date().toISOString()
-        };
-        writeFileSync(this.rutaMetadatos, JSON.stringify(metadatos, null, 2), 'utf-8');
+        try {
+            const activas = tareas.filter(t => !t.eliminada).length;
+            const eliminadas = tareas.filter(t => t.eliminada).length;
+            const metadatos: MetadatosAlmacenamiento = {
+                ruta: this.rutaAlmacenamiento,
+                tareasActivas: activas,
+                tareasEliminadas: eliminadas,
+                total: tareas.length,
+                ultimaActualizacion: new Date().toISOString()
+            };
+            writeFileSync(this.rutaMetadatos, JSON.stringify(metadatos, null, 2), 'utf-8');
+        } catch (error) {
+            console.error('Error al actualizar metadatos:', error);
+        }
     }
 }

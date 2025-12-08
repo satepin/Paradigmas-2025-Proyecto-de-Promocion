@@ -17,6 +17,7 @@ function main(): void {
     // Estado inicial: lista vacía de tareas
     const repository = new TaskRepository();
     repository.inicializar();
+    
     let listaTareas: readonly Task[] = repository.cargar();
     let continuarEjecucion = true;
     const username = "Usuario"; // Puedes solicitar el nombre si lo deseas
@@ -25,6 +26,7 @@ function main(): void {
     while (continuarEjecucion) {
         const resultado = mainMenu(listaTareas, username);
         listaTareas = resultado.listaTareasActualizada;
+        repository.guardar(listaTareas);
         continuarEjecucion = resultado.continuarEjecucion;
     }
 
