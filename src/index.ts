@@ -4,7 +4,7 @@
  */
 
 import { mainMenu } from './interfaz/exports.ts';
-import { cargarTareas, inicializarAlmacenamiento } from './core/tools/modulos/guardado.ts';
+import { TaskRepository } from './core/tools/modulos/guardado.ts';
 import type { Task } from './core/type.ts';
 import { mensaje, clearMensaje } from './interfaz/mensajes.ts';
 /**
@@ -15,8 +15,9 @@ function main(): void {
     clearMensaje("=== Sistema de Gestión de Tareas ===\n");
     
     // Estado inicial: lista vacía de tareas
-    inicializarAlmacenamiento();
-    let listaTareas: readonly Task[] = cargarTareas();
+    const repository = new TaskRepository();
+    repository.inicializar();
+    let listaTareas: readonly Task[] = repository.cargar();
     let continuarEjecucion = true;
     const username = "Usuario"; // Puedes solicitar el nombre si lo deseas
 

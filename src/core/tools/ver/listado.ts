@@ -7,7 +7,7 @@ import { menuPrompt, prompt } from "../modulos/promptSync.ts";
 import type { Task } from '../../type.ts';
 import { detalles } from './detalles.ts';
 import { clearMensaje, mensaje } from "../../../interfaz/mensajes.ts";
-import { cargarTareas } from '../modulos/guardado.ts';
+import { TaskRepository } from '../modulos/guardado.ts';
 
 /**
  * Función pura que formatea una lista de tareas como strings para mostrar.
@@ -127,7 +127,8 @@ export function listado(tareas: readonly Task[], etiqueta: string | number = '')
     
     // Si hubo cambios (edición), recargar y mostrar nuevamente
     if (huboCambios) {
-        const tareasActualizadas = cargarTareas();
+        const repository = new TaskRepository();
+        const tareasActualizadas = repository.cargar();
         listado(tareasActualizadas, etiqueta);
     }
 }

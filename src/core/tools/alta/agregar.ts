@@ -23,7 +23,7 @@
 **/
 
 import { crear } from './crear.ts';
-import { agregarTareaAlAlmacenamiento } from '../modulos/guardado.ts'; // Función para guardar tarea en JSON
+import { TaskRepository } from '../modulos/guardado.ts'; // Función para guardar tarea en JSON
 import type { Task } from '../../type.ts';
 import { mensaje,clearMensaje } from '../../../interfaz/mensajes.ts';
 /**
@@ -51,7 +51,8 @@ function crearTareaInteractiva(): Task {
  * @returns {void}
  */
 function guardarYConfirmar(tarea: Task, totalTareas: number): void {
-    agregarTareaAlAlmacenamiento(tarea); 
+    const repository = new TaskRepository();
+    repository.agregar(tarea); 
     mensaje(`Total de Tareas: ${totalTareas}`);
 }
 

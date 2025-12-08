@@ -6,7 +6,7 @@
 
 import { prompt, set } from '../modulos/promptSync.ts';
 import { datePrompt } from '../modulos/fechas.ts';
-import { actualizarTareaEnAlmacenamiento, cargarTareas } from '../modulos/guardado.ts';
+import { TaskRepository } from '../modulos/guardado.ts'
 import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
 import { taskFlags } from '../../task.ts';
 import { mensaje } from '../../../interfaz/mensajes.ts';
@@ -79,7 +79,8 @@ export function editarTareaInteractiva(tarea: Task): Task | null {
 
     const tareaActualizada = aplicarCambiosA(editable, { uEdicion: new Date() as unknown as Date });
     // Persistir cambios
-    actualizarTareaEnAlmacenamiento(tareaActualizada);
+    const repository = new TaskRepository();
+    repository.actualizar(tareaActualizada);
     mensaje('\n¡Tarea actualizada!');
     return tareaActualizada;
 }
@@ -95,5 +96,6 @@ export function modificarTareaEnLista(tareas: readonly Task[], indice: number): 
     const actualizada = editarTareaInteractiva(tarea as Task);
     if (!actualizada) return tareas;
     // Cargar tareas desde almacenamiento para mantener consistencia
-    return cargarTareas();
+    const repository = new TaskRepository();
+    return repository.cargar();
 }

@@ -6,9 +6,6 @@
 
 import { readFileSync, writeFileSync, existsSync, renameSync } from 'fs'; 
 import { join } from 'path';
-import type { TaskDifficulty, TaskStatus} from '../../type.ts';
-import { mensaje } from '../../../interfaz/mensajes.ts';
-import { eliminarTareaLogicamente } from '../eliminar/eliminar.ts';
 import { Task } from '../../type.ts';
 
 /**
@@ -143,7 +140,7 @@ export class TaskRepository {
         `.trim();
     }
 
-    private inicializar(): void {
+    public inicializar(): void {
         if (!existsSync(this.rutaAlmacenamiento)) {
             const datos: DatosAlmacenamiento = {
                 tareas: [],

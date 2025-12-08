@@ -4,11 +4,10 @@
  */
 
 import { menuPrompt, prompt } from "../../core/tools/modulos/promptSync.ts";
-import { obtenerInfoAlmacenamiento } from "../../core/tools/modulos/guardado.ts";
+import { TaskRepository } from "../../core/tools/modulos/guardado.ts";
 import { filtrarPorOpcion, filtrarPorTitulo } from "../../core/tools/ver/busqueda/filtro.ts";
 import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../../core/tools/ver/listado.ts";
 import { agregar} from "../../core/tools/alta/agregar.ts";
-import { eliminarTareaDelAlmacenamiento } from "../../core/tools/modulos/guardado.ts";
 import { taskFlags } from "../../core/task.ts";
 import type { Task } from '../../core/type.ts';
 import { modificarTareaEnLista } from "../../core/tools/modificar/modificar.ts";
@@ -148,7 +147,8 @@ function seleccionarTareaParaEliminar(tareasVisibles: readonly Task[]): number {
  * @returns Lista actualizada
  */
 function eliminarYConfirmar(tarea: Task): readonly Task[] {
-    const listaActualizada = eliminarTareaDelAlmacenamiento(tarea.id);
+    const repository = new TaskRepository();
+    const listaActualizada = repository.eliminar(tarea.id);
     mensaje(`\n¡Tarea "${tarea.titulo}" eliminada!`);
     prompt("Presiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
     return listaActualizada;
@@ -191,8 +191,9 @@ export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionR
  * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
  */
 export function ejecutarInfoAlmacenamiento(listaTareas: readonly Task[]): MenuActionResult {
+    const repository = new TaskRepository();
     clearMensaje("Información del Almacenamiento");
-    const info = obtenerInfoAlmacenamiento();
+    const info = repository.obtenerInfo();
     mensaje(info);
     prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
     return crearResultadoSinCambios(listaTareas);
