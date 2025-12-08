@@ -6,9 +6,11 @@
 
 import { readFileSync, writeFileSync, existsSync, renameSync } from 'fs'; 
 import { join } from 'path';
-import type { Task, TaskDifficulty, TaskStatus} from '../../type.ts';
+import type { TaskDifficulty, TaskStatus} from '../../type.ts';
 import { mensaje } from '../../../interfaz/mensajes.ts';
 import { eliminarTareaLogicamente } from '../eliminar/eliminar.ts';
+import { Task } from '../../type.ts';
+
 /**
  * Ruta del archivo de almacenamiento JSON.
  * @type {string}
@@ -55,7 +57,7 @@ interface DatosAlmacenamiento {
  * @property {string} categoria - Categoría de la tarea
  * @property {boolean} eliminada - Indica si la tarea está eliminada
  */
-interface StoredTask {
+export interface StoredTask {
     id: string;
     titulo: string;
     descripcion: string;
@@ -67,271 +69,100 @@ interface StoredTask {
     categoria: string;
     eliminada: boolean;
 }
-/**
- * Inicializa el archivo de almacenamiento si no existe.
- * @returns {void}
- */
-export function inicializarAlmacenamiento(nowIso?: string): void { 
-    if (!existsSync(RUTA_ALMACENAMIENTO)) {// Si el archivo no existe, lo crea con datos iniciales
-        const fechaIso = nowIso ?? new Date().toISOString();
-        const datosIniciales: DatosAlmacenamiento = { // Datos iniciales vacíos
-            tareas: [],// Array vacío de tareas
-            ultimaActualizacion: fechaIso// Fecha actual en formato ISO
-        };
-        // Utilizar guardarTareas para mantener consistencia de metadatos
-        guardarTareas([], RUTA_ALMACENAMIENTO, fechaIso);
-        mensaje(`✓ Archivo de almacenamiento creado en: ${RUTA_ALMACENAMIENTO}`); // Mensaje de éxito
+
+export class TaskRepository {
+    private rutaAlmacenamiento: string;
+    private rutaMetadatos: string;
+
+    constructor(rutaAlmacenamiento: string = join(process.cwd(), 'tareas.json')) {
+        this.rutaAlmacenamiento = rutaAlmacenamiento;
+        this.rutaMetadatos = join(process.cwd(), 'guardado.json');
     }
-}
 
-/**
- * Función pura que convierte una tarea serializada a Task con fechas como Date.
- * @param {StoredTask} tarea - Tarea con fechas en formato string
- * @returns {Task} Tarea con fechas como objetos Date
- */
-export function parseTaskDates(tarea: StoredTask): Task {
-    return {
-        ...tarea,
-        creacion: tarea.creacion ? new Date(tarea.creacion) : null,
-        uEdicion: tarea.uEdicion ? new Date(tarea.uEdicion) : null,
-        vencimiento: tarea.vencimiento ? new Date(tarea.vencimiento) : null,
-        estado: tarea.estado as TaskStatus,
-        dificultad: tarea.dificultad as TaskDifficulty,
-    };
-}
-
-/**
- * Función pura que serializa una tarea convirtiendo fechas Date a strings ISO.
- * @param {Task} tarea - Tarea con fechas como objetos Date
- * @returns {StoredTask} Tarea serializada con fechas en formato string
- */
-export function serializarTaskDates(tarea: Task): StoredTask {
-    return {
-        ...tarea,
-        creacion: tarea.creacion ? (tarea.creacion as Date).toISOString() : null,
-        uEdicion: tarea.uEdicion ? (tarea.uEdicion as Date).toISOString() : null,
-        vencimiento: tarea.vencimiento ? (tarea.vencimiento as Date).toISOString() : null,
-    };
-}
-
-/**
- * Cargar tareas desde el archivo (wrapper con E/S). Mantiene compatibilidad con llamadas externas.
- * @param {string} ruta - Ruta del archivo de almacenamiento (por defecto: tareas.json)
- * @returns {readonly Task[]} Array inmutable de tareas cargadas
- */
-export function cargarTareas(ruta: string = RUTA_ALMACENAMIENTO): readonly Task[] {
-    try {
-        inicializarAlmacenamiento();
-        const contenido: string = readFileSync(ruta, 'utf-8');
-        const datos: DatosAlmacenamiento = JSON.parse(contenido);
-        return datos.tareas.map(parseTaskDates);
-    } catch (error) {
-        console.error('Error al cargar tareas:', error);
-        return [];
+    public cargar(): readonly Task[] {
+        try {
+            this.inicializar();
+            const contenido = readFileSync(this.rutaAlmacenamiento, 'utf-8');
+            const datos = JSON.parse(contenido) as DatosAlmacenamiento;
+            return datos.tareas.map(Task.fromJSON);
+        } catch (error) {
+            console.error('Error al cargar tareas:', error);
+            return [];
+        }
     }
-}
 
-/**
- * Guarda la lista de tareas en el archivo JSON.
- * @param {readonly Task[]} tareas - Array de tareas a guardar.
- * @returns {boolean} true si se guardó exitosamente, false en caso contrario.
- */
-export function prepararDatosParaGuardar(tareas: readonly Task[], ultimaActualizacion: string): DatosAlmacenamiento {
-    return {
-        tareas: (tareas as Task[]).map(serializarTaskDates),
-        ultimaActualizacion
-    };
-}
-
-/**
- * Guarda las tareas y actualiza el archivo de metadatos (`guardado.json`).
- * Esta función centraliza la E/S: escribe de forma atómica el archivo de tareas y
- * luego actualiza `guardado.json` con metadatos calculados a partir de `tareas`.
- */
-export function guardarTareas(tareas: readonly Task[], ruta: string = RUTA_ALMACENAMIENTO, ultimaActualizacionISO?: string): boolean {
-    try {
-        const nowIso = ultimaActualizacionISO ?? new Date().toISOString();
-        const datosGuardar: DatosAlmacenamiento = prepararDatosParaGuardar(tareas, nowIso);
-        // Escribir de forma atómica en un archivo temporal y renombrar
-        const tempRuta = `${ruta}.tmp`;
-        writeFileSync(tempRuta, JSON.stringify(datosGuardar, null, 2), 'utf-8');
-        renameSync(tempRuta, ruta);
-        // Actualizar metadatos
-        const metadatos: MetadatosAlmacenamiento = calcularMetadatos(tareas, nowIso);
-        escribirMetadatos(metadatos);
-        return true;
-    } catch (error) {
-        console.error('Error al guardar tareas:', error);
-        return false;
+    public guardar(tareas: readonly Task[]): boolean {
+        try {
+            const datos: DatosAlmacenamiento = {
+                tareas: tareas.map(t => t.toJSON()),
+                ultimaActualizacion: new Date().toISOString()
+            };
+            const tempRuta = `${this.rutaAlmacenamiento}.tmp`;
+            writeFileSync(tempRuta, JSON.stringify(datos, null, 2), 'utf-8');
+            renameSync(tempRuta, this.rutaAlmacenamiento);
+            this.actualizarMetadatos(tareas);
+            return true;
+        } catch (error) {
+            console.error('Error al guardar:', error);
+            return false;
+        }
     }
-}
 
-/**
- * Calcula metadatos (conteos y fechas) a partir de una lista de tareas.
- */
-export function calcularMetadatos(tareas: readonly Task[], ultimaActualizacionISO: string): MetadatosAlmacenamiento {
-    const tareasActivas = tareas.filter(t => !t.eliminada).length;
-    const tareasEliminadas = tareas.filter(t => t.eliminada).length;
-    return {
-        ruta: RUTA_ALMACENAMIENTO,
-        tareasActivas,
-        tareasEliminadas,
-        total: tareas.length,
-        ultimaActualizacion: ultimaActualizacionISO
-    };
-}
-
-/**
- * Escribe los metadatos en `guardado.json`.
- */
-export function escribirMetadatos(metadatos: MetadatosAlmacenamiento, ruta: string = RUTA_GUARDADO): boolean {
-    try {
-        const tempRuta = `${ruta}.tmp`;
-        writeFileSync(tempRuta, JSON.stringify(metadatos, null, 2), 'utf-8');
-        renameSync(tempRuta, ruta);
-        return true;
-    } catch (error) {
-        console.error('Error al escribir metadatos:', error);
-        return false;
+    public agregar(tarea: Task): readonly Task[] {
+        const tareas = this.cargar();
+        const nuevas = [...tareas, tarea];
+        this.guardar(nuevas);
+        return nuevas;
     }
-}
 
-/**
- * Agrega una nueva tarea al almacenamiento.
- * @param {Task} nuevaTarea - La tarea a agregar.
- * @returns {readonly Task[]} Lista actualizada de tareas.
- */
-export function agregarTareaAlAlmacenamiento(nuevaTarea: Task): readonly Task[] {
-    const tareasActuales: readonly Task[] = cargarTareas();
-    const tareasActualizadas: readonly Task[] = agregarTareaPure(tareasActuales as Task[], nuevaTarea);
-    
-    if (guardarTareas(tareasActualizadas)) {
-        mensaje('✓ Tarea guardada en almacenamiento');
-        return tareasActualizadas;
+    public actualizar(tarea: Task): readonly Task[] {
+        const tareas = this.cargar();
+        const nuevas = tareas.map(t => (t.id === tarea.id ? tarea : t));
+        this.guardar(nuevas);
+        return nuevas;
     }
-    
-    console.error('✗ Error al guardar tarea en almacenamiento');
-    return tareasActuales;
-}
 
-/**
- * Actualiza una tarea existente en el almacenamiento.
- * @param {Task} tareaActualizada - La tarea con datos actualizados.
- * @returns {readonly Task[]} Lista actualizada de tareas.
- */
-export function actualizarTareaEnAlmacenamiento(tareaActualizada: Task): readonly Task[] {
-    const tareasActuales: readonly Task[] = cargarTareas();
-    const tareasActualizadas: readonly Task[] = actualizarTareaPure(tareasActuales as Task[], tareaActualizada);
-    
-    if (guardarTareas(tareasActualizadas)) {
-        mensaje('✓ Tarea actualizada en almacenamiento');
-        return tareasActualizadas;
+    public eliminar(id: string): readonly Task[] {
+        const tareas = this.cargar();
+        const tarea = tareas.find(t => t.id === id);
+        if (!tarea) return tareas;
+        const eliminada = tarea.marcarEliminada();
+        return this.actualizar(eliminada);
     }
-    
-    console.error('✗ Error al actualizar tarea en almacenamiento');
-    return tareasActuales;
-}
 
-
-/**
- * Elimina una tarea del almacenamiento (eliminación lógica).
- * @param {string} tareaId - ID de la tarea a eliminar.
- * @returns {readonly Task[]} Lista actualizada de tareas.
- */
-export function eliminarTareaDelAlmacenamiento(tareaId: string): readonly Task[] {
-    const tareasActuales: readonly Task[] = cargarTareas();
-    const tareaAEliminar = tareasActuales.find(t => t.id === tareaId);
-    
-    if (!tareaAEliminar) {
-        console.error('✗ Tarea no encontrada');
-        return tareasActuales;
-    }
-    
-    const fechaEdicion = new Date();
-    // Usamos la función pura para producir la lista actualizada, luego la guardamos
-    const tareasActualizadas: readonly Task[] = eliminarTareaLogicamente(tareasActuales, tareaId, fechaEdicion);
-    if (guardarTareas(tareasActualizadas)) {
-        mensaje('✓ Tarea eliminada en almacenamiento');
-        return tareasActualizadas;
-    }
-    console.error('✗ Error al eliminar tarea en almacenamiento');
-    return tareasActuales;
-}
-
-/**
- * Obtiene el número total de tareas no eliminadas.
- * @returns {number} Cantidad de tareas activas.
- */
-export function obtenerCantidadTareas(): number {
-    const tareas: readonly Task[] = cargarTareas();
-    return tareas.filter(t => !t.eliminada).length;
-}
-
-/**
- * Limpia el archivo de almacenamiento (elimina todas las tareas).
- * @returns {boolean} true si se limpió exitosamente.
- */
-export function limpiarAlmacenamiento(nowIso?: string): boolean {
-    try {
-        const fechaIso = nowIso ?? new Date().toISOString();
-        // Reutilizar guardarTareas para limpieza y metadatos
-        guardarTareas([], RUTA_ALMACENAMIENTO, fechaIso);
-        mensaje('✓ Almacenamiento limpiado');
-        return true;
-    } catch (error) {
-        console.error('Error al limpiar almacenamiento:', error);
-        return false;
-    }
-}
-
-/**
- * Obtiene información sobre el archivo de almacenamiento.
- * @returns {string} Información del almacenamiento.
- */
-export function obtenerInfoAlmacenamiento(): string {
-    if (!existsSync(RUTA_ALMACENAMIENTO)) {
-        return `Archivo de almacenamiento no existe en: ${RUTA_ALMACENAMIENTO}`;
-    }
-    
-    const tareas: readonly Task[] = cargarTareas();
-    const tareasActivas = tareas.filter(t => !t.eliminada).length;
-    const tareasEliminadas = tareas.filter(t => t.eliminada).length;
-    
-    return `
+    public obtenerInfo(): string {
+        const tareas = this.cargar();
+        const activas = tareas.filter(t => !t.eliminada).length;
+        const eliminadas = tareas.filter(t => t.eliminada).length;
+        return `
 📁 Almacenamiento de Tareas
-├── Ruta: ${RUTA_ALMACENAMIENTO}
-├── Tareas Activas: ${tareasActivas}
-├── Tareas Eliminadas: ${tareasEliminadas}
+├── Ruta: ${this.rutaAlmacenamiento}
+├── Tareas Activas: ${activas}
+├── Tareas Eliminadas: ${eliminadas}
 └── Total: ${tareas.length}
-    `.trim(); // Retorna la información formateada
-}
+        `.trim();
+    }
 
-/**
- * Función pura que agrega una tarea a un array.
- * @param {Task[]} tareas - Array de tareas
- * @param {Task} nuevaTarea - Tarea a agregar
- * @returns {Task[]} Nuevo array con la tarea agregada
- */
-export function agregarTareaPure(tareas: Task[], nuevaTarea: Task): Task[] {
-    return [...tareas, nuevaTarea];
-}
+    private inicializar(): void {
+        if (!existsSync(this.rutaAlmacenamiento)) {
+            const datos: DatosAlmacenamiento = {
+                tareas: [],
+                ultimaActualizacion: new Date().toISOString()
+            };
+            writeFileSync(this.rutaAlmacenamiento, JSON.stringify(datos, null, 2), 'utf-8');
+        }
+    }
 
-/**
- * Función pura que actualiza una tarea en un array.
- * @param {Task[]} tareas - Array de tareas
- * @param {Task} tareaActualizada - Tarea con datos actualizados
- * @returns {Task[]} Nuevo array con la tarea actualizada
- */
-export function actualizarTareaPure(tareas: Task[], tareaActualizada: Task): Task[] {
-    return tareas.map(t => (t.id === tareaActualizada.id ? tareaActualizada : t));
+    private actualizarMetadatos(tareas: readonly Task[]): void {
+        const activas = tareas.filter(t => !t.eliminada).length;
+        const eliminadas = tareas.filter(t => t.eliminada).length;
+        const metadatos = {
+            ruta: this.rutaAlmacenamiento,
+            tareasActivas: activas,
+            tareasEliminadas: eliminadas,
+            total: tareas.length,
+            ultimaActualizacion: new Date().toISOString()
+        };
+        writeFileSync(this.rutaMetadatos, JSON.stringify(metadatos, null, 2), 'utf-8');
+    }
 }
-
-/**
- * Función pura que cuenta las tareas activas (no eliminadas).
- * @param {Task[]} tareas - Array de tareas
- * @returns {number} Cantidad de tareas activas
- */
-export function contarTareasActivasPure(tareas: Task[]): number {
-    return tareas.filter(t => !t.eliminada).length;
-}
-
