@@ -205,7 +205,7 @@ export function ejecutarInfoAlmacenamiento(listaTareas: readonly Task[]): MenuAc
  * @param {readonly Task[]} listaTareas - La lista de tareas.
  * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
  */
-export function ejecutarEstadisticasNerds(listaTareas: readonly Task[]): MenuActionResult {
+export function ejecutarEstadisticas(listaTareas: readonly Task[]): MenuActionResult {
     clearMensaje("Estadísticas");
     const totalTareas = listaTareas.length;
     const tareasEliminadas = listaTareas.filter(t => t.eliminada).length;
@@ -313,7 +313,7 @@ export function obtenerAccionPorOpcion(
         case 3: return ejecutarAgregarTarea;
         case 4: return ejecutarEliminarTarea;
         case 5: return ejecutarInfoAlmacenamiento;
-        case 6: return ejecutarEstadisticasNerds;
+        case 6: return ejecutarEstadisticas;
         case 7: return ejecutarConsultasAdicionales;
         case 8: return ejecutarModificarTarea;
         case 0: return ejecutarSalir;

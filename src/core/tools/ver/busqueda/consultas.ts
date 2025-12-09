@@ -1,6 +1,9 @@
+// Mane: Este archivo es el mejor para meterle paradigma logico, imo
+
 import { listado } from '../listado.ts';
-import type { Task } from '../../../type.ts';
+import type { Task, TaskStatus } from '../../../type.ts';
 import { mensaje, pausaMensaje } from "../../../../interfaz/mensajes.ts";
+
 /**
  * Función pura que filtra tareas prioritarias.
  * Se consideran prioritarias las tareas pendientes y en curso que expiran en 3 días o menos.
@@ -8,16 +11,30 @@ import { mensaje, pausaMensaje } from "../../../../interfaz/mensajes.ts";
  * @param fechaReferencia - Fecha de referencia (default: ahora)
  * @returns Tareas prioritarias filtradas
  */
+
+function esVencidoEnProximo(tarea: Task, dias: number, fechaReferencia: Date): boolean {
+    if (tarea.vencimiento === null) {
+        return false;
+    }
+    const limite = new Date(fechaReferencia);
+    limite.setDate(fechaReferencia.getDate() + dias);
+    return tarea.vencimiento <= limite;
+}
+
+// Estados válidos para prioritario
+const ESTADOS_ACTIVOS: readonly TaskStatus[] = ['pendiente', 'en curso'];
+
+function tieneEstadoActivo(tarea: Task): boolean {
+    return ESTADOS_ACTIVOS.includes(tarea.estado);
+}
+
 export function filtrarTareasPrioritarias(
     tareas: readonly Task[],
-    fechaReferencia: Date = new Date()
+    diasLimite: number = 3
 ): readonly Task[] {
-    const tresDiasDespues = new Date(fechaReferencia);
-    tresDiasDespues.setDate(fechaReferencia.getDate() + 3);
     return tareas.filter(tarea => 
-        (tarea.estado === 'pendiente' || tarea.estado === 'en curso') &&
-        tarea.vencimiento !== null &&
-        tarea.vencimiento <= tresDiasDespues
+        tieneEstadoActivo(tarea) &&
+        esVencidoEnProximo(tarea, diasLimite, new Date())
     );
 }
 

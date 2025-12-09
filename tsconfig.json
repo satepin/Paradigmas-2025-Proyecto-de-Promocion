@@ -10,6 +10,8 @@
     "module": "nodenext",
     "target": "esnext",
     "types": ["node"],
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "esModuleInterop": true,
     // For nodejs:
     "lib": ["esnext"],
     // and npm install -D @types/node
