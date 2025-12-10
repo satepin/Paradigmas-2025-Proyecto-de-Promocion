@@ -1,64 +1,20 @@
-import { taskFlags } from "../../task.ts";
 import { datePrompt } from "../modulos/fechas.ts";
 import { prompt } from "../modulos/promptSync.ts";
-import { mensaje,clearMensaje} from "../../../interfaz/mensajes.ts";
-/**
- * Función pura que genera las líneas del menú de opciones.
- * @param label - Etiqueta descriptiva
- * @param map - Map con las opciones disponibles
- * @returns Array de líneas formateadas
- */
-function generarLineasOpcionesMap<K extends string>(
-    label: string,
-    map: ReadonlyMap<K, number>
-): readonly string[] {
-    const entries = Array.from(map.entries());
-    return [
-        `\n${label}:`,
-        ...entries.map(([key, value]) => `   ${value}. ${key}`)
-    ];
-}
-
-/**
- * Función pura que busca la opción seleccionada en el Map.
- * @param map - Map con las opciones disponibles
- * @param input - Entrada del usuario
- * @param defaultValue - Valor por defecto
- * @returns La clave seleccionada o el valor por defecto
- */
-function obtenerOpcionDeMap<K extends string>(
-    map: ReadonlyMap<K, number>,
-    input: string,
-    defaultValue: K
-): K {
-    const entries = Array.from(map.entries());
-    return entries.find(([_, value]) => value.toString() === input)?.[0] || defaultValue;
-}
-
-/**
- * Función que orquesta la selección de una opción de un Map.
- * @param label - Etiqueta descriptiva para mostrar al usuario
- * @param map - Map con las opciones disponibles
- * @param defaultValue - Valor por defecto si no se selecciona ninguno
- * @returns La clave seleccionada del Map
- */
-function seleccionarOpcionDeMap<K extends string>(
-    label: string,
-    map: ReadonlyMap<K, number>,
-    defaultValue: K
-): K {
-    const lineas = generarLineasOpcionesMap(label, map);
-    lineas.forEach(linea => mensaje(linea));
-    const input = prompt("   Opción: ");
-    return obtenerOpcionDeMap(map, input, defaultValue);
-}
+import { mensaje, clearMensaje} from "../../../interfaz/mensajes.ts";
+import { validarTitulo, validarDescripcion, validarEstado, validarDificultad, validarCategoria} from "../validaciones.ts";
 
 /**
  * Solicita al usuario ingresar el título de la tarea.
  * @returns {string} El título ingresado
  */
 function setTitulo(): string {
-    return prompt("1. Ingresa el titulo: ", taskFlags.titulo);
+    while (true) {
+        const titulo = prompt("1. Ingresa el titulo: ");
+        const validation = validarTitulo(titulo);
+        
+        if (validation.valid) return titulo;
+        mensaje(`${validation.error}`);
+    }
 }
 
 /**
@@ -66,15 +22,42 @@ function setTitulo(): string {
  * @returns {string} La descripción ingresada
  */
 function setDescripcion(): string {
-    return prompt("2. Ingresa la descripcion: ", taskFlags.descripcion);
+    while (true) {
+        const descripcion = prompt("2. Ingresa la descripcion: ");
+        const validation = validarDescripcion(descripcion);
+        
+        if (validation.valid) return descripcion;
+        mensaje(`${validation.error}`);
+    }
 }  
 
 /**
  * Solicita al usuario seleccionar el estado de la tarea.
  * @returns {string} El estado seleccionado
  */
+function asignarEstado(estado: number): string {
+    const estadoMap: Record<number, string> = {
+        1: "pendiente",
+        2: "en curso",
+        3: "completada",
+        4: "cancelada"
+    };
+    return estadoMap[estado] ?? "en curso";
+}
 function setEstado(): string {
-    return seleccionarOpcionDeMap("3. Selecciona un estado", taskFlags.estado, 'pendiente');
+    while (true) {
+        mensaje(`3. Ingresa el estado:
+            1. pendiente
+            2. en curso
+            3. completada
+            4. cancelada`)
+        const estado = Number(prompt("Opción: "));
+        const validation = validarEstado(estado);
+        const estadoAsignado = asignarEstado(estado);
+        
+        if (validation.valid) return estadoAsignado;
+        mensaje(`${validation.error}`);
+    }
 }
 
 /**
@@ -89,16 +72,58 @@ function setVencimiento(): Date | null {
  * Solicita al usuario seleccionar la dificultad de la tarea.
  * @returns {string} La dificultad seleccionada
  */
+function asignarDificultad(estado: number): string {
+    const dificultadMap: Record<number, string> = {
+        1: "facil ★☆☆",
+        2: "medio ★★☆",
+        3: "dificil ★★★",
+    };
+    return dificultadMap[estado] ?? "medio ★★☆";
+}
 function setDificultad(): string {
-    return seleccionarOpcionDeMap("4. Selecciona una dificultad", taskFlags.dificultad, 'facil ★☆☆');
+    while (true) {
+        mensaje(`4. Ingresa la dificultad:
+            1. facil ★☆☆
+            2. medio ★★☆
+            3. dificil ★★★`);
+        const dificultad = Number(prompt("Opción: "));
+        const validation = validarDificultad(dificultad);
+        const dificultadAsignada = asignarDificultad(dificultad);
+        
+        if (validation.valid) return dificultadAsignada;
+        mensaje(`${validation.error}`);
+    }
 }
 
 /**
  * Solicita al usuario seleccionar la categoría de la tarea.
  * @returns {string} La categoría seleccionada
  */
+function asignarCategoria(estado: number): string {
+    const dificultadMap: Record<number, string> = {
+        1: "programacion",
+        2: "estudio",
+        3: "trabajo",
+        4: "ocio",
+        5: "otro"
+    };
+    return dificultadMap[estado] ?? "otro";
+}
 function setCategoria(): string {
-    return seleccionarOpcionDeMap("6. Selecciona una categoria", taskFlags.categoria, 'otro');
+    while (true) {
+        mensaje(`6. Ingresa la categoria: 
+            1. programacion
+            2. estudio
+            3. trabajo
+            4. ocio
+            5. otro`);
+        const categoria = Number(prompt("Opcion: "));
+        const validation = validarCategoria(categoria);
+        const categoriaAsignada = asignarCategoria(categoria);
+        
+        if (validation.valid) return categoriaAsignada;
+        mensaje(`${validation.error}`);
+    }
 }
 
 /**

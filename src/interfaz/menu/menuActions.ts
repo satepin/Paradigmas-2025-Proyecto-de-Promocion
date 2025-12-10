@@ -205,26 +205,37 @@ export function ejecutarInfoAlmacenamiento(listaTareas: readonly Task[]): MenuAc
  * @param {readonly Task[]} listaTareas - La lista de tareas.
  * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
  */
-export function ejecutarEstadisticas(listaTareas: readonly Task[]): MenuActionResult {
-    clearMensaje("Estadísticas");
-    const totalTareas = listaTareas.length;
-    const tareasEliminadas = listaTareas.filter(t => t.eliminada).length;
-    const tareasPendientes = listaTareas.filter(t => t.estado === 'pendiente' && !t.eliminada).length;
-    const tareasEnCurso = listaTareas.filter(t => t.estado === 'en curso' && !t.eliminada).length;
-    const tareasCompletadas = listaTareas.filter(t => t.estado === 'completada' && !t.eliminada).length;
+export function calcularEstadisticas(tareas: readonly Task[]) {
+    return {
+        totalTareas: tareas.length,
+        tareasEliminadas: tareas.filter(t => t.eliminada).length,
+        tareasPendientes: tareas.filter(t => t.estado === 'pendiente' && !t.eliminada).length,
+        tareasEnCurso: tareas.filter(t => t.estado === 'en curso' && !t.eliminada).length,
+        tareasCompletadas: tareas.filter(t => t.estado === 'completada' && !t.eliminada).length,
+        tareasDificiles: tareas.filter(t => t.dificultad === 'dificil ★★★' && !t.eliminada).length,
+        tareasMedias: tareas.filter(t => t.dificultad === 'medio ★★☆' && !t.eliminada).length,
+        tareasFaciles: tareas.filter(t => t.dificultad === 'facil ★☆☆' && !t.eliminada).length
+    };
+}
 
-    mensaje(`Total de Tareas: ${totalTareas}`);
-    mensaje(`-------------------------`);
-    mensaje(`Tareas Eliminadas: ${tareasEliminadas}`);
-    mensaje(`Tareas Pendientes: ${tareasPendientes}`);
-    mensaje(`Tareas En Curso: ${tareasEnCurso}`);
-    mensaje(`Tareas Completadas: ${tareasCompletadas}`);
-    mensaje(`-------------------------`);
-    mensaje(`Tareas Faciles: ${listaTareas.filter(t => t.dificultad === 'facil ★☆☆' && !t.eliminada).length}`);
-    mensaje(`Tareas Medias: ${listaTareas.filter(t => t.dificultad === 'medio ★★☆' && !t.eliminada).length}`);
-    mensaje(`Tareas Dificiles: ${listaTareas.filter(t => t.dificultad === 'dificil ★★★' && !t.eliminada).length}`);
+function mostrarEstadisticas(stats: any): void {
+    mensaje(`Total de Tareas: ${stats.totalTareas}
+    -------------------------
+    Tareas Eliminadas: ${stats.tareasEliminadas}
+    Tareas Pendientes: ${stats.tareasPendientes}
+    Tareas En Curso: ${stats.tareasEnCurso}
+    Tareas Completadas: ${stats.tareasCompletadas}
+    -------------------------
+    Tareas Faciles: ${stats.tareasDificiles}
+    Tareas Medias: ${stats.tareasMedias}
+    Tareas Dificiles: ${stats.tareasFaciles}`);
     prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
-    return crearResultadoSinCambios(listaTareas);
+}
+
+export function ejecutarEstadisticas(tareas: readonly Task[]): MenuActionResult {
+    const stats = calcularEstadisticas(tareas);
+    mostrarEstadisticas(stats);
+    return crearResultadoSinCambios(tareas);
 }
 
 /**

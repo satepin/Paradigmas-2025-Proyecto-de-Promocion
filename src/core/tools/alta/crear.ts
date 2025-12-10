@@ -22,6 +22,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
 import { nuevaTareaMensajeGuardado, nuevaTareaMensajeInicio, setCategoria, setDescripcion, setDificultad, setEstado, setTitulo, setVencimiento } from './funcionesCrear.ts';
 import { obtenerFechaActual } from '../modulos/fechas.ts';
+
 /**
  * Función pura que crea una tarea a partir de datos ya validados.
  * @param {string} id - El ID de la tarea

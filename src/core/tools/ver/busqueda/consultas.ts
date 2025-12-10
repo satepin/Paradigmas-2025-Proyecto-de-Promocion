@@ -30,11 +30,12 @@ function tieneEstadoActivo(tarea: Task): boolean {
 
 export function filtrarTareasPrioritarias(
     tareas: readonly Task[],
-    diasLimite: number = 3
+    diasLimite: number = 3,
+    fechaReferencia: Date = new Date()
 ): readonly Task[] {
     return tareas.filter(tarea => 
         tieneEstadoActivo(tarea) &&
-        esVencidoEnProximo(tarea, diasLimite, new Date())
+        esVencidoEnProximo(tarea, diasLimite, fechaReferencia)
     );
 }
 

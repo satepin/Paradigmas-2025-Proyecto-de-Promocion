@@ -20,6 +20,6 @@ export function eliminarTareaLogicamente(
 ): readonly Task[] {
     const fechaEdicion = uEdicion ?? new Date();
     return listaTareas.map(tarea =>
-        tarea.id === idTarea ? { ...tarea, eliminada: true, uEdicion: fechaEdicion } : tarea
+        tarea.id === idTarea ? tarea.marcarEliminada?.(fechaEdicion) ?? tarea.marcarEliminada() : tarea
     );
 }

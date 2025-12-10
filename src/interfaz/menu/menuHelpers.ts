@@ -59,7 +59,14 @@ export function generarLineasMenu(
  * @param {readonly string[]} lineas - Las líneas del menú a mostrar.
  * @returns {void}
  */
+export function prepararLineasMenuParaMostrar(
+    lineas: readonly string[]
+): string {
+    return lineas.join('\n');
+}
+
 export function mostrarLineasMenu(lineas: readonly string[]): void {
     clearMensaje();
-    lineas.forEach(linea => mensaje(linea));
+    const contenido = prepararLineasMenuParaMostrar(lineas);
+    mensaje(contenido);
 }

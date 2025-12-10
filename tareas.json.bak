@@ -95,7 +95,139 @@
       "dificultad": "dificil ★★★",
       "categoria": "programacion",
       "eliminada": false
+    },
+    {
+      "id": "08944ea6-ff73-451f-8c60-cef30943703c",
+      "titulo": "Titulo Refactorizado",
+      "descripcion": "Descripcion refactorizada para editar",
+      "estado": "en curso",
+      "creacion": "2025-12-10T17:22:44.054Z",
+      "uEdicion": "2025-12-10T20:41:25.470Z",
+      "vencimiento": "2025-12-25T03:00:00.000Z",
+      "dificultad": "medio ★★☆",
+      "categoria": "programacion",
+      "eliminada": false
+    },
+    {
+      "id": "3613f27c-8d11-4c35-81dd-1a954dc9583f",
+      "titulo": "Titulo Re-Refactorizado",
+      "descripcion": "Lo mismo",
+      "estado": "completada",
+      "creacion": "2025-12-10T17:28:25.566Z",
+      "uEdicion": "2025-12-10T17:28:25.566Z",
+      "vencimiento": "2025-12-20T03:00:00.000Z",
+      "dificultad": "medio ★★☆",
+      "categoria": "programacion",
+      "eliminada": false
+    },
+    {
+      "id": "e3c39b91-0d9a-4b40-9807-903a011daa21",
+      "titulo": "Me estoy volviendo loco",
+      "descripcion": "Ayuda",
+      "estado": "en curso",
+      "creacion": "2025-12-10T17:38:20.225Z",
+      "uEdicion": "2025-12-10T17:38:20.225Z",
+      "vencimiento": "2025-12-26T03:00:00.000Z",
+      "dificultad": "medio ★★☆",
+      "categoria": "estudio",
+      "eliminada": false
+    },
+    {
+      "id": "b5074ff5-b68f-4b52-9e67-160a61fc0d8e",
+      "titulo": "Refactorizar Estado",
+      "descripcion": "Intentando refactorizar setEstado",
+      "estado": 2,
+      "creacion": "2025-12-10T18:02:23.038Z",
+      "uEdicion": "2025-12-10T18:02:23.038Z",
+      "vencimiento": "2025-12-27T03:00:00.000Z",
+      "dificultad": "medio ★★☆",
+      "categoria": "programacion",
+      "eliminada": false
+    },
+    {
+      "id": "f0b94c73-40cd-497a-826a-200bbed4902a",
+      "titulo": "The last dance",
+      "descripcion": "This is it, maybe",
+      "estado": "en curso",
+      "creacion": "2025-12-10T18:11:09.828Z",
+      "uEdicion": "2025-12-10T18:11:09.828Z",
+      "vencimiento": "2025-12-28T03:00:00.000Z",
+      "dificultad": "medio ★★☆",
+      "categoria": "estudio",
+      "eliminada": false
+    },
+    {
+      "id": "5d6c910f-7dea-41a5-a94a-e7e6c4a1712f",
+      "titulo": "Titulo final",
+      "descripcion": "Descripcion final",
+      "estado": "en curso",
+      "creacion": "2025-12-10T18:39:50.791Z",
+      "uEdicion": "2025-12-10T18:39:50.791Z",
+      "vencimiento": "2025-12-29T03:00:00.000Z",
+      "dificultad": "medio ★★☆",
+      "categoria": "estudio",
+      "eliminada": false
+    },
+    {
+      "id": "8006cb26-f689-401c-ac7f-44df8157b579",
+      "titulo": "Titulo final ahora si",
+      "descripcion": "Esto esta raro",
+      "estado": "en curso",
+      "creacion": "2025-12-10T20:08:56.861Z",
+      "uEdicion": "2025-12-10T20:43:20.847Z",
+      "vencimiento": "2025-12-20T03:00:00.000Z",
+      "dificultad": "medio ★★☆",
+      "categoria": "programacion",
+      "eliminada": false
+    },
+    {
+      "id": "a2a3dfcf-8ddd-422e-b30c-7f621adb6367",
+      "titulo": "Por favor",
+      "descripcion": "Estoy sufriendo",
+      "estado": "en curso",
+      "creacion": "2025-12-10T20:10:50.815Z",
+      "uEdicion": "2025-12-10T20:47:02.318Z",
+      "vencimiento": "2025-12-20T03:00:00.000Z",
+      "dificultad": "dificil ★★★",
+      "categoria": "estudio",
+      "eliminada": false
+    },
+    {
+      "id": "57390ba9-58f1-49c0-b0cd-6eee2d34ae40",
+      "titulo": "Ahora si",
+      "descripcion": "Se supone",
+      "estado": "completada",
+      "creacion": "2025-12-10T20:22:38.974Z",
+      "uEdicion": "2025-12-10T20:38:22.097Z",
+      "vencimiento": "2025-12-25T03:00:00.000Z",
+      "dificultad": "medio ★★☆",
+      "categoria": "estudio",
+      "eliminada": false
+    },
+    {
+      "id": "5811a1e0-3e94-4f27-9412-8f57cb8114d6",
+      "titulo": "Funcion Crear",
+      "descripcion": "Descripcion de Funcion Crear",
+      "estado": "en curso",
+      "creacion": "2025-12-10T20:25:19.512Z",
+      "uEdicion": "2025-12-10T20:25:19.512Z",
+      "vencimiento": "2025-12-20T03:00:00.000Z",
+      "dificultad": "medio ★★☆",
+      "categoria": "estudio",
+      "eliminada": false
+    },
+    {
+      "id": "4635d046-3d4b-410a-9b45-99a1d7a871fc",
+      "titulo": "Me estoy volviendo LocO",
+      "descripcion": "Fr",
+      "estado": "en curso",
+      "creacion": "2025-12-10T20:37:21.873Z",
+      "uEdicion": "2025-12-10T20:37:33.582Z",
+      "vencimiento": "2025-12-20T03:00:00.000Z",
+      "dificultad": "dificil ★★★",
+      "categoria": "ocio",
+      "eliminada": true
     }
   ],
-  "ultimaActualizacion": "2025-12-09T15:55:33.380Z"
+  "ultimaActualizacion": "2025-12-10T20:59:08.576Z"
 }

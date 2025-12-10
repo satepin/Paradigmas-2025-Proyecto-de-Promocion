@@ -10,8 +10,9 @@ import { TaskRepository } from '../modulos/guardado.ts'
 import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
 import { taskFlags } from '../../task.ts';
 import { mensaje } from '../../../interfaz/mensajes.ts';
+
 /**
- * Aplica cambios a una tarea (pura).
+ * Aplica cambios a una tarea.
  */
 export function aplicarCambiosA(tarea: Task, cambios: Partial<Task>): Task {
     return { ...tarea, ...cambios } as Task;
@@ -66,12 +67,12 @@ export function editarTareaInteractiva(tarea: Task): Task | null {
             }
         }
         if (continuar) {
-            const seguir = prompt('¿Desea continuar con la iteración? (S/n): ', { maxLength: 1, puedeVacio: true });
+            const seguir = prompt('¿Desea continuar con la iteración? (s/n): ', { maxLength: 1, puedeVacio: true });
             if (seguir.toLowerCase() === 'n') continuar = false;
         }
     }
 
-    const confirmar = prompt('Guardar cambios? (S/n): ', { maxLength: 1, puedeVacio: true });
+    const confirmar = prompt('Guardar cambios? (s/n): ', { maxLength: 1, puedeVacio: true });
     if (confirmar.toLowerCase() === 'n') {
         mensaje('\nCambios descartados.');
         return null;
