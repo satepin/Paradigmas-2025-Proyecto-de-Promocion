@@ -70,16 +70,16 @@ export interface TaskFlags {
 }
 
 export class Task {
-    readonly id: string;
-    readonly titulo: string;
-    readonly descripcion: string;
-    readonly estado: TaskStatus;
-    readonly creacion: Date | null;
-    readonly uEdicion: Date | null;
-    readonly vencimiento: Date | null;
-    readonly dificultad: TaskDifficulty;
-    readonly categoria: string;
-    readonly eliminada: boolean;
+    id: string;
+    titulo: string;
+    descripcion: string;
+    estado: TaskStatus;
+    creacion: Date | null;
+    uEdicion: Date | null;
+    vencimiento: Date | null;
+    dificultad: TaskDifficulty;
+    categoria: string;
+    eliminada: boolean;
 
     constructor(
         id: string,
@@ -173,6 +173,32 @@ export class Task {
             data.dificultad as TaskDifficulty,
             data.categoria,
             data.eliminada
+        );
+    }
+
+    static fromPlain(data: {
+        id: string;
+        titulo: string;
+        descripcion: string;
+        estado: TaskStatus;
+        dificultad: TaskDifficulty;
+        creacion: Date | null;
+        uEdicion?: Date | null;
+        vencimiento?: Date | null;
+        categoria: string;
+        eliminada?: boolean;
+    }): Task {
+        return new Task(
+            data.id,
+            data.titulo,
+            data.descripcion,
+            data.estado,
+            data.creacion,
+            data.uEdicion ?? data.creacion ?? null,
+            data.vencimiento ?? null,
+            data.dificultad,
+            data.categoria,
+            data.eliminada ?? false
         );
     }
 }

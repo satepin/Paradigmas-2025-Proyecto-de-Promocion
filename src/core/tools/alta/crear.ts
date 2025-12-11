@@ -19,7 +19,8 @@ crear.ts se encarga de la creacion y validacion de una unica unidad de tarea, qu
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
+import { Task } from '../../type.ts'
+import type { TaskStatus, TaskDifficulty } from '../../type.ts';
 import { nuevaTareaMensajeGuardado, nuevaTareaMensajeInicio, setCategoria, setDescripcion, setDificultad, setEstado, setTitulo, setVencimiento } from './funcionesCrear.ts';
 import { obtenerFechaActual } from '../modulos/fechas.ts';
 
@@ -46,18 +47,18 @@ export function crearTareaDesdeValores(
     vencimiento: Date | null,
     categoria: string
 ): Task {
-    return {
+    return Task.fromPlain({
         id,
         titulo,
         descripcion,
         estado,
+        dificultad,
         creacion: fechaActual,
         uEdicion: fechaActual,
         vencimiento,
-        dificultad,
-        eliminada: false,
-        categoria
-    };
+        categoria,
+        eliminada: false
+    });
 }
 
 /**
