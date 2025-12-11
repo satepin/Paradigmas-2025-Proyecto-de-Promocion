@@ -1,11 +1,10 @@
-// Mane: Este archivo es el mejor para meterle paradigma logico, imo
-
 import { listado } from '../listado.ts';
 import type { Task, TaskStatus } from '../../../type.ts';
 import { mensaje, pausaMensaje } from "../../../../interfaz/mensajes.ts";
+import logicjs from 'logicjs-es6';
 
 /**
- * Función pura que filtra tareas prioritarias.
+ * Función que filtra tareas prioritarias.
  * Se consideran prioritarias las tareas pendientes y en curso que expiran en 3 días o menos.
  * @param tareas - Lista de tareas
  * @param fechaReferencia - Fecha de referencia (default: ahora)
@@ -49,7 +48,7 @@ export function verPrioridad(tareas: readonly Task[]): void {
 }
 
 /**
- * Función pura que verifica si una tarea está relacionada por categoría.
+ * Función que verifica si una tarea está relacionada por categoría.
  * @param tarea - Tarea a verificar
  * @param categoria - Categoría de referencia
  * @returns true si la tarea pertenece a la categoría
@@ -59,7 +58,7 @@ function estaRelacionada(tarea: Task, categoria: string): boolean {
 }
 
 /**
- * Función pura que filtra tareas relacionadas por categoría.
+ * Función que filtra tareas relacionadas por categoría.
  * @param tareaBase - Tarea de referencia
  * @param tareas - Lista de tareas a filtrar
  * @returns Tareas relacionadas (misma categoría, diferente ID)

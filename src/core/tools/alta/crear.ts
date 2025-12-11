@@ -66,10 +66,9 @@ export function crearTareaDesdeValores(
  * Esta función maneja la lógica de presentación y entrada del usuario.
  * @returns {Task} El objeto de tarea recién creado.
  */
-export function crear(): Task {
-    nuevaTareaMensajeInicio();
 
-    const titulo: string = setTitulo();
+export function crearLogica(): Task {
+const titulo: string = setTitulo();
     const descripcion: string = setDescripcion();
     const estado: TaskStatus = setEstado() as TaskStatus;
     const dificultad: TaskDifficulty = setDificultad() as TaskDifficulty;
@@ -89,7 +88,15 @@ export function crear(): Task {
         categoria
     );
 
+    return nuevaTarea;
+}
+
+export function crear(): Task {
+    nuevaTareaMensajeInicio();
+
+    crearLogica();
+
     nuevaTareaMensajeGuardado();
 
-    return nuevaTarea;
+    return crearLogica();
 }
