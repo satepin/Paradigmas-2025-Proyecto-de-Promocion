@@ -92,11 +92,22 @@ export function editarTareaInteractiva(tarea: Task): Task | null {
  */
 export function modificarTareaEnLista(tareas: readonly Task[], indice: number): readonly Task[] {
     if (indice < 1 || indice > tareas.length) return tareas;
-    const tarea = tareas[indice - 1];
-    if (!tarea) return tareas;
-    const actualizada = editarTareaInteractiva(tarea as Task);
-    if (!actualizada) return tareas;
-    // Cargar tareas desde almacenamiento para mantener consistencia
+    const tareaVisible = tareas[indice];
+    if (!tareaVisible) return tareas;
+
+    // Recuperar la instancia actual desde el repositorio usando la id
     const repository = new TaskRepository();
+    const todas = repository.cargar();
+    const tareaReal = todas.find(t => t.id === tareaVisible.id);
+    if (!tareaReal) {
+        mensaje('No fue posible encontrar la tarea en el almacenamiento.');
+        return tareas;
+    }
+
+    const actualizada = editarTareaInteractiva(tareaReal);
+    if (!actualizada) return tareas;
+
+    // Persistir cambios y devolver la lista actualizada desde el repo
+    repository.actualizar(actualizada);
     return repository.cargar();
 }

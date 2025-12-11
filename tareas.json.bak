@@ -171,22 +171,22 @@
     {
       "id": "8006cb26-f689-401c-ac7f-44df8157b579",
       "titulo": "Titulo final ahora si",
-      "descripcion": "Esto esta raro",
-      "estado": "en curso",
+      "descripcion": "Modificar ya funciona como debe",
+      "estado": "completada",
       "creacion": "2025-12-10T20:08:56.861Z",
-      "uEdicion": "2025-12-10T20:43:20.847Z",
+      "uEdicion": "2025-12-11T16:05:59.847Z",
       "vencimiento": "2025-12-20T03:00:00.000Z",
-      "dificultad": "medio ★★☆",
+      "dificultad": "dificil ★★★",
       "categoria": "programacion",
       "eliminada": false
     },
     {
       "id": "a2a3dfcf-8ddd-422e-b30c-7f621adb6367",
       "titulo": "Por favor",
-      "descripcion": "Estoy sufriendo",
+      "descripcion": "Ya no",
       "estado": "en curso",
       "creacion": "2025-12-10T20:10:50.815Z",
-      "uEdicion": "2025-12-10T20:47:02.318Z",
+      "uEdicion": "2025-12-11T16:06:23.273Z",
       "vencimiento": "2025-12-20T03:00:00.000Z",
       "dificultad": "dificil ★★★",
       "categoria": "estudio",
@@ -229,5 +229,5 @@
       "eliminada": true
     }
   ],
-  "ultimaActualizacion": "2025-12-10T20:59:08.576Z"
+  "ultimaActualizacion": "2025-12-11T16:06:23.304Z"
 }
