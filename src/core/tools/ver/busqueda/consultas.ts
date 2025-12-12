@@ -58,12 +58,6 @@ const venceEnDias = (dias: number, fecha: Date) => (tarea: Task): boolean =>
         (t: Task) => t.vencimiento!.getTime() <= sumarDias(dias, fecha).getTime()
     )(tarea);
 
-const perteneceA = (categoria: string) => (tarea: Task): boolean =>
-    tarea.categoria === categoria;
-
-const esDistintaDe = (tareaBase: Task) => (tarea: Task): boolean =>
-    tarea.id !== tareaBase.id;
-
 // ============== PREDICADOS COMPUESTOS ==============
 
 const esPrioritaria = (fecha: Date) => (tarea: Task): boolean =>
@@ -71,9 +65,6 @@ const esPrioritaria = (fecha: Date) => (tarea: Task): boolean =>
 
 const estaVencida = (fecha: Date) => (tarea: Task): boolean =>
     y(tieneVencimiento, noEstaCompletada, venceAntes(fecha))(tarea);
-
-const estaRelacionada = (tareaBase: Task) => (tarea: Task): boolean =>
-    y(esDistintaDe(tareaBase), perteneceA(tareaBase.categoria))(tarea);
 
 // ============== TRANSFORMADORES ==============
 
@@ -131,20 +122,9 @@ export const verPrioridad = (tareas: readonly Task[]): void =>
 export const verVencidas = (tareas: readonly Task[]): void =>
     buscarYMostrar(estaVencida(new Date()))('Tareas Vencidas')(tareas);
 
-/**
- * Muestra tareas relacionadas (Misma categoría, distinta ID)
- */
-export const verRelacionadas = (tareaBase: Task, tareas: readonly Task[]): void => {
-    mensaje(`\nTarea seleccionada: ${tareaBase.titulo} (Categoria: ${tareaBase.categoria})`);
-    buscarYMostrar(estaRelacionada(tareaBase))(`Tareas relacionadas con "${tareaBase.titulo}"`)(tareas);
-};
-
 // ============== FILTRADORES ==============
 export const filtrarTareasPrioritarias = (tareas: readonly Task[], fecha: Date = new Date()) =>
     filtrar(esPrioritaria(fecha))(tareas);
 
 export const filtrarTareasVencidas = (tareas: readonly Task[], fecha: Date = new Date()) =>
     filtrar(estaVencida(fecha))(tareas);
-
-export const filtrarTareasRelacionadas = (tareaBase: Task, tareas: readonly Task[]) =>
-    filtrar(estaRelacionada(tareaBase))(tareas);
