@@ -262,7 +262,7 @@ function seleccionarTareaParaModificar(tareasVisibles: readonly Task[]): number 
     clearMensaje("Modificar Tarea");
     const lineasFormateadas = formatearListaTareas(tareasVisibles);
     lineasFormateadas.forEach(linea => mensaje(linea));
-    return menuPrompt("\nIntroduce el número de la tarea a modificar o 0 para volver: ", 0, tareasVisibles.length);
+    return menuPrompt(`Introduce el número de la tarea a modificar o 0 para volver: `, 0, tareasVisibles.length);
 }
 
 /**

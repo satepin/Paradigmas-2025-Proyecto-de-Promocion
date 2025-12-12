@@ -33,7 +33,7 @@ export function editarTareaInteractiva(tarea: Task): Task | null {
         mensaje('3 - Dificultad');
         mensaje('4 - Vencimiento');
         mensaje('0 - Finalizar edición');
-        const campo = prompt('Selecciona el número del campo a editar: ', { maxLength: 1, puedeVacio: false });
+        const campo = prompt(`Selecciona el número del campo a editar: `, { maxLength: 1, puedeVacio: false });
         switch (campo) {
             case '1': {
                 const desc = prompt(`Descripción [${editable.descripcion || 'Sin descripción'}]: `, taskFlags.descripcion);
