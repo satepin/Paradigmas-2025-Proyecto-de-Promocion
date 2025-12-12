@@ -1,38 +1,66 @@
 /**
  * @module interfaz/menuActions
- * @description Orquestadores de acciones del menú (con efectos secundarios controlados).
+ * @description Orquestadores de acciones del menú principal.
+ * 
+ * Este módulo contiene todas las acciones ejecutables desde el menú principal.
+ * Cada acción orquesta el flujo completo de una operación, incluyendo:
+ * - Validaciones
+ * - Interacción con el usuario
+ * - Modificaciones de estado
+ * - Presentación de resultados
+ * 
+ * Organización:
+ * 1. Tipos
+ * 2. Ver tareas (opción 1)
+ * 3. Buscar tareas (opción 2)
+ * 4. Agregar tarea (opción 3)
+ * 5. Eliminar tarea (opción 4)
+ * 6. Info almacenamiento (opción 5)
+ * 7. Estadísticas (opción 6)
+ * 8. Consultas adicionales (opción 7)
+ * 9. Modificar tarea (opción 8)
+ * 10. Salir (opción 0)
+ * 11. Mapeo de opciones
  */
 
+import type { Task } from '../../core/type.ts';
 import { menuPrompt, prompt } from "../../core/tools/modulos/promptSync.ts";
-import { obtenerInfoAlmacenamiento } from "../../core/tools/modulos/guardado.ts";
+import { obtenerInfoAlmacenamiento, eliminarTareaDelAlmacenamiento } from "../../core/tools/modulos/guardado.ts";
 import { filtrarPorOpcion, filtrarPorTitulo } from "../../core/tools/ver/busqueda/filtro.ts";
 import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../../core/tools/ver/listado.ts";
-import { agregar} from "../../core/tools/alta/agregar.ts";
-import { eliminarTareaDelAlmacenamiento } from "../../core/tools/modulos/guardado.ts";
-import { taskFlags } from "../../core/task.ts";
-import type { Task } from '../../core/type.ts';
+import { agregar } from "../../core/tools/alta/agregar.ts";
 import { modificarTareaEnLista } from "../../core/tools/modificar/modificar.ts";
-import { ejecutarConsultasAdicionales } from "../adicionales.ts";
+import { taskFlags } from "../../core/task.ts";
 import { mensaje, clearMensaje } from "../mensajes.ts";
+import { ejecutarEstadisticasNerds } from "../../core/tools/ver/busqueda/consultas.ts";
+import { ejecutarConsultasAdicionales } from "../adicionales.ts";
 import {
     crearResultadoSinCambios,
     crearResultadoConCambios,
     generarLineasMenu,
     mostrarLineasMenu
-} from "./menuHelpers.ts";
+} from "./funciones.ts";
+
+// ============================================================================
+// TIPOS
+// ============================================================================
 
 /**
- * Tipo para el resultado de una acción del menú.
+ * Resultado de una acción del menú.
+ * Contiene el nuevo estado de la aplicación después de ejecutar la acción.
  */
 export type MenuActionResult = {
     readonly continuarEjecucion: boolean;
     readonly listaTareasActualizada: readonly Task[];
 };
 
+// ============================================================================
+// OPCIÓN 1: VER TAREAS
+// ============================================================================
+
 /**
- * Muestra el menú de opciones para ver tareas.
- * Responsabilidad: Presentar menú y capturar selección.
- * @returns {number} Número de opción seleccionada (0-4)
+ * Muestra el menú de opciones para ver tareas y captura la selección.
+ * @returns Número de opción seleccionada (0-4)
  */
 function mostrarMenuVerTareas(): number {
     const lineasMenu = generarLineasMenu(
@@ -44,10 +72,17 @@ function mostrarMenuVerTareas(): number {
 }
 
 /**
- * Ejecuta la acción de ver tareas (no modifica la lista).
- * Responsabilidad: Orquestar el flujo de visualización de tareas.
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
+ * Ejecuta la acción de ver tareas filtradas.
+ * No modifica la lista de tareas.
+ * 
+ * Flujo:
+ * 1. Filtra tareas no eliminadas
+ * 2. Muestra menú de opciones
+ * 3. Aplica filtro según selección
+ * 4. Muestra el listado
+ * 
+ * @param listaTareas - La lista actual de tareas
+ * @returns Resultado indicando continuar sin cambios
  */
 export function ejecutarVerTareas(listaTareas: readonly Task[]): MenuActionResult {
     const tareasVisibles = listaTareas.filter(t => !t.eliminada);
@@ -62,10 +97,13 @@ export function ejecutarVerTareas(listaTareas: readonly Task[]): MenuActionResul
     return crearResultadoSinCambios(listaTareas);
 }
 
+// ============================================================================
+// OPCIÓN 2: BUSCAR TAREAS
+// ============================================================================
+
 /**
- * Solicita el término de búsqueda al usuario.
- * Responsabilidad: Capturar entrada de búsqueda.
- * @returns {string} Término de búsqueda ingresado
+ * Solicita al usuario el término de búsqueda.
+ * @returns Término de búsqueda ingresado
  */
 function solicitarTerminoBusqueda(): string {
     clearMensaje("Buscar Tarea");
@@ -73,11 +111,9 @@ function solicitarTerminoBusqueda(): string {
 }
 
 /**
- * Muestra resultados de búsqueda o mensaje de no encontrados.
- * Responsabilidad: Presentar resultados de búsqueda.
- * @param {readonly Task[]} resultados - Tareas encontradas
- * @param {string} busqueda - Término buscado
- * @returns {void}
+ * Muestra los resultados de búsqueda o un mensaje si no hay coincidencias.
+ * @param resultados - Tareas encontradas
+ * @param busqueda - Término buscado
  */
 function mostrarResultadosBusqueda(resultados: readonly Task[], busqueda: string): void {
     if (resultados.length > 0) {
@@ -88,10 +124,17 @@ function mostrarResultadosBusqueda(resultados: readonly Task[], busqueda: string
 }
 
 /**
- * Ejecuta la acción de buscar tareas (no modifica la lista).
- * Responsabilidad: Orquestar el flujo de búsqueda.
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
+ * Ejecuta la acción de buscar tareas por título.
+ * No modifica la lista de tareas.
+ * 
+ * Flujo:
+ * 1. Solicita término de búsqueda
+ * 2. Filtra tareas no eliminadas
+ * 3. Busca coincidencias por título
+ * 4. Muestra resultados
+ * 
+ * @param listaTareas - La lista actual de tareas
+ * @returns Resultado indicando continuar sin cambios
  */
 export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionResult {
     const busqueda = solicitarTerminoBusqueda();
@@ -101,24 +144,37 @@ export function ejecutarBuscarTareas(listaTareas: readonly Task[]): MenuActionRe
     return crearResultadoSinCambios(listaTareas);
 }
 
+// ============================================================================
+// OPCIÓN 3: AGREGAR TAREA
+// ============================================================================
+
 /**
- * Ejecuta la acción de agregar una tarea (modifica la lista).
- * Responsabilidad: Orquestar flujo de adición de tarea.
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @returns {MenuActionResult} Resultado con la lista actualizada.
+ * Ejecuta la acción de agregar una nueva tarea.
+ * Modifica la lista de tareas.
+ * 
+ * Flujo:
+ * 1. Limpia pantalla
+ * 2. Llama al módulo de agregado (creación + guardado)
+ * 3. Muestra confirmación con total de tareas
+ * 
+ * @param listaTareas - La lista actual de tareas
+ * @returns Resultado con la lista actualizada
  */
 export function ejecutarAgregarTarea(listaTareas: readonly Task[]): MenuActionResult {
     clearMensaje("Agregar Tarea");
-    // Usamos la función que hace la creación + guardado para persistir
     const listaActualizada = agregar(listaTareas);
     mensaje(`\n¡Tarea Agregada a la Lista!\nTotal de Tareas: ${listaActualizada.length}`);
     return crearResultadoConCambios(listaActualizada);
 }
 
+// ============================================================================
+// OPCIÓN 4: ELIMINAR TAREA
+// ============================================================================
+
 /**
  * Verifica si hay tareas disponibles para eliminar.
  * @param tareasVisibles - Tareas no eliminadas
- * @returns true si no hay tareas
+ * @returns true si no hay tareas (debe abortar)
  */
 function validarTareasDisponibles(tareasVisibles: readonly Task[]): boolean {
     if (tareasVisibles.length === 0) {
@@ -130,9 +186,9 @@ function validarTareasDisponibles(tareasVisibles: readonly Task[]): boolean {
 }
 
 /**
- * Muestra la lista de tareas y solicita selección.
+ * Muestra la lista de tareas y solicita al usuario seleccionar una para eliminar.
  * @param tareasVisibles - Tareas a mostrar
- * @returns Índice seleccionado
+ * @returns Índice seleccionado (0 para volver)
  */
 function seleccionarTareaParaEliminar(tareasVisibles: readonly Task[]): number {
     clearMensaje("Eliminar Tarea");
@@ -143,9 +199,9 @@ function seleccionarTareaParaEliminar(tareasVisibles: readonly Task[]): number {
 }
 
 /**
- * Elimina una tarea y muestra confirmación.
+ * Elimina una tarea del almacenamiento y muestra confirmación.
  * @param tarea - Tarea a eliminar
- * @returns Lista actualizada
+ * @returns Lista actualizada después de la eliminación
  */
 function eliminarYConfirmar(tarea: Task): readonly Task[] {
     const listaActualizada = eliminarTareaDelAlmacenamiento(tarea.id);
@@ -155,10 +211,17 @@ function eliminarYConfirmar(tarea: Task): readonly Task[] {
 }
 
 /**
- * Ejecuta la acción de eliminar una tarea (modifica la lista).
- * Responsabilidad: Orquestar el flujo de eliminación.
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @returns {MenuActionResult} Resultado con la lista actualizada.
+ * Ejecuta la acción de eliminar una tarea.
+ * Modifica la lista de tareas.
+ * 
+ * Flujo:
+ * 1. Valida que haya tareas disponibles
+ * 2. Muestra lista y solicita selección
+ * 3. Elimina la tarea seleccionada
+ * 4. Muestra confirmación
+ * 
+ * @param listaTareas - La lista actual de tareas
+ * @returns Resultado con la lista actualizada o sin cambios
  */
 export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionResult {
     const tareasVisibles = listaTareas.filter(t => !t.eliminada);
@@ -184,11 +247,22 @@ export function ejecutarEliminarTarea(listaTareas: readonly Task[]): MenuActionR
     prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
     return crearResultadoSinCambios(listaTareas);
 }
+// ============================================================================
+// OPCIÓN 5: INFORMACIÓN DEL ALMACENAMIENTO
+// ============================================================================
+
 /**
- * Ejecuta la acción de mostrar información del almacenamiento (no modifica la lista).
- * Responsabilidad: Orquestar visualización de información del almacenamiento.
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
+ * Ejecuta la acción de mostrar información del almacenamiento.
+ * No modifica la lista de tareas.
+ * 
+ * Flujo:
+ * 1. Limpia pantalla
+ * 2. Obtiene información del sistema de almacenamiento
+ * 3. Muestra la información
+ * 4. Espera confirmación del usuario
+ * 
+ * @param listaTareas - La lista actual de tareas
+ * @returns Resultado indicando continuar sin cambios
  */
 export function ejecutarInfoAlmacenamiento(listaTareas: readonly Task[]): MenuActionResult {
     clearMensaje("Información del Almacenamiento");
@@ -198,38 +272,28 @@ export function ejecutarInfoAlmacenamiento(listaTareas: readonly Task[]): MenuAc
     return crearResultadoSinCambios(listaTareas);
 }
 
-/**
- * Ejecuta la acción de mostrar estadísticas detalladas de las tareas (no modifica la lista).
- * Responsabilidad: Orquestar visualización de estadísticas.
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
- */
-export function ejecutarEstadisticasNerds(listaTareas: readonly Task[]): MenuActionResult {
-    clearMensaje("Estadísticas para Nerds");
-    const totalTareas = listaTareas.length;
-    const tareasEliminadas = listaTareas.filter(t => t.eliminada).length;
-    const tareasPendientes = listaTareas.filter(t => t.estado === 'pendiente' && !t.eliminada).length;
-    const tareasEnCurso = listaTareas.filter(t => t.estado === 'en curso' && !t.eliminada).length;
-    const tareasCompletadas = listaTareas.filter(t => t.estado === 'completada' && !t.eliminada).length;
+// ============================================================================
+// OPCIÓN 6: ESTADÍSTICAS PARA NERDS
+// ============================================================================
 
-    mensaje(`Total de Tareas: ${totalTareas}`);
-    mensaje(`-------------------------`);
-    mensaje(`Tareas Eliminadas: ${tareasEliminadas}`);
-    mensaje(`Tareas Pendientes: ${tareasPendientes}`);
-    mensaje(`Tareas En Curso: ${tareasEnCurso}`);
-    mensaje(`Tareas Completadas: ${tareasCompletadas}`);
-    mensaje(`-------------------------`);
-    mensaje(`Tareas Faciles: ${listaTareas.filter(t => t.dificultad === 'facil ★☆☆' && !t.eliminada).length}`);
-    mensaje(`Tareas Medias: ${listaTareas.filter(t => t.dificultad === 'medio ★★☆' && !t.eliminada).length}`);
-    mensaje(`Tareas Dificiles: ${listaTareas.filter(t => t.dificultad === 'dificil ★★★' && !t.eliminada).length}`);
-    prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
-    return crearResultadoSinCambios(listaTareas);
-}
+// Esta función se importa directamente de consultas.ts
+// export { ejecutarEstadisticasNerds };
+
+// ============================================================================
+// OPCIÓN 7: CONSULTAS ADICIONALES
+// ============================================================================
+
+// Esta función se importa directamente de adicionales.ts
+// export { ejecutarConsultasAdicionales };
+
+// ============================================================================
+// OPCIÓN 8: MODIFICAR TAREA
+// ============================================================================
 
 /**
  * Valida que existan tareas disponibles para modificar.
  * @param tareasVisibles - Tareas no eliminadas
- * @returns true si no hay tareas (debe abortar), false si hay tareas
+ * @returns true si no hay tareas (debe abortar)
  */
 function validarTareasParaModificar(tareasVisibles: readonly Task[]): boolean {
     if (tareasVisibles.length === 0) {
@@ -244,7 +308,7 @@ function validarTareasParaModificar(tareasVisibles: readonly Task[]): boolean {
 /**
  * Muestra la lista de tareas y solicita al usuario seleccionar una para modificar.
  * @param tareasVisibles - Tareas a mostrar
- * @returns Índice seleccionado
+ * @returns Índice seleccionado (0 para volver)
  */
 function seleccionarTareaParaModificar(tareasVisibles: readonly Task[]): number {
     clearMensaje("Modificar Tarea");
@@ -254,10 +318,10 @@ function seleccionarTareaParaModificar(tareasVisibles: readonly Task[]): number 
 }
 
 /**
- * Modifica una tarea y muestra confirmación.
+ * Modifica una tarea y espera confirmación del usuario.
  * @param listaTareas - Lista completa de tareas
  * @param indice - Índice de la tarea a modificar (relativo a tareas visibles)
- * @returns Lista actualizada
+ * @returns Lista actualizada después de la modificación
  */
 function modificarYConfirmar(listaTareas: readonly Task[], indice: number): readonly Task[] {
     const listaActualizada = modificarTareaEnLista(listaTareas, indice);
@@ -266,10 +330,17 @@ function modificarYConfirmar(listaTareas: readonly Task[], indice: number): read
 }
 
 /**
- * Ejecuta la acción de modificar una tarea (modifica la lista).
- * Responsabilidad: Orquestar el flujo de modificación.
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @returns {MenuActionResult} Resultado con la lista actualizada.
+ * Ejecuta la acción de modificar una tarea.
+ * Modifica la lista de tareas.
+ * 
+ * Flujo:
+ * 1. Valida que haya tareas disponibles
+ * 2. Muestra lista y solicita selección
+ * 3. Modifica la tarea seleccionada
+ * 4. Espera confirmación
+ * 
+ * @param listaTareas - La lista actual de tareas
+ * @returns Resultado con la lista actualizada o sin cambios
  */
 export function ejecutarModificarTarea(listaTareas: readonly Task[]): MenuActionResult {
     const tareasVisibles = listaTareas.filter(t => !t.eliminada);
@@ -288,20 +359,41 @@ export function ejecutarModificarTarea(listaTareas: readonly Task[]): MenuAction
     return crearResultadoConCambios(listaActualizada);
 }
 
+// ============================================================================
+// OPCIÓN 0: SALIR
+// ============================================================================
+
 /**
- * Ejecuta la acción de salir.
- * @param {readonly Task[]} listaTareas - La lista de tareas.
- * @returns {MenuActionResult} Resultado indicando no continuar.
+ * Ejecuta la acción de salir de la aplicación.
+ * 
+ * @param listaTareas - La lista actual de tareas
+ * @returns Resultado indicando no continuar (sale del ciclo del menú)
  */
 export function ejecutarSalir(listaTareas: readonly Task[]): MenuActionResult {
     mensaje("Saliendo...");
     return crearResultadoSinCambios(listaTareas, false);
 }
 
+// ============================================================================
+// MAPEO DE OPCIONES A ACCIONES
+// ============================================================================
+
 /**
- * Función pura que mapea una opción del menú a su acción correspondiente.
- * @param {number} opcion - La opción seleccionada.
- * @returns {(lista: readonly Task[]) => MenuActionResult} La función de acción.
+ * Función pura que mapea una opción numérica del menú a su acción correspondiente.
+ * 
+ * Mapeo de opciones:
+ * - 1: Ver tareas
+ * - 2: Buscar tareas
+ * - 3: Agregar tarea
+ * - 4: Eliminar tarea
+ * - 5: Información del almacenamiento
+ * - 6: Estadísticas para nerds
+ * - 7: Consultas adicionales
+ * - 8: Modificar tarea
+ * - 0: Salir
+ * 
+ * @param opcion - La opción seleccionada por el usuario (0-8)
+ * @returns Función que ejecuta la acción correspondiente
  */
 export function obtenerAccionPorOpcion(
     opcion: number

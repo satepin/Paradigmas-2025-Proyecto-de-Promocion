@@ -1,6 +1,11 @@
 import { listado } from '../listado.ts';
 import type { Task } from '../../../type.ts';
 import { mensaje, pausaMensaje } from "../../../../interfaz/mensajes.ts";
+import { clearMensaje } from '../../../../interfaz/mensajes.ts';
+import { prompt } from '../../modulos/promptSync.ts';
+import { crearResultadoSinCambios } from '../../../../interfaz/exports.ts';
+import type { MenuActionResult } from '../../../../interfaz/exports.ts';
+
 /**
  * Función pura que filtra tareas prioritarias.
  * Se consideran prioritarias las tareas pendientes y en curso que expiran en 3 días o menos.
@@ -108,4 +113,37 @@ function mostrarFiltradas(tareasFiltradas: readonly Task[], condicion: string): 
         mensaje(`\n===${condicion} (${tareasFiltradas.length}) ===\n`);
         listado(tareasFiltradas);
     }
+}
+
+/**
+ * Ejecuta la acción de mostrar estadísticas detalladas de las tareas (no modifica la lista).
+ * Responsabilidad: Orquestar visualización de estadísticas.
+ * @param {readonly Task[]} listaTareas - La lista de tareas.
+ * @returns {MenuActionResult} Resultado indicando continuar sin cambios.
+ */
+export function ejecutarEstadisticasNerds(listaTareas: readonly Task[]): MenuActionResult {
+    clearMensaje("Estadísticas para Nerds");
+    const totalTareas = listaTareas.length;
+    const tareasEliminadas = listaTareas.filter(t => t.eliminada).length;
+    const tareasPendientes = listaTareas.filter(t => t.estado === 'pendiente' && !t.eliminada).length;
+    const tareasEnCurso = listaTareas.filter(t => t.estado === 'en curso' && !t.eliminada).length;
+    const tareasCompletadas = listaTareas.filter(t => t.estado === 'completada' && !t.eliminada).length;
+
+    estadisticasNerdsMensaje(totalTareas, tareasEliminadas, tareasPendientes, tareasEnCurso, tareasCompletadas, listaTareas);
+
+    prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
+    return crearResultadoSinCambios(listaTareas);
+}
+
+function estadisticasNerdsMensaje(totalTareas: number, tareasEliminadas: number, tareasPendientes: number, tareasEnCurso: number, tareasCompletadas: number, listaTareas: readonly Task[]): void {
+    mensaje(`Total de Tareas: ${totalTareas}`);
+    mensaje(`-------------------------`);
+    mensaje(`Tareas Eliminadas: ${tareasEliminadas}`);
+    mensaje(`Tareas Pendientes: ${tareasPendientes}`);
+    mensaje(`Tareas En Curso: ${tareasEnCurso}`);
+    mensaje(`Tareas Completadas: ${tareasCompletadas}`);
+    mensaje(`-------------------------`);
+    mensaje(`Tareas Faciles: ${listaTareas.filter(t => t.dificultad === 'facil ★☆☆' && !t.eliminada).length}`);
+    mensaje(`Tareas Medias: ${listaTareas.filter(t => t.dificultad === 'medio ★★☆' && !t.eliminada).length}`);
+    mensaje(`Tareas Dificiles: ${listaTareas.filter(t => t.dificultad === 'dificil ★★★' && !t.eliminada).length}`);
 }
