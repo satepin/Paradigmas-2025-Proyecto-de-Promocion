@@ -349,3 +349,8 @@ export function _actualizarTarea(tareas: Task[], tareaActualizada: Task): Task[]
 export function contarTareasActivas(tareas: Task[]): number {
     return tareas.filter(t => !t.eliminada).length;
 }
+
+// Aliases para compatibilidad con nombres usados en otros módulos
+export const agregarTareaAlAlmacenamiento = agregarTarea;
+export const actualizarTareaEnAlmacenamiento = actualizarTarea;
+export const eliminarTareaDelAlmacenamiento = eliminarTarea;

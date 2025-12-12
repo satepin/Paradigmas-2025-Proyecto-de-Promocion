@@ -48,7 +48,6 @@ const noEstaCompletada = (tarea: Task): boolean =>
 const venceAntes = (fecha: Date) => (tarea: Task): boolean =>
     y(
         tieneVencimiento, 
-        // Usamos .getTime() para una comparación numérica segura
         (t: Task) => t.vencimiento!.getTime() < fecha.getTime() 
     )(tarea);
 
@@ -66,11 +65,15 @@ const esDistintaDe = (tareaBase: Task) => (tarea: Task): boolean =>
 
 // ============== PREDICADOS COMPUESTOS ==============
 
-const esPrioritaria = (fecha: Date) => (tarea: Task): boolean =>
-    y(esActiva, venceEnDias(3, fecha))(tarea);
-
 const estaVencida = (fecha: Date) => (tarea: Task): boolean =>
     y(tieneVencimiento, noEstaCompletada, venceAntes(fecha))(tarea);
+
+const esPrioritaria = (fecha: Date) => (tarea: Task): boolean =>
+    y(
+        esActiva, 
+        venceEnDias(3, fecha),
+        (t: Task) => !estaVencida(fecha)(t)
+    )(tarea);
 
 const estaRelacionada = (tareaBase: Task) => (tarea: Task): boolean =>
     y(esDistintaDe(tareaBase), perteneceA(tareaBase.categoria))(tarea);
@@ -120,7 +123,7 @@ const buscarYMostrar =
 // ============================
 
 /**
- * Muestra tareas prioritarias (Activas y vencen en los próximos 3 días o ya vencieron)
+ * Muestra tareas prioritarias (Activas que vencen en 0-3 días, excluyendo ya vencidas)
  */
 export const verPrioridad = (tareas: readonly Task[]): void =>
     buscarYMostrar(esPrioritaria(new Date()))('Tareas Prioritarias')(tareas);
