@@ -226,9 +226,9 @@ function mostrarEstadisticas(stats: any): void {
     Tareas En Curso: ${stats.tareasEnCurso}
     Tareas Completadas: ${stats.tareasCompletadas}
     -------------------------
-    Tareas Faciles: ${stats.tareasDificiles}
+    Tareas Dificiles: ${stats.tareasDificiles}
     Tareas Medias: ${stats.tareasMedias}
-    Tareas Dificiles: ${stats.tareasFaciles}`);
+    Tareas Faciles: ${stats.tareasFaciles}`);
     prompt("\nPresiona cualquier tecla para continuar...", { puedeVacio: true, maxLength: 100 });
 }
 
