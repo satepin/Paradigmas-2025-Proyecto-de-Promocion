@@ -78,12 +78,24 @@
       "descripcion": "la tarea Y",
       "estado": "en curso",
       "creacion": "2025-11-30T21:47:43.066Z",
-      "uEdicion": "2025-12-05T04:31:28.097Z",
-      "vencimiento": "2027-12-06T03:00:00.000Z",
+      "uEdicion": "2025-12-12T02:48:24.210Z",
+      "vencimiento": "2025-12-25T00:00:00.000Z",
       "dificultad": "dificil ★★★",
       "eliminada": true,
       "categoria": "trabajo"
+    },
+    {
+      "id": "459b8c50-d597-483d-bc09-9d7a04f7e9ec",
+      "titulo": "nose",
+      "descripcion": "no",
+      "estado": "pendiente",
+      "creacion": "2025-12-12T02:39:52.086Z",
+      "uEdicion": "2025-12-12T02:39:52.086Z",
+      "vencimiento": "2025-12-12T00:00:00.000Z",
+      "dificultad": "facil ★☆☆",
+      "eliminada": false,
+      "categoria": "otro"
     }
   ],
-  "ultimaActualizacion": "2025-12-05T05:06:15.031Z"
+  "ultimaActualizacion": "2025-12-12T02:48:24.211Z"
 }
