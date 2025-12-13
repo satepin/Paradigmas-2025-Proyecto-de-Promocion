@@ -95,7 +95,19 @@
       "dificultad": "dificil ★★★",
       "categoria": "programacion",
       "eliminada": false
+    },
+    {
+      "id": "77afe130-5d77-4f88-b443-73c9333128c7",
+      "titulo": "Refactorizacion Total",
+      "descripcion": "Intentando refactorizar todo el programa",
+      "estado": "en curso",
+      "creacion": "2025-12-13T16:52:43.429Z",
+      "uEdicion": "2025-12-13T16:52:43.429Z",
+      "vencimiento": "2025-12-18T03:00:00.000Z",
+      "dificultad": "dificil ★★★",
+      "categoria": "estudio",
+      "eliminada": false
     }
   ],
-  "ultimaActualizacion": "2025-12-12T18:54:30.871Z"
+  "ultimaActualizacion": "2025-12-13T16:52:53.255Z"
 }

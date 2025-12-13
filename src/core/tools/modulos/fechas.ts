@@ -10,7 +10,7 @@ export function obtenerFechaActual(): Date {
     return new Date();
 }
 /**
- * Función pura que valida si una fecha es correcta.
+ * Función que valida si una fecha es correcta.
  * @param {number} yyyy - Año
  * @param {number} mm - Mes (1-12)
  * @param {number} dd - Día
@@ -22,7 +22,7 @@ function esFechaValida(yyyy: number, mm: number, dd: number): boolean {
 }
 
 /**
- * Función pura que intenta parsear una fecha desde un string.
+ * Función que intenta parsear una fecha desde un string.
  * @param {string} input - El string de entrada
  * @returns {{ valida: true, fecha: Date } | { valida: false, error: string }} Resultado del parseo
  */

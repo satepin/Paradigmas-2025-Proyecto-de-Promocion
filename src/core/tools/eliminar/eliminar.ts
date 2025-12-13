@@ -16,7 +16,7 @@ import type { Task } from '../../type.ts';
 export function eliminarTareaLogicamente(
     listaTareas: readonly Task[],
     idTarea: string,
-    uEdicion?: Date
+    uEdicion: Date
 ): readonly Task[] {
     const fechaEdicion = uEdicion ?? new Date();
     return listaTareas.map(tarea =>
