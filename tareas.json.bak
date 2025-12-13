@@ -98,16 +98,16 @@
     },
     {
       "id": "77afe130-5d77-4f88-b443-73c9333128c7",
-      "titulo": "Refactorizacion Total",
-      "descripcion": "Intentando refactorizar todo el programa",
+      "titulo": "Mayor refactorizacion en modificar.ts",
+      "descripcion": "Refactorizada en su mayoria modificar.ts",
       "estado": "en curso",
       "creacion": "2025-12-13T16:52:43.429Z",
-      "uEdicion": "2025-12-13T16:52:43.429Z",
+      "uEdicion": "2025-12-13T20:54:18.733Z",
       "vencimiento": "2025-12-18T03:00:00.000Z",
       "dificultad": "dificil ★★★",
       "categoria": "estudio",
       "eliminada": false
     }
   ],
-  "ultimaActualizacion": "2025-12-13T16:52:53.255Z"
+  "ultimaActualizacion": "2025-12-13T20:54:19.668Z"
 }

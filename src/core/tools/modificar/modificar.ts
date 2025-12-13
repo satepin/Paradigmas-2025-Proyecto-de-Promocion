@@ -8,8 +8,8 @@ import { prompt, set } from '../modulos/promptSync.ts';
 import { datePrompt } from '../modulos/fechas.ts';
 import { TaskRepository } from '../modulos/guardado.ts'
 import type { Task, TaskStatus, TaskDifficulty } from '../../type.ts';
-import { taskFlags } from '../../task.ts';
 import { mensaje } from '../../../interfaz/mensajes.ts';
+import { taskFlags, validarDescripcion, validarEstado, validarDificultad, validarCategoria } from '../validaciones.ts';
 
 /**
  * Aplica cambios a una tarea.
@@ -35,23 +35,115 @@ export function editarTareaInteractiva(tarea: Task): Task | null {
         mensaje('0 - Finalizar edición');
         const campo = prompt(`Selecciona el número del campo a editar: `, { maxLength: 1, puedeVacio: false });
         switch (campo) {
-            case '1': {
-                const desc = prompt(`Descripción [${editable.descripcion || 'Sin descripción'}]: `, taskFlags.descripcion);
-                editable = { ...editable, descripcion: desc.trim() === '' ? editable.descripcion : desc } as Task;
+            case '1': { // DESCRIPCIÓN
+                // 1. I/O: Obtener input (Impuro)
+                const input = prompt(`Descripcion [${editable.descripcion}]: `);
+
+                // 2. Lógica de UI: Si el usuario da Enter vacío, mantenemos el viejo y salimos.
+                if (input === null || input.trim() === '') {
+                    console.log("Se mantiene el título actual.");
+                    break;
+                }
+
+                // 3. Validación Pura (Usando función externa)
+                const validacion = validarDescripcion(input, taskFlags.descripcion);
+
+                if (!validacion.valid) {
+                    // Manejo de error (Impuro: imprimir en pantalla)
+                    console.error(`Error: ${validacion.error}`);
+                } else {
+                    // 4. Actualización de estado (Creando nuevo objeto, inmutabilidad)
+                    editable = Object.assign(
+                        Object.create(Object.getPrototypeOf(editable)), editable, { descripcion: input.trim() });
+                    console.log("Título actualizado correctamente.");
+                }
                 break;
             }
-            case '2': {
-                mensaje('\nEstado actual: ' + editable.estado);
-                const nuevoEstado = set<TaskStatus>(taskFlags.estado as Map<TaskStatus, number>);
-                editable = { ...editable, estado: nuevoEstado } as Task;
+            case '2': { // ESTADO
+                // 1. I/O: Mostrar opciones y pedir entrada
+                mensaje(`\nEstado actual: ${editable.estado}`);
+                mensaje('Opciones de estado:');
+                for (const [clave, valor] of taskFlags.estado.entries()) {
+                    mensaje(`- ${valor}: ${clave}`);
+                }
+
+                const inputStr = prompt("Seleccione el número del nuevo estado: ");
+                const inputNum = parseInt(inputStr || "0");
+
+                // 2. Validación Pura
+                const validacion = validarEstado(inputNum, taskFlags.estado);
+
+                if (!validacion.valid) {
+                    console.error(validacion.error);
+                    break;
+                }
+
+                // 3. Reverse Lookup
+                // Tenemos el número (2), necesitamos el string ("en curso")
+                // Buscamos en el mapa la entrada cuyo valor coincida con el input
+                const nuevaClave = [...taskFlags.estado.entries()]
+                    .find(([clave, valor]) => valor === inputNum)?.[0];
+
+                if (!nuevaClave) {
+                    // Esto no debería pasar si la validación pasó, pero TypeScript es denso
+                    console.error("Error crítico al resolver el estado.");
+                    break;
+                }
+
+                // 4. Actualización de Estado
+                // Técnica segura para no perder los métodos de la clase Task
+                editable = Object.assign(
+                    Object.create(Object.getPrototypeOf(editable)),
+                    editable,
+                    { estado: nuevaClave }
+                );
+
+                console.log(`Estado actualizado a: ${nuevaClave}`);
                 break;
             }
-            case '3': {
-                mensaje('\nDificultad actual: ' + editable.dificultad);
-                const nuevaDificultad = set<TaskDifficulty>(taskFlags.dificultad as Map<TaskDifficulty, number>);
-                editable = { ...editable, dificultad: nuevaDificultad } as Task;
+            case '3': { // DIFICULTAD
+                // 1. I/O: Mostrar opciones y pedir entrada
+                mensaje(`\nDificultad actual: ${editable.dificultad}`);
+                mensaje('Opciones de estado:');
+                for (const [clave, valor] of taskFlags.dificultad.entries()) {
+                    mensaje(`- ${valor}: ${clave}`);
+                }
+
+                const inputStr = prompt("Seleccione el número de la nueva dificultad: ");
+                const inputNum = parseInt(inputStr || "0");
+
+                // 2. Validación Pura
+                const validacion = validarDificultad(inputNum, taskFlags.dificultad);
+
+                if (!validacion.valid) {
+                    console.error(validacion.error);
+                    break;
+                }
+
+                // 3. Reverse Lookup
+                // Tenemos el número (2), necesitamos el string ("en curso")
+                // Buscamos en el mapa la entrada cuyo valor coincida con el input
+                const nuevaClave = [...taskFlags.dificultad.entries()]
+                    .find(([clave, valor]) => valor === inputNum)?.[0];
+
+                if (!nuevaClave) {
+                    // Esto no debería pasar si la validación pasó, pero TypeScript es denso
+                    console.error("Error crítico al resolver el estado.");
+                    break;
+                }
+
+                // 4. Actualización de Estado
+                // Técnica segura para no perder los métodos de la clase Task
+                editable = Object.assign(
+                    Object.create(Object.getPrototypeOf(editable)),
+                    editable,
+                    { dificultad: nuevaClave }
+                );
+
+                console.log(`Dificultad actualizada a: ${nuevaClave}`);
                 break;
             }
+
             case '4': {
                 const fv = datePrompt('Vencimiento (yyyy/mm/dd) - dejar vacío para conservar: ', true);
                 const nuevaVenc = fv === null ? editable.vencimiento : fv;

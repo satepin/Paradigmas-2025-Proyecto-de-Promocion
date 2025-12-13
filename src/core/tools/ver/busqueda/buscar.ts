@@ -4,7 +4,7 @@
  */
 
 import { prompt } from '../../modulos/promptSync.ts'; 
-import { taskFlags } from '../../../task.ts'; 
+import { taskFlags } from '../../validaciones.ts'; 
 import { listado } from '../listado.ts';
 import type { Task } from '../../../type.ts';
 import { mensaje, clearMensaje } from '../../../../interfaz/mensajes.ts';

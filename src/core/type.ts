@@ -42,6 +42,12 @@ export type TaskStatus = 'pendiente' | 'en curso' | 'completada' | 'cancelada';
 export type TaskDifficulty = 'facil ★☆☆' | 'medio ★★☆' | 'dificil ★★★';
 
 /**
+ * Define los posibles niveles de dificultad de una tarea.
+ * @typedef {'programacion' | 'estudio' | 'trabajo' | 'ocio' | 'otro'} TaskCategory
+ */
+export type TaskCategory = 'programacion' | 'estudio' | 'trabajo' | 'ocio' | 'otro';
+
+/**
  * @interface ValidationFlag
  * @description Define las reglas inmutables de validación para una entrada de texto.
  * @property {number} maxLength - La longitud máxima permitida.

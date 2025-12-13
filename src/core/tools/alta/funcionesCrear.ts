@@ -1,7 +1,9 @@
 import { datePrompt } from "../modulos/fechas.ts";
 import { prompt } from "../modulos/promptSync.ts";
-import { mensaje, clearMensaje} from "../../../interfaz/mensajes.ts";
-import { validarTitulo, validarDescripcion, validarEstado, validarDificultad, validarCategoria} from "../validaciones.ts";
+import { mensaje, clearMensaje } from "../../../interfaz/mensajes.ts";
+import { taskFlags, 
+    validarTitulo, validarDescripcion, validarEstado, validarDificultad, validarCategoria
+} from "../validaciones.ts";
 
 // ===== Mapeos Puros (Constantes) =====
 const ESTADO_MAP: Record<number, string> = {
@@ -63,7 +65,7 @@ function asignarCategoria(categoria: number): string {
 function setTitulo(): string {
     while (true) {
         const titulo = prompt("1. Ingresa el titulo: ");
-        const validation = validarTitulo(titulo);
+        const validation = validarTitulo(titulo, taskFlags.titulo);
         
         if (validation.valid) return titulo;
         mensaje(`${validation.error}`);
@@ -77,7 +79,7 @@ function setTitulo(): string {
 function setDescripcion(): string {
     while (true) {
         const descripcion = prompt("2. Ingresa la descripcion: ");
-        const validation = validarDescripcion(descripcion);
+        const validation = validarDescripcion(descripcion, taskFlags.descripcion);
         
         if (validation.valid) return descripcion;
         mensaje(`${validation.error}`);
@@ -96,7 +98,7 @@ function setEstado(): string {
             3. completada
             4. cancelada`);
         const estado = Number(prompt("Opción: "));
-        const validation = validarEstado(estado);
+        const validation = validarEstado(estado, taskFlags.estado);
         
         if (validation.valid) return asignarEstado(estado);
         mensaje(`${validation.error}`);
@@ -114,7 +116,7 @@ function setDificultad(): string {
             2. medio ★★☆
             3. dificil ★★★`);
         const dificultad = Number(prompt("Opción: "));
-        const validation = validarDificultad(dificultad);
+        const validation = validarDificultad(dificultad, taskFlags.dificultad);
         
         if (validation.valid) return asignarDificultad(dificultad);
         mensaje(`${validation.error}`);
@@ -142,7 +144,7 @@ function setCategoria(): string {
             4. ocio
             5. otro`);
         const categoria = Number(prompt("Opcion: "));
-        const validation = validarCategoria(categoria);
+        const validation = validarCategoria(categoria, taskFlags.categoria);
         
         if (validation.valid) return asignarCategoria(categoria);
         mensaje(`${validation.error}`);

@@ -30,7 +30,7 @@ import { filtrarPorOpcion, filtrarPorTitulo } from "../../core/tools/ver/busqued
 import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../../core/tools/ver/listado.ts";
 import { agregar } from "../../core/tools/alta/agregar.ts";
 import { modificarTareaEnLista } from "../../core/tools/modificar/modificar.ts";
-import { taskFlags } from "../../core/task.ts";
+import { taskFlags } from "../../core/tools/validaciones.ts";
 import { mensaje, clearMensaje } from "../mensajes.ts";
 import { ejecutarConsultasAdicionales } from "../adicionales.ts";
 import {
