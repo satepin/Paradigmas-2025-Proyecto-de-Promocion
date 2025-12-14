@@ -18,6 +18,7 @@ function mensaje(texto: string): void {
 function pausaMensaje(): void {
     prompt("Presiona Enter para continuar...", { maxLength: Infinity, puedeVacio: true });
 }
+//tiene sus problemas pero cumple la funcion y es mas simple que aplicaciones robustas
 
 /**
  * Limpia la consola y opcionalmente muestra un mensaje.

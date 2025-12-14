@@ -1,8 +1,8 @@
-import { verPrioridad, verVencidas } from "../core/tools/ver/busqueda/consultas.ts";
-import { crearResultadoSinCambios } from "./exports.ts";
-import type { Task } from '../core/type.ts';
-import { menuPrompt } from "../core/tools/modulos/promptSync.ts";
-import { clearMensaje } from "./mensajes.ts";
+import { verPrioridad, verVencidas } from "../../../core/tools/ver/busqueda/consultas.ts";
+import { crearResultadoSinCambios } from "../../exports.ts";
+import type { Task } from '../../../core/type.ts';
+import { menuPrompt } from "../../../core/tools/modulos/promptSync.ts";
+import { clearMensaje } from "../../mensajes.ts";
 
 /**
  * Ejecuta el menú de consultas adicionales (tareas prioritarias, vencidas).
@@ -20,3 +20,5 @@ export function ejecutarConsultasAdicionales(listaTareas: readonly Task[]): { co
     }
     return crearResultadoSinCambios(listaTareas);
 }
+
+//archivo puede unirse a actions.ts

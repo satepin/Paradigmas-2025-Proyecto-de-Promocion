@@ -23,16 +23,16 @@
  * 11. Mapeo de opciones
  */
 
-import type { Task } from '../../core/type.ts';
-import { menuPrompt, prompt } from "../../core/tools/modulos/promptSync.ts";
-import { TaskRepository } from "../../core/tools/modulos/guardado.ts";
-import { filtrarPorOpcion, filtrarPorTitulo } from "../../core/tools/ver/busqueda/filtro.ts";
-import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../../core/tools/ver/listado.ts";
-import { agregar } from "../../core/tools/alta/agregar.ts";
-import { modificarTareaEnLista } from "../../core/tools/modificar/modificar.ts";
-import { taskFlags } from "../../core/tools/validaciones.ts";
-import { mensaje, clearMensaje } from "../mensajes.ts";
-import { ejecutarConsultasAdicionales } from "../adicionales.ts";
+import type { Task } from '../../../core/type.ts';
+import { menuPrompt, prompt } from "../../../core/tools/modulos/promptSync.ts";
+import { TaskRepository } from "../../../core/tools/modulos/guardado.ts";
+import { filtrarPorOpcion, filtrarPorTitulo } from "../../../core/tools/ver/busqueda/filtro.ts";
+import { listado, formatearListaTareas, obtenerTareaPorIndice } from "../../../core/tools/ver/listado.ts";
+import { agregar } from "../../../core/tools/alta/agregar.ts";
+import { modificarTareaEnLista } from "../../../core/tools/modificar/modificar.ts";
+import { taskFlags } from "../../../core/tools/validaciones.ts";
+import { mensaje, clearMensaje } from "../../mensajes.ts";
+import { ejecutarConsultasAdicionales } from "./adicionales.ts";
 import {
     crearResultadoSinCambios,
     crearResultadoConCambios,
@@ -403,46 +403,4 @@ export function ejecutarModificarTarea(listaTareas: readonly Task[]): MenuAction
 export function ejecutarSalir(listaTareas: readonly Task[]): MenuActionResult {
     mensaje("Saliendo...");
     return crearResultadoSinCambios(listaTareas, false);
-}
-
-// ============================================================================
-// MAPEO DE OPCIONES A ACCIONES
-// ============================================================================
-
-/**
- * Función pura que mapea una opción numérica del menú a su acción correspondiente.
- * 
- * Mapeo de opciones:
- * - 1: Ver tareas
- * - 2: Buscar tareas
- * - 3: Agregar tarea
- * - 4: Eliminar tarea
- * - 5: Información del almacenamiento
- * - 6: Estadísticas para nerds
- * - 7: Consultas adicionales
- * - 8: Modificar tarea
- * - 0: Salir
- * 
- * @param opcion - La opción seleccionada por el usuario (0-8)
- * @returns Función que ejecuta la acción correspondiente
- */
-export function obtenerAccionPorOpcion(
-    opcion: number
-): (lista: readonly Task[]) => MenuActionResult {
-    switch (opcion) {
-        case 1: return ejecutarVerTareas;
-        case 2: return ejecutarBuscarTareas;
-        case 3: return ejecutarAgregarTarea;
-        case 4: return ejecutarEliminarTarea;
-        case 5: return ejecutarInfoAlmacenamiento;
-        case 6: return ejecutarEstadisticas;
-        case 7: return ejecutarConsultasAdicionales;
-        case 8: return ejecutarModificarTarea;
-        case 0: return ejecutarSalir;
-        default:
-            return (lista) => {
-                mensaje("Opción no válida");
-                return crearResultadoSinCambios(lista);
-            };
-    }
 }

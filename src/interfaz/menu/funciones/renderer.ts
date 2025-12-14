@@ -11,6 +11,8 @@
  * - Transformar datos en representaciones visuales
  */
 
+import { mensaje } from "../../mensajes.ts";
+
 // ============================================================================
 // FORMATEO DEL MENÚ PRINCIPAL
 // ============================================================================
@@ -27,7 +29,7 @@
  * // ["Hola Juan", "¿Que deseas hacer?", ...]
  * ```
  */
-export function formatearMenuPrincipal(username: string): readonly string[] {
+function formatearMenuPrincipal(username: string): readonly string[] {
     return [
         `Hola ${username}`,
         "¿Que deseas hacer?",
@@ -56,6 +58,19 @@ export function formatearMenuPrincipal(username: string): readonly string[] {
  * console.log(texto);
  * ```
  */
-export function generarTextoMenu(username: string): string {
+function generarTextoMenu(username: string): string {
     return formatearMenuPrincipal(username).join('\n');
+}
+
+// ============================================================================
+// FUNCION DE PRESENTACIÓN (I/O)
+// ============================================================================
+
+/**
+ * Muestra el menú principal formateado en la consola.
+ * @param username - Nombre del usuario
+ */
+export function mostrarMenuPrincipal(username: string): void {
+    const lineasMenu = formatearMenuPrincipal(username);
+    lineasMenu.forEach(linea => mensaje(linea));
 }

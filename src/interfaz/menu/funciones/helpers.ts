@@ -12,9 +12,9 @@
  * - Funciones con I/O: mostrarLineasMenu
  */
 
-import type { Task } from "../../core/type.ts";
+import type { Task } from "../../../core/type.ts";
 import type { MenuActionResult } from "./actions.ts";
-import { mensaje, clearMensaje } from "../mensajes.ts";
+import { mensaje, clearMensaje } from "../../mensajes.ts";
 
 // ============================================================================
 // CONSTRUCTORES DE RESULTADOS (FUNCIONES PURAS)
