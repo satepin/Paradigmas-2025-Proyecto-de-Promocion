@@ -65,14 +65,14 @@ export interface ValidationFlag {
  * @property {ValidationFlag} descripcion - Banderas para la descripción.
  * @property {ReadonlyMap<TaskStatus, number>} estado - Mapa inmutable de opciones para el estado.
  * @property {ReadonlyMap<TaskDifficulty, number>} dificultad - Mapa inmutable de opciones para la dificultad.
- * @property {ReadonlyMap<string, number>} categoria - Mapa inmutable de opciones para la categoría.
+ * @property {ReadonlyMap<TaskCategory, number>} categoria - Mapa inmutable de opciones para la categoría.
  */
 export interface TaskFlags {
     readonly titulo: ValidationFlag;
     readonly descripcion: ValidationFlag;
     readonly estado: ReadonlyMap<TaskStatus, number>;
     readonly dificultad: ReadonlyMap<TaskDifficulty, number>;
-    readonly categoria: ReadonlyMap<string, number>;
+    readonly categoria: ReadonlyMap<TaskCategory, number>;
 }
 
 export class Task {

@@ -2,6 +2,7 @@ import { listado } from '../listado.ts';
 import type { Task } from '../../../type.ts';
 import { mensaje, pausaMensaje } from "../../../../interfaz/mensajes.ts";
 import { prompt } from "../../../../core/tools/modulos/promptSync.ts";
+import logicjs from 'logicjs-es6';
 
 // ===========================
 // UTILIDADES DE FECHA
