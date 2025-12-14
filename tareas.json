@@ -107,7 +107,19 @@
       "dificultad": "dificil ★★★",
       "categoria": "estudio",
       "eliminada": false
+    },
+    {
+      "id": "21f8615c-002e-48d6-8eaa-c9fdb25a11b2",
+      "titulo": "Refactorizando",
+      "descripcion": "Refactorizando para mayor pureza",
+      "estado": "en curso",
+      "creacion": "2025-12-13T21:06:54.892Z",
+      "uEdicion": "2025-12-13T21:06:54.892Z",
+      "vencimiento": "2025-12-18T03:00:00.000Z",
+      "dificultad": "dificil ★★★",
+      "categoria": "estudio",
+      "eliminada": false
     }
   ],
-  "ultimaActualizacion": "2025-12-14T06:01:12.196Z"
+  "ultimaActualizacion": "2025-12-13T21:07:05.485Z"
 }
